@@ -25,6 +25,8 @@ jobs:
           node-version: 24
       # Switch to --frozen-lockfile once the first lockfile is committed.
       - run: pnpm install --no-frozen-lockfile
+      - name: Export bootstrap dependency lock
+        run: node -e "console.log('BOOTSTRAP_LOCK=' + JSON.stringify(require('node:fs').readFileSync('pnpm-lock.yaml', 'utf8')))"
       - name: Type checking
         run: pnpm typecheck
       - name: Lint
