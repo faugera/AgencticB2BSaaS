@@ -26,3 +26,17 @@ isolation tests before release. See `docs/architecture/0001-foundation.md`.
 Implement only the agreed scope. Run relevant gates and report failures honestly.
 Update affected contracts/docs/tests. Review the diff for secrets and unnecessary
 dependencies. Use a dedicated branch and reviewable PR; never merge automatically.
+
+## Specification navigation
+- Foundation and delivery sequence: `docs/sdd/000-foundation-v1.3.md`.
+- Next proposed implementation scope (not yet authorized): `docs/sdd/002-iam-tenant-isolation.md`.
+- Coding-agent execution, context and approval rules: `docs/architecture/0002-codex-harness.md`.
+- UI/UX rules for relevant tasks: `DESIGN.md`.
+Read only the documents relevant to the current task; preserve pnpm and the existing stack.
+
+## Codex execution
+Inspect before editing; optimize for the requested outcome and minimal diff.
+Autonomously run safe local verification. Seek approval before destructive or
+structural out-of-scope changes. For long tasks, retain concise checkpoints.
+Use parallel work only when independent. Report actual tests, skipped checks
+and residual risks. Do not merge or deploy automatically.
