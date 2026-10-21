@@ -12,6 +12,18 @@ Premium, minimal, functional UI inspired by Linear and Pigment. Low cognitive lo
 - Platform administration uses neutral backgrounds.
 - WCAG 2.2 AA target: keyboard, contrast, visible focus, reduced motion and responsive layout.
 
+## Responsive behavior (required)
+- Mobile-first layouts across phone, tablet and desktop. Navigation collapses gracefully; key actions remain discoverable and keyboard/touch accessible.
+- Dense tables use appropriate responsive alternatives (prioritized columns, detail drill-down or horizontal scroll within the table region), never overflow the entire page.
+- Charts, dialogs, filters, tooltips and forms adapt to narrow viewports. No hover-only interaction. Verify representative viewport widths and landscape where relevant.
+
+## Internationalization (required)
+- French (`fr`) is the default UI language; English (`en`) is available from the first functional release.
+- Provide a discoverable language switcher, ideally in user preferences. Preserve the selection and update the document language.
+- Every visible string and accessible label uses translation keys, including errors, tooltips, validation, empty states, notifications and dialogs. Avoid text embedded in images.
+- Use locale-aware `Intl` formatting for dates, numbers, money and pluralization. Design flexible labels and buttons for longer translations. Avoid fixed widths that truncate meaningful text.
+- Test both languages on desktop and mobile, including fallback when a translation is missing.
+
 ## Reusable primitives, when justified
 Button, Input, Select, Tooltip, Dialog, PageHeader, Breadcrumb, FilterBar, DataTable, Chart and status feedback. Do not scaffold unused components. Domain-specific components live near domain modules. Use contextual tooltips for important unfamiliar actions, with accessible labels.
 
