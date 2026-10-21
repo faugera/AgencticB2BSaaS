@@ -30,15 +30,19 @@ dependencies. Use a dedicated branch and reviewable PR; never merge automaticall
 ## Specification navigation
 - Foundation and delivery sequence: `docs/sdd/000-foundation-v1.3.md`.
 - Next proposed implementation scope (not yet authorized): `docs/sdd/002-iam-tenant-isolation.md`.
-- Coding-agent execution, context and approval rules: `docs/architecture/0002-codex-harness.md`.
-- UI/UX rules for relevant tasks: `DESIGN.md`.
+- Proposed coding-agent contract: `docs/architecture/0002-codex-harness.md`.
+- Proposed shared design contract: `DESIGN.md`.
+- Accepted Task 002 IAM arbitrations and managed identity: `docs/architecture/0003-managed-identity.md`.
+- Task 002 delivery plan: `docs/sdd/002-implementation-plan.md`.
+Proposed contracts do not become binding merely by being linked here; their
+repository-wide activation requires approval of this documentation PR.
 Read only the documents relevant to the current task; preserve pnpm and the existing stack.
 
 ## UX delivery invariants
 All new UI must be responsive on mobile, tablet and desktop, with no page-level
 horizontal overflow. French (`fr`) is the default locale and English (`en`)
 must be supported. Use translation keys for user-facing text, accessible labels
-and errors; locale-aware `Intl` formatting. Follow `DESIGN.md` and verify
+and errors; locale-aware `Intl` formatting. Use `DESIGN.md` as the proposed visual direction and verify
 critical paths in both locales and representative viewports.
 
 ## Codex execution

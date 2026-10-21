@@ -7,11 +7,11 @@ Baseline: Task 001 merged; Node 24, pnpm 11.25.0, React 19/Vite/Tailwind v4, Fas
 Reusable, secure, multi-tenant and multi-workspace B2B agentic SaaS, modular TypeScript monolith. YAGNI, reuse, minimal diffs, few dependencies, explicit security boundaries. Existing `apps/web`, `apps/api`, `packages/shared` are the baseline, not a mandate to scaffold empty packages.
 
 ## Domain and security
-- Customer: commercial account; Tenant: isolation boundary; Workspace: tenant-scoped collaboration; User: identity; Membership: tenant/workspace association; Subscription: commercial entitlement.
+- Organization = Tenant: isolation boundary; Workspace: tenant-scoped collaboration; User: identity; Membership: tenant/workspace association. A standard user belongs to at most one tenant initially; a tenant can contain multiple workspaces. Customer and Subscription remain deferred.
 - Workspace visibility configurable per workspace; tenant admin access across their tenant's workspaces subject to audited authorization policy.
-- Platform Super Admin is a distinct privileged control plane and has no implicit access to tenant business data.
-- Temporary support access: explicit approval, justification, scoped authorization, auditable, revocable, expires within 24h.
-- Identity provider via OIDC/SSO; SAML through broker if enterprise requirements warrant. Identity adapter independent of application RBAC/ABAC.
+- Only Platform Super Admin creates tenants. No public tenant self-provisioning.
+- Platform Super Admin is independent of tenant memberships and has persistent cross-tenant authorization, explicitly enforced and audited. This is not temporary impersonation or a database superuser; ordinary tenant sessions cannot acquire that authority. Supersedes the earlier temporary-support-only proposal, per owner arbitration.
+- Managed authentication with Clerk for Task 002; application RBAC and memberships remain in PostgreSQL. SSO/SAML and enterprise provisioning remain deferred. See ADR-003.
 - Establish actor, tenant and workspace context server-side; never trust tenant IDs supplied by clients. Authorize at API/service boundaries and in database.
 - PostgreSQL RLS with least-privilege runtime roles, transaction-scoped tenant context, fail-closed policies and adversarial read/write tests. No superuser for application queries. Prevent cross-tenant access through jobs, cache, files, search, tools and agent context.
 
@@ -44,11 +44,13 @@ Reusable, secure, multi-tenant and multi-workspace B2B agentic SaaS, modular Typ
 - Security, resilience, privacy lifecycle, rate limiting and deployment hardening are release gates, not properties of the bootstrap.
 
 ## Contract roadmap
-00 Foundation; 01 multi-tenant; 02 IAM RBAC/ABAC; 03 agent runtime; 04 tools; 05 context; 06 durable workflows; 07 HITL; 08 subscriptions/metering; 09 shared UI; 10 local development; 11 migrations/backup; 12 observability; 13 privacy; 14 CI/CD; 15 strict typing; 16 coding harness; 17 evaluations.
+Delivery task IDs match files: Task 001 bootstrap (`001-bootstrap.md`); Task 002 IAM plus tenant/workspace isolation (`002-iam-tenant-isolation.md`).
+Future capability themes are unnumbered until specified: agent runtime, tools, context, durable workflows, HITL, subscriptions/metering, shared UI, local development, migrations/backup, observability, privacy, CI/CD, strict typing, coding harness and evaluations.
 
 ## Decision status
 Accepted: modular monolith, React/Fastify/pnpm existing stack, PostgreSQL, tenant isolation by RLS plus service authorization, shared UI policy, OpenAI Agents SDK as future adapter.
-Open ADRs: production hosting; enterprise identity provider; deployment/promotion strategy; SLA/RPO/RTO. Do not assume a cloud provider.
+Task 002 identity decision: Clerk managed authentication (ADR-003); production instance configuration and enterprise SSO remain to be configured/decided.
+Open ADRs: production hosting; deployment/promotion strategy; SLA/RPO/RTO. Do not assume a cloud provider.
 No Convex adoption or dual database. No premature Kafka/Kubernetes/microservices/Temporal.
 
 ## Implementation sequencing

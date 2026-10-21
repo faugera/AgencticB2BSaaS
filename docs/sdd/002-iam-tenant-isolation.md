@@ -1,35 +1,78 @@
-# Task 002 — IAM and tenant/workspace isolation (proposed)
+# Task 002 — IAM and tenant/workspace isolation
 
-Status: specification for review. Do not implement as part of the documentation PR.
+Status: scope and delivery plan approved by owner; implementation not started.
+This remains a documentation-only PR. See `002-implementation-plan.md` for
+sequencing and `../architecture/0003-managed-identity.md` for authentication.
 
-## Goal
-Establish enforceable server-side tenant/workspace authorization and PostgreSQL isolation before adding tenant data or agent tools.
+## Accepted scope
 
-## Scope
-1. Inspect existing Fastify API, shared types, PostgreSQL Compose and CI; make a small migration/tooling decision supported by actual needs.
-2. Model Tenant, Workspace, User and Membership, with tenant admin and workspace roles. Keep Customer and Subscription out of the first migration unless required.
-3. Define authenticated server-established actor/tenant/workspace context; choose a testable authentication boundary without hard-coding an enterprise provider. No trust in request-supplied tenant IDs.
-4. Implement centralized authorization checks for tenant membership, workspace visibility and scoped CRUD; explicitly distinguish 401, 403 and 404 behavior to avoid enumeration.
-5. PostgreSQL RLS policies for tenant-scoped records; runtime DB role must not own tables, bypass RLS or be superuser. Ensure connection-pool safety: use transaction-local tenant context, reset automatically, fail closed when absent.
-6. Seed at least two fictional tenants with two workspaces each and different memberships. Never commit real credentials.
-7. Integration tests using real PostgreSQL for cross-tenant reads/writes, workspace access, tenant admin policy, missing context, stale memberships, SQL joins and concurrent pooled requests.
-8. Document the authorization matrix, threat assumptions, migration/rollback procedure and open IdP decisions.
+- Clerk manages identity, sign-in, verification, recovery and session lifecycle.
+  PostgreSQL owns application roles, tenant/workspace memberships and invitations.
+- Organization equals tenant. A standard user belongs to at most one tenant.
+  Tenant memberships and workspace assignments remain distinct.
+- Only Platform Super Admin creates tenants. Its platform identity is independent
+  of tenant memberships and has permanent, explicit cross-tenant authorization.
+  Every privileged cross-tenant operation is audited with actor, scope and action.
+- Roles initially: platform super-admin, tenant admin, workspace admin and member.
+  Tenant admins manage their tenant; workspace admins manage assigned workspaces.
+  No custom role builder, generic ABAC engine, or platform impersonation UI.
+- Deliver sign-in, invite-only application access, tenant creation, invitations,
+  acceptance and a minimal workspace view. Identity registration alone grants no
+  tenant membership or application privilege.
+- Preserve the monorepo, React/Vite/Fastify/pnpm and health liveness endpoint.
+  New UI supports French by default, English, desktop/mobile and keyboard use.
 
-## Explicitly deferred
-Production IdP/SSO integration and provider selection, platform support impersonation UI, subscription billing, agents, tools, business modules, tenant admin portal and full provisioning automation. Define future invariants without implementing speculative scaffolding.
+## Database and authorization requirements
 
-## Acceptance criteria
-- Unauthorized cross-tenant reads and writes are denied at API and DB levels.
-- Workspace access follows explicit visibility and membership policy.
-- Tenant admin access cannot escape tenant boundary.
-- Request-supplied tenant/workspace identifiers never establish authority.
-- RLS cannot be bypassed through ordinary application connections or connection-pool reuse.
-- Integration tests prove denial and legitimate access for both tenants.
-- `pnpm verify`, relevant PostgreSQL integration tests and Playwright checks pass in CI.
-- No `any`, no unnecessary packages, no unrelated UI redesign; code review includes security evidence.
-- Changes delivered on dedicated branch as reviewable PR; no automatic merge.
+- Versioned PostgreSQL migrations; no unused ORM or generic repository package.
+- Runtime role cannot own tables, be superuser or have BYPASSRLS.
+- Derive actor and scope from verified identity and persisted authorization.
+  Client-supplied tenant/workspace IDs are requested resources, never authority.
+- Transaction-local context with pooled-connection cleanup and fail-closed RLS.
+- Composite foreign keys prevent cross-tenant workspace/member associations.
+- Enforce one tenant per standard user with a database constraint.
+- Workspace visibility is explicit; private workspaces require assignment,
+  except authorized tenant admins and platform super-admin.
+- Tenant creation and granting its first admin must not leave an unusable tenant.
+- Invitations are scoped, expiring, revocable, single-use and bound to a verified
+  identity/email. Store token hashes, not bearer invitation tokens.
+- Check persisted privileges on requests; removal/disablement must invalidate
+  application access even while an identity session remains valid.
+- Audit records are append-only for ordinary application connections.
+  Platform privilege is never a user-editable profile field or request flag.
 
-## Delivery plan
-Phase A: inspect, propose schema/permission matrix and migration strategy; request approval on material decisions.
-Phase B: implement minimal vertical slice.
-Phase C: adversarial tests, documentation and CI evidence.
+## Initial super-admin
+
+Use an operator-only, one-time bootstrap procedure. Bind the intended verified
+Clerk subject to a local platform actor; never promote the first registrant or
+an arbitrary matching request email. Existing platforms must not silently gain
+another super-admin on repeated bootstrap. Document intentional recovery.
+Passwords and invitation/recovery secrets stay with the provider. Do not include
+real personal account data or default credentials in public fixtures.
+
+## Verification and acceptance
+
+- Real PostgreSQL tests: two fictional tenants, two workspaces each, legitimate
+  access and adversarial reads/writes, joins, missing context, stale memberships,
+  cross-tenant foreign keys, concurrent pool reuse and workspace restrictions.
+- API tests: invalid/expired/wrong-issuer/wrong-origin tokens denied, 401/403/404
+  policy avoids resource enumeration, forged role/scope input cannot escalate.
+- Prove platform-only creation and audit of cross-tenant access.
+- Test invitation expiry/revocation/replay and one-tenant conflicts.
+- Test bootstrap idempotence, identity verification and denial of public promotion.
+- `verify:tenant-isolation` and `verify:security` must fail on missing test DB
+  configuration, not silently skip. Preserve all existing CI gates.
+- Browser tests cover sign-in handoff, onboarding, permissions, fr/en and responsive
+  layouts. Provider fixtures are not evidence of live Clerk configuration.
+- A manual live activation/sign-in/recovery check requires an actual configured
+  Clerk instance. Report it as blocked until credentials and configuration exist.
+
+## Deferred
+
+Enterprise SSO/SAML, billing, agents, tools, business modules, custom permissions,
+full tenant administration portal, deployment and production hardening.
+
+## Delivery
+
+Dedicated implementation branch and reviewable PR. No automatic merge, deploy,
+production migration, account provisioning, or credential publication.
