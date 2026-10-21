@@ -29,6 +29,14 @@ Reusable, secure, multi-tenant and multi-workspace B2B agentic SaaS, modular Typ
 - Workspace-specific pastel gradient only as subtle fading background at top of workspace pages. Never replace semantic status colors. Neutral Platform Admin.
 - Accessible keyboard navigation, contrast, responsive layouts and WCAG 2.2 AA target. See `DESIGN.md`.
 
+## Responsive design and internationalization (mandatory)
+- Every application surface, including tenant workspaces and platform administration, must support mobile, tablet and desktop without horizontal page overflow or loss of critical actions. Mobile-first layouts, adaptive navigation, touch targets and responsive tables/charts are required; use progressive disclosure rather than squeezing dense desktop UI.
+- Supported UI locales at launch: French (`fr`, default) and English (`en`). Default to French when no saved preference exists; users can explicitly switch language. Persist a user's preference when identity/settings storage exists, otherwise use local preference. Do not infer authorization or tenant from locale.
+- All user-facing copy, navigation, forms, validation, errors, empty states, tooltips, notifications and accessibility labels must be translatable. Use message keys and locale dictionaries, not hard-coded UI strings. Keep API error codes stable and localize presentation at the client.
+- Format dates, numbers, currencies and plural forms with locale-aware standards (`Intl`); avoid concatenating translated fragments. Translation structure must allow additional languages without changing feature logic.
+- Locale switching must not lose form state or navigation context. Ensure HTML `lang` reflects the active locale.
+- Add tests for both locales, fallback behavior and responsive critical journeys; no new i18n dependency until justified by the first implementation slice.
+
 ## Engineering and delivery
 - Strict TypeScript, no explicit `any`, typed lint safety checks as codebase matures. Maintain CI: frozen install, typecheck, lint, unit/integration, builds, HTTP smoke, Playwright, PostgreSQL.
 - Portable `AGENTS.md` map, concise docs and on-demand `.agents/skills`. No duplicate rule manuals. Reviewable branches/PRs; never auto-merge.
