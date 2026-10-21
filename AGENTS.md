@@ -34,6 +34,13 @@ dependencies. Use a dedicated branch and reviewable PR; never merge automaticall
 - UI/UX rules for relevant tasks: `DESIGN.md`.
 Read only the documents relevant to the current task; preserve pnpm and the existing stack.
 
+## UX delivery invariants
+All new UI must be responsive on mobile, tablet and desktop, with no page-level
+horizontal overflow. French (`fr`) is the default locale and English (`en`)
+must be supported. Use translation keys for user-facing text, accessible labels
+and errors; locale-aware `Intl` formatting. Follow `DESIGN.md` and verify
+critical paths in both locales and representative viewports.
+
 ## Codex execution
 Inspect before editing; optimize for the requested outcome and minimal diff.
 Autonomously run safe local verification. Seek approval before destructive or
