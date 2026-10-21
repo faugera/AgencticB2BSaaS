@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: pnpm install --frozen-lockfile
+      - name: Type checking
+        run: pnpm typecheck
+      - name: Lint
+        run: pnpm lint
+      - name: Unit tests
+        run: pnpm test
+      - name: Production build
+        run: pnpm build
+      - name: API smoke
+        run: pnpm smoke
+      - name: Browser setup
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Browser tests
+        run: pnpm test:e2e
+      - name: PostgreSQL development config
+        env:
+          POSTGRES_PASSWORD: ci-ephemeral-password
+        run: |
+          docker compose config --quiet
+          docker compose up -d --wait postgres
+          docker compose exec -T postgres psql -U enterprise -d enterprise_ai_os -c 'SELECT 1'
+      - name: Stop PostgreSQL
+        if: always()
+        run: docker compose down
+        env:
+          POSTGRES_PASSWORD: ci-ephemeral-password
