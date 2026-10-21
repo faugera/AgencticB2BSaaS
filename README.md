@@ -9,7 +9,7 @@ Use Node **24 LTS** (`.node-version`) and **pnpm 11.25.0**.
 Install the pinned pnpm version via your Node/package-manager setup, then:
 
 ```sh
-pnpm install --no-frozen-lockfile
+pnpm install --frozen-lockfile
 cp .env.example .env
 # Set POSTGRES_PASSWORD in .env to a locally generated password.
 pnpm db:up
@@ -74,7 +74,6 @@ IAM, tenant management, agents, workflows, database access, and business portals
 are intentionally deferred. The OpenAI Agents SDK adapter will be added with the
 first concrete agent use case. No API key or provider dependency is needed now.
 
-Direct dependency versions are pinned. A dependency lockfile still needs to be
-generated and committed after a successful registry connection; until then,
-transitive dependency resolution is not frozen and CI installs with
-`--no-frozen-lockfile`. The bootstrap verification record documents this gap.
+Direct dependency versions and transitive resolution are pinned in
+`pnpm-lock.yaml`. Use frozen installs locally and in CI. Dependency build scripts
+are denied except esbuild, which is explicitly allowed in the workspace config.

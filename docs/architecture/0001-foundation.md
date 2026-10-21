@@ -44,12 +44,11 @@ ESLint checks JS/TS and React hook rules; TypeScript checks all app and test con
    backups and recovery objectives.
 5. Domain modules when business behavior warrants them. No microservices,
    event sourcing, Temporal, or additional packages without measured need.
-6. Dependency lockfile and automated dependency updates. Commit the lockfile
-   after registry access is restored, then use frozen installs in CI.
+6. Automated dependency update cadence and vulnerability response ownership.
 
 ## Tradeoffs
 
-Pinned direct dependencies keep initial resolution bounded, but a missing lockfile
-means transitives can change. The foundation page describes principles rather
+Pinned direct dependencies and a committed lockfile freeze dependency resolution.
+Only esbuild's required installation script is allowed. The foundation page describes principles rather
 than presenting simulated tenants, fake metrics, or unfinished product actions.
 Database connectivity is deferred to avoid an unused driver and connection layer.
