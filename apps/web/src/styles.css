@@ -68,3 +68,250 @@ footer { border-top: 1px solid #d7dad0; padding: 28px 0; display: flex; justify-
 footer p { margin: 0; }
 @media (max-width: 760px) { .masthead { height: 82px; } .brand { font-size: 15px; } .header-link { gap: 8px; font-size: 11px; } .hero { grid-template-columns: 1fr; gap: 36px; padding-top: 50px; } .art-panel { height: 360px; } .edition { margin-top: 30px; } .section-heading { display: block; } .section-heading h2 { width: auto; } .principles { grid-template-columns: 1fr; gap: 28px; margin-top: 30px; } .principles p { max-width: none; } footer { flex-wrap: wrap; } footer p { order: 3; width: 100%; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+.password-field { display: grid; gap: 8px; }
+.header-link select { padding: 8px; border: 1px solid #aab5a4; border-radius: 6px; background: transparent; }
+/* Semantic tokens shared by account and business screens. */
+@layer base {
+  :root {
+    --surface: #fff;
+    --surface-soft: #eef1e8;
+    --text-muted: #586355;
+    --border: #d7dad0;
+    --border-input: #aab5a4;
+    --action: #263b2d;
+    --action-hover: #3a503c;
+    --action-text: #fff;
+    --link: #263b2d;
+    --focus: #5a6d27;
+    --danger: #9c2525;
+    --danger-surface: #fff1f0;
+    --workspace-tint: #e9efdc;
+    --shadow-card: 0 8px 32px rgb(38 59 45 / 4%);
+    --space-1: .25rem;
+    --space-3: .75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --radius-md: 8px;
+    --duration: 160ms;
+  }
+}
+.auth-card,.panel { background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-card); }
+.auth-card p,.hero-description,.principles p,footer,.brand-light { color:var(--text-muted); }
+.auth-card input,.auth-navigation select,.application input,.application select { background:var(--surface); color:var(--color-ink); border:1px solid var(--border-input); border-radius:6px; padding:12px; min-width:0; width:100%; }
+.application label { display:grid; gap:8px; font-size:14px; }
+.application form { display:grid; gap:18px; margin:24px 0; }
+.application button,.auth-card button { background:var(--action); color:var(--action-text); padding:12px 18px; border-radius:6px; min-height:44px; cursor:pointer; }
+.application button:disabled { opacity:.6; cursor:wait; }
+.auth-card .text-button { color:var(--link); background:transparent; }
+.auth-card [role="alert"],[role="alert"] { color:var(--danger); }
+input:focus-visible,button:focus-visible,select:focus-visible,a:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+@media(max-width:760px) { .page .masthead { height:auto; min-height:82px; padding:18px 0; flex-wrap:wrap; } .page .brand { flex-basis:100%; } }
+.application {
+    max-inline-size: 1120px;
+    margin-inline: auto;
+    padding: 0 clamp(1rem, 5vw, 4rem) 4rem;
+    overflow-wrap: anywhere;
+  }
+
+  .application nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
+    padding-block: var(--space-5);
+  }
+
+  .application nav a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    text-underline-offset: 0.3em;
+  }
+
+  .application nav a[aria-current='page'] {
+    color: var(--link);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .application h1 {
+    margin-block: 0 var(--space-6);
+    font-size: clamp(1.875rem, 5vw, 3rem);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+  }
+
+  .application h2 {
+    font-size: 1.375rem;
+    letter-spacing: -0.025em;
+  }
+
+  .application h3 {
+    margin-block: var(--space-5) var(--space-3);
+    font-size: 1.0625rem;
+    font-weight: 500;
+  }
+
+  .panel {
+    padding: clamp(1.125rem, 4vw, 2rem);
+    margin-block: var(--space-5);
+  }
+
+  .workspace-panel {
+    background: linear-gradient(
+      180deg,
+      var(--workspace-tint),
+      var(--surface) 180px
+    );
+  }
+
+  .application form {
+    max-inline-size: 480px;
+  }
+
+  .application li {
+    margin-block: var(--space-3);
+  }
+
+  .application li button {
+    margin: var(--space-1);
+  }
+
+  .workspace-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .workspace-list li {
+    min-inline-size: 0;
+    margin: 0;
+  }
+
+  .workspace-list a {
+    display: grid;
+    gap: var(--space-4);
+    block-size: 100%;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition:
+      background-color var(--duration),
+      border-color var(--duration);
+  }
+
+  .workspace-list span {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+
+  .secret {
+    display: block;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    user-select: all;
+  }
+
+  /* 6. Adaptations : toucher, petits écrans et survol. */
+  .hero > *,
+  .principles > *,
+  .masthead > * {
+    min-inline-size: 0;
+  }
+
+  .brand-mark {
+    background: #263b2d;
+    flex-shrink: 0;
+  }
+
+  .edition {
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 600px) {
+    .masthead {
+      height: auto;
+      min-height: 82px;
+      flex-wrap: wrap;
+      padding-block: var(--space-4);
+    }
+
+    .application .masthead {
+      align-items: flex-start;
+    }
+
+    .application .masthead > .brand {
+      flex-basis: 100%;
+    }
+
+    .auth-card {
+      margin-block: var(--space-6);
+    }
+
+    .orbit {
+      max-inline-size: 90%;
+    }
+  }
+
+  @media (hover: hover) {
+    :where(.auth-card, .application) button:enabled:hover {
+      background: var(--action-hover);
+    }
+
+    .auth-card .text-button:enabled:hover {
+      background: transparent;
+      text-decoration-thickness: 2px;
+    }
+
+    .workspace-list a:hover {
+      border-color: var(--border-input);
+      background: var(--surface-soft);
+    }
+
+    .application nav a:hover,
+    .auth-navigation a:hover {
+      text-decoration: underline;
+    }
+  }
+/* 7. Mode sombre : substitutions sémantiques centralisées. */
+@layer base {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --color-paper: #161c18;
+      --color-ink: #e6ebe2;
+      --surface: #202a22;
+      --surface-soft: #29362b;
+      --text-muted: #bac5b4;
+      --border: #465143;
+      --border-input: #7d8e75;
+      --action: #dce5aa;
+      --action-hover: #e9efcf;
+      --action-text: #212b25;
+      --link: #dce5aa;
+      --focus: #dce5aa;
+      --danger: #ffb3ac;
+      --danger-surface: #3a2424;
+      --workspace-tint: #354332;
+      --shadow-card: 0 8px 32px rgb(0 0 0 / 15%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}

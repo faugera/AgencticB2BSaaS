@@ -18,20 +18,28 @@
     "db:up": "docker compose up -d --wait postgres",
     "db:down": "docker compose down",
     "auth:migrate": "pnpm --filter @enterprise/api auth:migrate",
+    "db:provision": "pnpm --filter @enterprise/api db:provision",
+    "operator:bootstrap": "pnpm --filter @enterprise/api operator:bootstrap",
+    "operator:identity": "pnpm --filter @enterprise/api operator:identity",
     "auth:invite": "pnpm --filter @enterprise/api auth:invite",
     "auth:services": "docker compose up -d --wait postgres mailpit",
     "test:auth": "vitest run --config vitest.auth.config.ts",
-    "test:auth:e2e": "AUTH_LIVE_TEST=true playwright test tests/e2e/auth-live.spec.ts"
+    "verify:tenant-isolation": "vitest run --config vitest.auth.config.ts apps/api/src/business/isolation.integration.test.ts",
+    "verify:security": "node scripts/security.mjs && pnpm audit --audit-level high && pnpm test:auth",
+    "test:auth:e2e": "AUTH_LIVE_TEST=true playwright test tests/e2e/auth-live.spec.ts tests/e2e/business-live.spec.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.39.2",
     "@playwright/test": "1.58.2",
     "@types/node": "24.10.1",
+    "@types/pg": "8.23.1",
     "eslint": "9.39.2",
     "eslint-plugin-react-hooks": "7.0.1",
     "globals": "16.5.0",
+    "pg": "8.23.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.53.1",
-    "vitest": "4.0.18"
+    "vite": "7.3.7",
+    "vitest": "4.1.12"
   }
 }

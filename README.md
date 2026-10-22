@@ -1,8 +1,10 @@
 # AgencticB2BSaaS
 
-Enterprise AI OS foundation: a small TypeScript modular monolith with a foundation
-page and invitation-only Better Auth identity. The API exposes liveness and
-authentication/session endpoints; tenant/workspace authorization is still pending.
+Enterprise AI OS: a TypeScript modular monolith for a private B2B pilot with
+invitation-only Better Auth, optional TOTP, server-authorized organizations and
+private workspaces. React/Vite, Fastify, PostgreSQL; no external auth CLI.
+Follow [the private pilot runbook](docs/setup/private-pilot.md) for the complete
+setup, verified super-admin bootstrap, SMTP, recovery and deployment prerequisites.
 
 ## Local setup
 
@@ -20,8 +22,9 @@ pnpm dev
 Open http://127.0.0.1:5173 and http://127.0.0.1:3000/health.
 PostgreSQL is optional for this bootstrap: neither the page nor liveness depends
 on it. `pnpm db:up` needs Docker with Compose v2. PostgreSQL binds only to
-loopback; use a unique local password. No database driver, schema, migration,
-or query exists yet. `pnpm db:down` preserves its named data volume.
+loopback; use a unique local password. Authentication/business features require
+private API configuration, explicit `pnpm db:provision` and `pnpm auth:migrate`.
+`pnpm db:down` preserves its named data volume.
 
 The root `.env` configures Docker Compose only. The API reads `HOST` and `PORT`
 from its process environment, with defaults `127.0.0.1:3000`. For example:
@@ -71,8 +74,10 @@ Claude Code's `CLAUDE.md` points to the same instructions.
 
 ## Current limits
 
-Tenant/workspace authorization, platform roles, agents, workflows, business data,
-and business portals are deferred. The OpenAI Agents SDK adapter will be added with the
+The pilot is single-instance, with synchronous, retryable invitation mail and
+optional MFA even for super-admin. Hosting, SMTP sender, encrypted backups and
+branch protection still require operator configuration. SSO/SCIM, billing, agents,
+workflows and high availability are deferred. The OpenAI Agents SDK adapter will be added with the
 first concrete agent use case. No API key or provider dependency is needed now.
 
 Direct dependency versions and transitive resolution are pinned in
@@ -84,9 +89,16 @@ are denied except esbuild, which is explicitly allowed in the workspace config.
 Better Auth replaces the former managed-provider proposal. See
 [the setup guide](docs/setup/better-auth.md) for PostgreSQL, local Mailpit email,
 operator invitations and Codespaces ports. Start with `pnpm auth:services`, then
-configure private API environment files, run `pnpm auth:migrate` and `pnpm dev`.
-Open `/auth` to sign in; public registration is disabled.
+configure private API environment files, run `pnpm db:provision`,
+`pnpm auth:migrate` and `pnpm dev`. Open `/login`; public registration is disabled.
+Legacy `/auth` and `/auth/reset` links remain supported.
 
 `pnpm auth:invite <email> <display-name>` creates an identity invitation only;
-it does not grant platform-admin or tenant access. Business authorization and RLS
-remain Task 002 work. No default administrator or password is provided.
+it does not grant platform-admin or tenant access. `operator:identity` and
+`operator:bootstrap` explicitly bind a verified identity to the initial platform
+role. No default administrator/password is provided. See
+[ADR-005](docs/architecture/0005-private-pilot.md) for precise RLS boundaries.
+
+CI additionally runs `pnpm verify:security`, `pnpm verify:tenant-isolation` and
+`pnpm test:auth:e2e` against disposable PostgreSQL/Mailpit. These gates fail rather
+than skip when required test infrastructure is missing. See the runbook for variables.

@@ -2,6 +2,7 @@
 
 - `apps/web`: React/Vite UI; `apps/api`: Fastify API.
 - `packages/shared`: type-only public contracts.
+- `apps/api/migrations`: reviewed SQL; provisioning is a separate operator command.
 - `docs/architecture`: decisions, security boundaries, open questions.
 - `docs/sdd`: scope and acceptance criteria.
 - `.agents/skills/*/SKILL.md`: discover task-specific instructions here.
@@ -11,6 +12,8 @@
 Node 24 LTS + pnpm 11.25.0. `pnpm install`, `pnpm dev`.
 Gates: `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build`,
 `pnpm smoke` (starts the built API), `pnpm test:e2e` (after build).
+Private-pilot gates: `pnpm verify:security`, `pnpm verify:tenant-isolation`
+(explicit disposable PostgreSQL credentials required), `pnpm test:auth:e2e`.
 Local PostgreSQL: `pnpm db:up` / `pnpm db:down`. See README for setup.
 
 ## Invariants and security
@@ -18,8 +21,9 @@ Local PostgreSQL: `pnpm db:up` / `pnpm db:down`. See README for setup.
 Keep the modular monolith and minimal dependencies. Shared contracts contain no
 business logic. Add boundaries only for concrete needs. Never expose secrets to
 the browser, commit credentials, log sensitive payloads, or trust client tenant IDs.
-Future tenant data requires server-established tenant context and database
-isolation tests before release. See `docs/architecture/0001-foundation.md`.
+Business authorization requires server-established transaction-local context and
+database isolation tests. See `docs/architecture/0005-private-pilot.md` and
+`docs/setup/private-pilot.md` for roles, migrations, bootstrap and operations.
 
 ## Definition of Done
 
@@ -29,14 +33,13 @@ dependencies. Use a dedicated branch and reviewable PR; never merge automaticall
 
 ## Specification navigation
 - Foundation and delivery sequence: `docs/sdd/000-foundation-v1.3.md`.
-- Next proposed implementation scope (not yet authorized): `docs/sdd/002-iam-tenant-isolation.md`.
+- IAM specification: `docs/sdd/002-iam-tenant-isolation.md`.
 - Proposed coding-agent contract: `docs/architecture/0002-codex-harness.md`.
 - Proposed shared design contract: `DESIGN.md`.
 - Current authentication decision: `docs/architecture/0004-better-auth.md`.
 - Auth setup, operator invitations and recovery: `docs/setup/better-auth.md`.
 - Task 002 delivery plan: `docs/sdd/002-implementation-plan.md`.
-Proposed contracts do not become binding merely by being linked here; their
-repository-wide activation requires approval of this documentation PR.
+ADR-005 and the approved private-pilot plan supersede older pending-scope notes.
 Read only the documents relevant to the current task; preserve pnpm and the existing stack.
 
 ## UX delivery invariants

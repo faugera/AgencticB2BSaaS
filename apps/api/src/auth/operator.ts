@@ -3,7 +3,7 @@ import type { AuthConfig } from './config.js';
 import type { SendAuthMail } from './mail.js';
 import { createAuth, createAuthPool } from './service.js';
 
-export async function inviteIdentity(config: AuthConfig, send: SendAuthMail, email: string, name: string) {
+export async function inviteIdentity(config: AuthConfig, send: SendAuthMail, email: string, name: string, recoverExisting = true) {
   if (!email.includes('@') || /[\r\n]/.test(email + name)) throw new Error('Invalid invitation identity');
   const pool = createAuthPool(config.databaseURL);
   try {
@@ -12,7 +12,7 @@ export async function inviteIdentity(config: AuthConfig, send: SendAuthMail, ema
       await send(message);
       delivered = true;
     };
-    // This instance exists only in the operator process, never in the HTTP server.
+    // Provisioning-capable instance is never mounted as an HTTP auth handler.
     const auth = createAuth(config, pool, checkedSend, true);
     const existing = await pool.query<{ id: string; emailVerified: boolean }>(
       'SELECT id, "emailVerified" FROM identity."user" WHERE lower(email) = lower($1)', [email],
@@ -25,6 +25,8 @@ export async function inviteIdentity(config: AuthConfig, send: SendAuthMail, ema
     } else if (!existing.rows[0]?.emailVerified) {
       await auth.api.sendVerificationEmail({ body: { email, callbackURL: config.baseURL + '/auth?activate=1' } });
     } else {
+      // Business invitations to verified identities do not need password recovery.
+      if (!recoverExisting) return;
       await auth.api.requestPasswordReset({ body: { email, redirectTo: config.baseURL + '/auth/reset' } });
     }
     if (!delivered) throw new Error('Invitation email was not delivered; retry the operator invitation');

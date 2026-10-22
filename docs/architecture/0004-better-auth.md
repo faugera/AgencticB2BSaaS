@@ -2,6 +2,9 @@
 
 Status: accepted by owner; supersedes ADR-003's provider decision.
 
+Historical identity-only slice: remaining-work statements below are superseded
+by [ADR-005](0005-private-pilot.md), which implements the approved private pilot.
+
 ## Decision
 
 Use Better Auth 1.7.12 in Fastify, its React client in Vite, and PostgreSQL for
