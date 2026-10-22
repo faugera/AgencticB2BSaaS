@@ -1,0 +1,41 @@
+export const messages = {
+  fr: {
+    home: 'Retour à l’accueil', title: 'Votre espace commence ici.',
+    subtitle: 'Connectez-vous avec votre adresse professionnelle.',
+    email: 'Adresse email', password: 'Mot de passe', newPassword: 'Nouveau mot de passe',
+    signIn: 'Se connecter', forgot: 'Mot de passe oublié ?', resetTitle: 'Retrouver votre accès',
+    sendReset: 'Envoyer le lien', back: 'Retour à la connexion', reset: 'Définir mon mot de passe',
+    resetSubtitle: 'Choisissez un mot de passe unique d’au moins 12 caractères.',
+    invitation: 'Les comptes sont créés sur invitation. Contactez votre administrateur.',
+    emailSent: 'Si ce compte existe, un email vous permettra de poursuivre.',
+    passwordSaved: 'Votre mot de passe a été enregistré. Vous pouvez vous connecter.',
+    verified: 'Adresse vérifiée. Vous pouvez vous connecter.',
+    activate: 'Adresse vérifiée. Demandez un lien pour définir votre mot de passe.',
+    failure: 'Impossible de terminer cette demande. Vérifiez vos informations ou réessayez plus tard.',
+    unverified: 'Vérifiez votre adresse email avant de vous connecter. Consultez votre boîte de réception.',
+    resend: 'Renvoyer la vérification', loading: 'Chargement…', busy: 'Veuillez patienter…',
+    sessionTitle: 'Bienvenue', sessionText: 'Votre compte est connecté. Pour obtenir un accès à un espace, contactez votre administrateur.',
+    signOut: 'Se déconnecter', language: 'Langue', invalidToken: 'Lien invalide ou expiré. Demandez un nouveau lien.',
+  },
+  en: {
+    home: 'Back to home', title: 'Your workspace starts here.',
+    subtitle: 'Sign in with your work email.',
+    email: 'Email address', password: 'Password', newPassword: 'New password',
+    signIn: 'Sign in', forgot: 'Forgot your password?', resetTitle: 'Recover your access',
+    sendReset: 'Send link', back: 'Back to sign in', reset: 'Set my password',
+    resetSubtitle: 'Choose a unique password with at least 12 characters.',
+    invitation: 'Accounts are invitation-only. Contact your administrator.',
+    emailSent: 'If this account exists, an email will let you continue.',
+    passwordSaved: 'Your password has been saved. You can now sign in.',
+    verified: 'Email verified. You can now sign in.',
+    activate: 'Email verified. Request a link to set your password.',
+    failure: 'Unable to complete this request. Check your details or try again later.',
+    unverified: 'Verify your email before signing in. Check your inbox.',
+    resend: 'Resend verification', loading: 'Loading…', busy: 'Please wait…',
+    sessionTitle: 'Welcome', sessionText: 'You are signed in. Contact your administrator to request workspace access.',
+    signOut: 'Sign out', language: 'Language', invalidToken: 'Invalid or expired link. Request a new one.',
+  },
+} as const;
+
+export type Locale = keyof typeof messages;
+export type MessageKey = keyof typeof messages.fr;

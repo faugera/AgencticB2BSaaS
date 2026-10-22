@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import { AuthPage } from './auth/AuthPage';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
           <span>enterprise<span className="brand-light"> / AI OS</span></span>
         </a>
         <a className="header-link" href="#foundation">The foundation <span aria-hidden="true">↗</span></a>
+        <a className="header-link" href="/auth">Se connecter</a>
       </header>
 
       <main id="main">
@@ -49,4 +51,4 @@ function App() {
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Missing application root');
-createRoot(root).render(<StrictMode><App /></StrictMode>);
+createRoot(root).render(<StrictMode>{window.location.pathname.startsWith('/auth') ? <AuthPage /> : <App />}</StrictMode>);

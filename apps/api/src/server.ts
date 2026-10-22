@@ -1,7 +1,9 @@
 import { buildApp } from './app.js';
 import { readConfig } from './config.js';
+import { readAuthConfig } from './auth/config.js';
 
-const app = buildApp({ logger: true });
+const authConfig = readAuthConfig();
+const app = buildApp({ logger: true, ...(authConfig ? { authConfig } : {}) });
 const config = readConfig();
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
