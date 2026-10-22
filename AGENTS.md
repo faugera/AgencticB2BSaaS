@@ -32,7 +32,8 @@ dependencies. Use a dedicated branch and reviewable PR; never merge automaticall
 - Next proposed implementation scope (not yet authorized): `docs/sdd/002-iam-tenant-isolation.md`.
 - Proposed coding-agent contract: `docs/architecture/0002-codex-harness.md`.
 - Proposed shared design contract: `DESIGN.md`.
-- Accepted Task 002 IAM arbitrations and managed identity: `docs/architecture/0003-managed-identity.md`.
+- Current authentication decision: `docs/architecture/0004-better-auth.md`.
+- Auth setup, operator invitations and recovery: `docs/setup/better-auth.md`.
 - Task 002 delivery plan: `docs/sdd/002-implementation-plan.md`.
 Proposed contracts do not become binding merely by being linked here; their
 repository-wide activation requires approval of this documentation PR.
