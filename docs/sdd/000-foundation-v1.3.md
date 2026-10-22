@@ -11,7 +11,7 @@ Reusable, secure, multi-tenant and multi-workspace B2B agentic SaaS, modular Typ
 - Workspace visibility configurable per workspace; tenant admin access across their tenant's workspaces subject to audited authorization policy.
 - Only Platform Super Admin creates tenants. No public tenant self-provisioning.
 - Platform Super Admin is independent of tenant memberships and has persistent cross-tenant authorization, explicitly enforced and audited. This is not temporary impersonation or a database superuser; ordinary tenant sessions cannot acquire that authority. Supersedes the earlier temporary-support-only proposal, per owner arbitration.
-- Managed authentication with Clerk for Task 002; application RBAC and memberships remain in PostgreSQL. SSO/SAML and enterprise provisioning remain deferred. See ADR-003.
+- Self-hosted Better Auth with PostgreSQL for identity and sessions; business RBAC and tenant/workspace memberships remain separate application concerns. SSO/SAML remain deferred. See ADR-004.
 - Establish actor, tenant and workspace context server-side; never trust tenant IDs supplied by clients. Authorize at API/service boundaries and in database.
 - PostgreSQL RLS with least-privilege runtime roles, transaction-scoped tenant context, fail-closed policies and adversarial read/write tests. No superuser for application queries. Prevent cross-tenant access through jobs, cache, files, search, tools and agent context.
 
@@ -49,7 +49,7 @@ Future capability themes are unnumbered until specified: agent runtime, tools, c
 
 ## Decision status
 Accepted: modular monolith, React/Fastify/pnpm existing stack, PostgreSQL, tenant isolation by RLS plus service authorization, shared UI policy, OpenAI Agents SDK as future adapter.
-Task 002 identity decision: Clerk managed authentication (ADR-003); production instance configuration and enterprise SSO remain to be configured/decided.
+Task 002 identity decision: Better Auth (ADR-004); production SMTP, deployment hardening and enterprise SSO remain to be configured/decided.
 Open ADRs: production hosting; deployment/promotion strategy; SLA/RPO/RTO. Do not assume a cloud provider.
 No Convex adoption or dual database. No premature Kafka/Kubernetes/microservices/Temporal.
 
