@@ -16,7 +16,12 @@
     "test:e2e": "playwright test",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm smoke",
     "db:up": "docker compose up -d --wait postgres",
-    "db:down": "docker compose down"
+    "db:down": "docker compose down",
+    "auth:migrate": "pnpm --filter @enterprise/api auth:migrate",
+    "auth:invite": "pnpm --filter @enterprise/api auth:invite",
+    "auth:services": "docker compose up -d --wait postgres mailpit",
+    "test:auth": "vitest run --config vitest.auth.config.ts",
+    "test:auth:e2e": "AUTH_LIVE_TEST=true playwright test tests/e2e/auth-live.spec.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.39.2",

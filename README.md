@@ -1,7 +1,8 @@
 # AgencticB2BSaaS
 
-Enterprise AI OS foundation: a small TypeScript modular monolith. The current UI
-is a presentational foundation page; the API exposes only `GET /health`.
+Enterprise AI OS foundation: a small TypeScript modular monolith with a foundation
+page and invitation-only Better Auth identity. The API exposes liveness and
+authentication/session endpoints; tenant/workspace authorization is still pending.
 
 ## Local setup
 
@@ -70,10 +71,22 @@ Claude Code's `CLAUDE.md` points to the same instructions.
 
 ## Current limits
 
-IAM, tenant management, agents, workflows, database access, and business portals
-are intentionally deferred. The OpenAI Agents SDK adapter will be added with the
+Tenant/workspace authorization, platform roles, agents, workflows, business data,
+and business portals are deferred. The OpenAI Agents SDK adapter will be added with the
 first concrete agent use case. No API key or provider dependency is needed now.
 
 Direct dependency versions and transitive resolution are pinned in
 `pnpm-lock.yaml`. Use frozen installs locally and in CI. Dependency build scripts
 are denied except esbuild, which is explicitly allowed in the workspace config.
+
+## Authentication
+
+Better Auth replaces the former managed-provider proposal. See
+[the setup guide](docs/setup/better-auth.md) for PostgreSQL, local Mailpit email,
+operator invitations and Codespaces ports. Start with `pnpm auth:services`, then
+configure private API environment files, run `pnpm auth:migrate` and `pnpm dev`.
+Open `/auth` to sign in; public registration is disabled.
+
+`pnpm auth:invite <email> <display-name>` creates an identity invitation only;
+it does not grant platform-admin or tenant access. Business authorization and RLS
+remain Task 002 work. No default administrator or password is provided.
