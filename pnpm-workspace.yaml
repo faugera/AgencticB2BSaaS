@@ -4,3 +4,8 @@ packages:
 
 allowBuilds:
   esbuild: true
+
+# Security fix for Windows development-server file reads (GHSA-g7r4-m6w7-qqqr).
+# Recheck/remove when Vite and tsx request >=0.28.1 themselves.
+overrides:
+  'esbuild@>=0.27.3 <0.28.1': 0.28.1

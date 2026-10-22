@@ -8,12 +8,17 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node --env-file-if-exists=.env dist/server.js",
     "auth:migrate": "node --env-file-if-exists=.env --env-file-if-exists=.env.migration --import tsx src/auth/cli.ts migrate",
-    "auth:invite": "node --env-file-if-exists=.env --import tsx src/auth/cli.ts invite"
+    "auth:invite": "node --env-file-if-exists=.env --import tsx src/auth/cli.ts invite",
+    "db:provision": "node --env-file-if-exists=.env --env-file-if-exists=.env.migration --import tsx src/auth/cli.ts provision",
+    "operator:bootstrap": "node --env-file-if-exists=.env --env-file-if-exists=.env.migration --import tsx src/auth/cli.ts bootstrap",
+    "operator:identity": "node --env-file-if-exists=.env --import tsx src/auth/cli.ts identity"
   },
   "dependencies": {
     "@enterprise/shared": "workspace:*",
+    "@fastify/helmet": "13.2.0",
+    "@fastify/rate-limit": "11.2.1",
     "better-auth": "1.7.12",
-    "fastify": "5.7.4",
+    "fastify": "5.12.6",
     "nodemailer": "10.1.7",
     "pg": "8.23.1"
   },

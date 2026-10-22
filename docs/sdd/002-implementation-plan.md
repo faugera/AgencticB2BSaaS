@@ -1,7 +1,8 @@
 # Task 002 — Approved implementation plan
 
-Status: revised for Better Auth. Identity implementation is delivered separately;
-tenant/workspace provisioning, business RBAC, platform bootstrap and RLS remain to implement.
+Status: implemented in the private-pilot branch. The detailed delivered boundary,
+operational limits and decisions are in `../architecture/0005-private-pilot.md`;
+reproducible acceptance gates are in `../setup/private-pilot.md`.
 
 ## A. Align contracts
 

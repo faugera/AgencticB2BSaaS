@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('auth UI preserves form state across languages and stays within viewport', async ({ page }) => {
   await page.route('**/api/auth/get-session*', (route) => route.fulfill({ json: null }));
-  await page.goto('/auth');
+  await page.goto('/login');
   await expect(page.getByRole('heading', { name: 'Votre espace commence ici.' })).toBeVisible();
   await page.getByLabel('Adresse email').fill('invited@example.test');
   await page.getByLabel('Langue').selectOption('en');

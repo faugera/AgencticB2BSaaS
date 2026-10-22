@@ -2,7 +2,11 @@ import { fromNodeHeaders } from 'better-auth/node';
 import type { FastifyInstance } from 'fastify';
 import type { Auth } from './service.js';
 
-export function registerAuthRoutes(app: FastifyInstance, auth?: Auth) {
+export function registerAuthRoutes(
+  app: FastifyInstance,
+  auth?: Auth,
+  businessEnabled = false,
+) {
   app.addHook('onSend', async (request, reply) => {
     if (request.url.startsWith('/api/')) {
       reply.header('cache-control', 'no-store');
@@ -14,7 +18,10 @@ export function registerAuthRoutes(app: FastifyInstance, auth?: Auth) {
     url: '/api/auth/*',
     async handler(request, reply) {
       if (!auth) return reply.code(503).send({ code: 'AUTH_NOT_CONFIGURED' });
-      if (request.method === 'POST' && request.headers.origin !== auth.options.baseURL) {
+      if (
+        request.method === 'POST' &&
+        request.headers.origin !== auth.options.baseURL
+      ) {
         return reply.code(403).send({ code: 'UNTRUSTED_ORIGIN' });
       }
       // Use the configured origin, never a client-provided Host header.
@@ -22,11 +29,15 @@ export function registerAuthRoutes(app: FastifyInstance, auth?: Auth) {
       const headers = fromNodeHeaders(request.headers);
       // Never let a client spoof the IP used by the authentication rate limiter.
       headers.set('x-auth-client-ip', request.ip);
-      const response = await auth.handler(new Request(url, {
-        method: request.method,
-        headers,
-        ...(request.body !== undefined ? { body: JSON.stringify(request.body) } : {}),
-      }));
+      const response = await auth.handler(
+        new Request(url, {
+          method: request.method,
+          headers,
+          ...(request.body !== undefined
+            ? { body: JSON.stringify(request.body) }
+            : {}),
+        }),
+      );
       reply.code(response.status);
       response.headers.forEach((value, key) => {
         if (key !== 'set-cookie') reply.header(key, value);
@@ -37,11 +48,21 @@ export function registerAuthRoutes(app: FastifyInstance, auth?: Auth) {
       return reply.send(await response.text());
     },
   });
-  app.get('/api/me', async (request, reply) => {
-    if (!auth) return reply.code(503).send({ code: 'AUTH_NOT_CONFIGURED' });
-    const session = await auth.api.getSession({ headers: fromNodeHeaders(request.headers) });
-    if (!session?.user.emailVerified) return reply.code(401).send({ code: 'UNAUTHENTICATED' });
-    // Authentication is not tenant authorization. Never return a fabricated role.
-    return { user: { id: session.user.id, name: session.user.name, email: session.user.email } };
-  });
+  if (!businessEnabled)
+    app.get('/api/me', async (request, reply) => {
+      if (!auth) return reply.code(503).send({ code: 'AUTH_NOT_CONFIGURED' });
+      const session = await auth.api.getSession({
+        headers: fromNodeHeaders(request.headers),
+      });
+      if (!session?.user.emailVerified)
+        return reply.code(401).send({ code: 'UNAUTHENTICATED' });
+      // Authentication is not tenant authorization. Never return a fabricated role.
+      return {
+        user: {
+          id: session.user.id,
+          name: session.user.name,
+          email: session.user.email,
+        },
+      };
+    });
 }
