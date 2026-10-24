@@ -2,6 +2,11 @@
 
 Status: proposed. Applies to Codex, Claude Code, Cursor and Windsurf; Codex-specific capabilities remain optional.
 
+The Codex declarative SDD execution contract is now defined in
+`../../.specs/standards/workflow.md`, routed by root `AGENTS.md`.
+Its states, recovery and evidence rules take precedence over overlapping guidance
+below. This historical cross-tool proposal does not imply automated SDD CI checks.
+
 ## Decision
 Treat `AGENTS.md` as a compact navigation map, not a handbook. Prefer outcome-oriented tasks, minimal diffs, existing utilities and platform APIs. Load only task-relevant `docs/` and `.agents/skills/`; keep stable instructions ahead of volatile task details.
 

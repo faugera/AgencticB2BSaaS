@@ -2,6 +2,10 @@
 
 Status: accepted for Task 001.
 
+Historical foundation snapshot. Identity, tenant records, database connectivity
+and same-origin browser API flows now follow [ADR-005](0005-private-pilot.md).
+Current implementation navigation: [architecture](../architecture.md).
+
 ## Decision
 
 Use Node 24 LTS, strict TypeScript, pnpm workspaces, React 19/Vite/Tailwind v4,

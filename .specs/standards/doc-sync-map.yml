@@ -1,0 +1,41 @@
+rules:
+  - id: database
+    change_type: Schéma DB, relation, contrainte ou migration
+    targets: [docs/data-model.md]
+    policy: required
+    reason: Maintenir le modèle réellement livré et ses frontières.
+  - id: security
+    change_type: Isolation tenant/workspace, RBAC ou IAM
+    targets: [docs/architecture/0005-private-pilot.md, docs/features-b2b.md, .specs/standards/b2b-tenancy-rbac.md]
+    policy: required
+    reason: Synchroniser garanties, matrice de permissions et lacunes.
+  - id: api
+    change_type: Endpoint ou contrat API
+    targets: [docs/architecture.md]
+    policy: required
+    reason: Maintenir les flux et références des contrats HTTP.
+  - id: environment
+    change_type: Variable d'environnement ajoutée, modifiée ou retirée
+    targets: [.env.example, README.md]
+    policy: required
+    reason: Expliquer la portée et actualiser l'exemple propriétaire existant dans apps/api si concerné, sans secret.
+  - id: feature
+    change_type: Fonctionnalité métier ou statut fonctionnel
+    targets: [.specs/domains/product-map.md, docs/features-b2b.md]
+    policy: required
+    reason: Distinguer capacités livrées et intentions.
+  - id: user-visible
+    change_type: Changement utilisateur notable
+    targets: [CHANGELOG.md]
+    policy: review
+    reason: Consigner un changement réel sans inventer d'historique ni entrée documentaire artificielle.
+  - id: internal-refactor
+    change_type: Refactoring interne
+    targets: [docs/architecture.md]
+    policy: review
+    reason: Modifier uniquement si une frontière ou un flux documenté change.
+  - id: isolated-css
+    change_type: Correction CSS isolée sans impact de parcours ou contrat
+    targets: []
+    policy: none
+    reason: Aucune documentation par défaut après analyse du changement réel.

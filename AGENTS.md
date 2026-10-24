@@ -1,4 +1,4 @@
-# Repository map
+# Repository Contract
 
 - `apps/web`: React/Vite UI; `apps/api`: Fastify API.
 - `packages/shared`: type-only public contracts.
@@ -6,6 +6,8 @@
 - `docs/architecture`: decisions, security boundaries, open questions.
 - `docs/sdd`: scope and acceptance criteria.
 - `.agents/skills/*/SKILL.md`: discover task-specific instructions here.
+- Stack: TypeScript strict, React 19/Vite/Tailwind 4, React Router,
+  Fastify 5, Better Auth, PostgreSQL 17 via `pg`; no ORM.
 
 ## Commands
 
@@ -55,3 +57,32 @@ Autonomously run safe local verification. Seek approval before destructive or
 structural out-of-scope changes. For long tasks, retain concise checkpoints.
 Use parallel work only when independent. Report actual tests, skipped checks
 and residual risks. Do not merge or deploy automatically.
+
+## Golden Rule #1 — Context Injection
+Before any edit, read `.specs/standards/index.yml`; load only applicable standards.
+Always load B2B for backend, DB/data, IAM or authorization work.
+Reuse existing code before creating components, services or helpers.
+
+## Golden Rule #2 — Zero Doc Drift
+Analyze `.specs/standards/doc-sync-map.yml` for every change, including direct work.
+Synchronize actually affected documents in the same task/PR; leave unrelated docs alone.
+No delivery may leave required documentation stale. Record justified no-change decisions.
+
+## Golden Rule #3 — Evidence-Based Verification
+Never claim a check passed without running or inspecting it. Explicitly report
+unavailable tests and distinguish static evidence from runtime proof.
+
+## Golden Rule #4 — B2B Security
+Preserve tenant/workspace boundaries and server authorization. Frontend filtering
+is never sufficient authorization. See `.specs/standards/b2b-tenancy-rbac.md`.
+
+## Workflow Router
+- `$sdd-shape`: scope a delta and verifiable tasks.
+- `$sdd-implement`: implement and synchronize affected documentation.
+- `$sdd-verify`: verify criteria and produce evidence.
+- `$sdd-archive`: consolidate and archive a verified delta.
+- `$sdd-discover`: maintain recurring standards on request.
+State transitions, async recovery, Git concurrency and the direct path for small
+changes are defined once in `.specs/standards/workflow.md`.
+Existing `tenant-boundary` and `verify-change` skills remain applicable to code work.
+Product status: `.specs/domains/product-map.md`; technical entry: `docs/architecture.md`.

@@ -102,3 +102,25 @@ role. No default administrator/password is provided. See
 CI additionally runs `pnpm verify:security`, `pnpm verify:tenant-isolation` and
 `pnpm test:auth:e2e` against disposable PostgreSQL/Mailpit. These gates fail rather
 than skip when required test infrastructure is missing. See the runbook for variables.
+
+## Documentation and declarative SDD
+
+- [Architecture and API flows](docs/architecture.md),
+  [data model](docs/data-model.md), [B2B capabilities and permissions](docs/features-b2b.md).
+- [Product map](.specs/domains/product-map.md) separates observed implementation,
+  partial features and plans; older task specs remain in `docs/sdd/`.
+- Before changes, read [the standards index](.specs/standards/index.yml) and load
+  only relevant standards. Analyze [documentation routing](.specs/standards/doc-sync-map.yml)
+  for every change, including small direct fixes.
+- For business features, contract or security changes: `$sdd-shape` creates a
+  dated delta from [the templates](.specs/changes/_template/spec.md),
+  `$sdd-implement` implements and updates docs, `$sdd-verify` records evidence,
+  `$sdd-archive` consolidates verified work. `$sdd-discover` maintains recurring standards.
+- [The workflow contract](.specs/standards/workflow.md) defines states, recovery,
+  evidence and the direct path. This is a Codex execution contract, with no added
+  SDD CLI, orchestration script or automated CI enforcement.
+
+Environment ownership remains split: root `.env.example` is for Compose;
+`apps/api/.env.example` documents runtime auth/SMTP, and
+`apps/api/migration.env.example` is operator-only. Never copy operator credentials
+into runtime or frontend configuration. Examples are not deployment credentials.
