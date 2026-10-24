@@ -27,7 +27,7 @@ références exclues dans `docs/architecture/sdd-bootstrap-verification.md`.
 | SSO/SCIM, passkeys, MFA imposée | PLANNED | ADR-005 et `docs/architecture/routes-verification.md` ; hors pilote |
 | Facturation, agents IA et workflows durables | PLANNED | `docs/sdd/000-foundation-v1.3.md` |
 | Signup public, docs UI, profil/sessions UI | PLANNED | `docs/architecture/routes-verification.md` ; routes non implémentées |
-| Suppression logique utilisateur/organisation | NOT_FOUND | Tests lifecycle locaux sans migration correspondante |
+| Suppression logique utilisateur/organisation | IMPLEMENTED | Migration 0011, marqueurs persistés, sessions révoquées, RLS active seulement ; opération SQL opérateur, sans UI/API |
 | Support dédié / ABAC | NOT_FOUND | Pas de rôle ni moteur identifié |
 | État du déploiement et garanties opérationnelles | UNKNOWN | Aucun contrôle production réalisé |
 
@@ -89,4 +89,5 @@ Auteur absent si aucun contexte métier authentifié ; aucune attribution invent
 MFA non obligatoire en V0. Les 9 scénarios UI interceptés sont complétés par 4 tests PostgreSQL audit,
 14 tests d’isolation et 6 vues navigateur avec le vrai backend et refus 401/403.
 La migration est validée uniquement en base jetable, pas appliquée au développement.
-Le gate global reste bloqué par le chantier lifecycle et une fixture profil 429.
+Les blocages lifecycle et fixture profil 429 ont été corrigés par la migration 0011
+et l'isolation des IP de test ; voir le delta 2026-10-24-lifecycle pour les preuves courantes.

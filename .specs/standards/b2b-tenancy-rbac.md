@@ -19,7 +19,7 @@ certification de la DB déployée ni l'exécution des tests.
 | Tests négatifs HTTP/SQL | IMPLEMENTED | `apps/api/src/business/isolation.integration.test.ts`, `tests/e2e/business-live.spec.ts` ; résultats à exécuter pour chaque évolution |
 | Exports, jobs, événements, agents IA | PLANNED | `docs/sdd/000-foundation-v1.3.md` ; aucun runtime identifié |
 | Rôle support dédié / moteur ABAC | NOT_FOUND | Aucun mécanisme identifié dans routes, contrats et migrations inspectés |
-| Suppression logique et dates métier généralisées | NOT_FOUND | Tests locaux dans `apps/api/src/business/lifecycle.integration.test.ts`, sans migration correspondante au bootstrap |
+| Suppression logique utilisateurs/tenants et dates métier | IMPLEMENTED | Migration 0011 ; révocation sessions et acteur, session concurrente sérialisée, RLS tenant actif ; SQL opérateur uniquement |
 
 ## Prescriptions
 

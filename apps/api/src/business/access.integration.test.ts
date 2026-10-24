@@ -18,6 +18,7 @@ const operator = new Pool({ connectionString: migrationURL });
 const identity = createAuthPool(databaseURL);
 const business = createBusinessPool(businessURL);
 const password = randomBytes(24).toString('base64url');
+const testIP = `2001:db8:${randomBytes(2).toString('hex')}:${randomBytes(2).toString('hex')}::1`;
 const accounts: { id: string; actor: string; email: string; cookie: string }[] = [];
 const tenants: string[] = [];
 let app: ReturnType<typeof buildApp>;
@@ -29,7 +30,7 @@ const account = (index: number) => {
   if (!value) throw new Error('Missing test account');
   return value;
 };
-const post = (url: string, payload: object, index?: number) => app.inject({ method: 'POST', url, headers: { ...headers, ...(index === undefined ? {} : { cookie: account(index).cookie }) }, payload });
+const post = (url: string, payload: object, index?: number) => app.inject({ method: 'POST', url, remoteAddress: testIP, headers: { ...headers, ...(index === undefined ? {} : { cookie: account(index).cookie }) }, payload });
 
 describe('access requests, protected documentation and own-account profile', () => {
   beforeAll(async () => {

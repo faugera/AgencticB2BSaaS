@@ -60,7 +60,7 @@ NOT_FOUND (non identifié), UNKNOWN (indéterminable). Aucun ne certifie le dép
 | Agents, outils, jobs, événements et exports | PLANNED | `docs/sdd/000-foundation-v1.3.md` ; aucun runtime trouvé |
 | Facturation et abonnements | PLANNED | Même vision SDD, aucun modèle implémenté trouvé |
 | Signup, docs UI et édition profil/sessions | PLANNED | `docs/architecture/routes-verification.md` |
-| Suppression logique utilisateur/tenant et dates métier | NOT_FOUND | Tests locaux `apps/api/src/business/lifecycle.integration.test.ts` sans migration correspondante |
+| Suppression logique utilisateur/tenant et dates métier | IMPLEMENTED | Migration 0011 ; IDs et lignes conservés, dates imposées et accès révoqués ; SQL opérateur uniquement |
 | Support dédié et ABAC | NOT_FOUND | Ni rôle ni moteur identifié |
 | État courant DB/production | UNKNOWN | Pas de vérification runtime pendant l'audit |
 
@@ -104,5 +104,6 @@ sans valeurs sensibles ; les anciennes traces métier sont conservées. Authenti
 V0 sans MFA obligatoire. Code/API/UI présents ; preuve réelle PostgreSQL audit 4/4 et isolation 14/14,
 consultation navigateur réelle FR/EN aux trois tailles et refus 401/403.
 Pas de migration de la base de développement ni de certification globale :
-les tests lifecycle et une fixture profil bloquent encore les gates du dépôt.
+les preuves courantes du chantier lifecycle sont consignées dans le delta
+2026-10-24-lifecycle, qui corrige également la collision 429 des fixtures.
 Voir .specs/changes/2026-10-24-audit-log-v0.

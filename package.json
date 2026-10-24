@@ -26,7 +26,7 @@
     "test:auth": "vitest run --config vitest.auth.config.ts",
     "verify:tenant-isolation": "vitest run --config vitest.auth.config.ts apps/api/src/business/isolation.integration.test.ts",
     "verify:security": "node scripts/security.mjs && pnpm audit --audit-level high && pnpm test:auth",
-    "test:auth:e2e": "AUTH_LIVE_TEST=true playwright test tests/e2e/auth-live.spec.ts tests/e2e/business-live.spec.ts"
+    "test:auth:e2e": "node scripts/auth-e2e.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.2",

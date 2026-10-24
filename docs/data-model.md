@@ -47,9 +47,17 @@ pas d'une autorisation métier par sa seule session.
 
 ## Écarts constatés
 
-Les tests locaux `apps/api/src/business/lifecycle.integration.test.ts` décrivent
-suppression logique et dates métier. Aucune migration correspondante n'est présente
-dans l'audit : capacités non démontrées, à ne pas déclarer implémentées.
+La migration 0011 conserve les PK existantes et ajoute `identity.user.deletedAt`
+et `business.tenants.created_at/updated_at/deleted_at` (timestamptz).
+Les dates de création restent immuables ; les triggers imposent la modification.
+Les anciens tenants reçoivent la date de migration, pas une création historique exacte.
+L'opérateur supprime logiquement par UPDATE du marqueur ; les lignes sont conservées,
+le marqueur ne peut être effacé, et aucune UI/API de suppression n'est ajoutée.
+La suppression d'identité révoque les sessions et désactive l'acteur ; toute nouvelle
+session est refusée, y compris lors d'une suppression concurrente. Le runtime perd DELETE.
+Un tenant supprimé est exclu des lectures/autorisations, ses invitations en attente
+sont révoquées et ses liens de collecte retirés. L'audit conserve les IDs et marqueurs,
+sans les valeurs sensibles. Migration testée uniquement sur base jetable.
 Les suppressions de memberships sont des retraits physiques d'association avec
 cascade des affectations workspace, pas une suppression logique d'utilisateur/tenant.
 Pas de tables identifiées pour facturation, exécutions IA ou jobs durables.

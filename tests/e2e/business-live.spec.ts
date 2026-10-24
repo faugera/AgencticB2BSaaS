@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { Pool } from 'pg';
 import { expect, test } from '@playwright/test';
 import { createAuth, createAuthPool } from '../../apps/api/src/auth/service';
+import { openSidebar, closeSidebar } from './support/sidebar';
 import {
   liveConfig,
   resetTestLimits,
@@ -86,6 +87,7 @@ test('operator creates a tenant; verified invitee accepts and manages a private 
     'Modification enregistrée',
   );
   const invitation = await mailLink(request, adminEmail, 'Votre invitation');
+  await openSidebar(page);
   await page.getByRole('button', { name: 'Se déconnecter' }).click();
   await activate(page, request, adminEmail, password);
   await page.goto(invitation);
@@ -107,7 +109,9 @@ test('operator creates a tenant; verified invitee accepts and manages a private 
   await expect(
     page.getByRole('heading', { name: 'Private pilot', exact: true }),
   ).toBeVisible();
+  await openSidebar(page);
   await page.getByLabel('Langue').selectOption('en');
+  await closeSidebar(page);
   await expect(
     page.getByRole('heading', { name: 'Assign access' }),
   ).toBeVisible();
@@ -119,5 +123,6 @@ test('operator creates a tenant; verified invitee accepts and manages a private 
   const me = await page.request.get('/api/me');
   expect(me.status()).toBe(200);
   expect((await me.json()).access.tenantRole).toBe('tenant_admin');
+  await openSidebar(page);
   await page.getByRole('button', { name: 'Sign out' }).click();
 });

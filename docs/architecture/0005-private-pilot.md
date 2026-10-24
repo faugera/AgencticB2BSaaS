@@ -126,8 +126,16 @@ la transaction, des types de cible et noms de champs sans valeurs. Les anciens
 Les écritures sans contexte métier (identité, opérateur, demande publique) ne
 permettent pas d’établir un auteur authentifié : celui-ci reste null. Les IDs
 historiques survivent aux suppressions futures sans FK de l’audit vers la cible.
-Pas de nouvelle suppression utilisateur/tenant, pas de rétention/export/alerting.
+La migration 0011 ajoute la suppression logique opérateur utilisateur/tenant ;
+pas de rétention/export/alerting. Dates de création conservées, modification imposée
+par trigger, marqueur de suppression irréversible via UPDATE ordinaire.
+Les identités supprimées perdent leurs sessions et leur acteur actif ; les sessions
+concurrentes sont sérialisées avec la suppression. Le runtime ne peut supprimer
+physiquement identity.user. Les tenants supprimés sont exclus par RLS, même pour
+le super-admin ; leurs invitations en attente et liens de collecte sont révoqués.
+Les helpers d'autorisation restent privés/étroits, sans propriété ni BYPASSRLS runtime.
 Tests SQL/HTTP audit : 4/4 réussis sur PostgreSQL 17.11 jetable ; isolation : 14/14.
 La page a également été vérifiée avec le vrai backend, sans mocks, en FR/EN aux
-trois tailles et avec refus 401/403. Le gate global sécurité échoue encore sur
-les tests lifecycle préexistants et une limitation 429 de la fixture profil.
+trois tailles et avec refus 401/403. Les échecs lifecycle et la collision 429 des
+fixtures sont corrigés dans le delta 2026-10-24-lifecycle ; ses tâches consignent
+les résultats de vérification courants, sans certification de la DB de développement.

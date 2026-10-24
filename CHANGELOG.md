@@ -1,5 +1,12 @@
 # Changelog
 
+## Lifecycle — 2026-10-24
+
+Migration 0011 : dates et suppression logique des utilisateurs/organisations,
+conservation des identifiants et des lignes, révocation des sessions et accès.
+Opération SQL opérateur uniquement. Dates historiques des anciens tenants inconnues :
+référence fixée à l'application de la migration. Aucune base de développement migrée.
+
 Les prochains changements utilisateur notables seront consignés ici après analyse
 d'impact. Aucun historique de releases n'a été reconstitué ; le bootstrap documentaire
 ne constitue pas une évolution fonctionnelle du produit.

@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Pool } from 'pg';
+import type { QueryResult } from 'pg';
 import { migrateAuth } from '../auth/migrate.js';
 import { provisionRoles } from '../auth/provision.js';
 import { createAuth, createAuthPool } from '../auth/service.js';
@@ -22,6 +23,7 @@ const operator = new Pool({ connectionString: migrationURL });
 const identity = createAuthPool(databaseURL);
 const business = createBusinessPool(businessURL);
 const password = randomBytes(24).toString('base64url');
+const testIP = `2001:db8:${randomBytes(2).toString('hex')}:${randomBytes(2).toString('hex')}::1`;
 const candidateEmail = `lifecycle-candidate-${randomBytes(8).toString('hex')}@example.test`;
 let adminId = '', memberId = '', candidateId = '', controlId = '', superId = '', tenantA = '', tenantB = '';
 let app: ReturnType<typeof buildApp>;
@@ -100,7 +102,7 @@ describe('user and organization lifecycle metadata', () => {
 
   it('keeps a deleted user, revokes existing sessions and refuses new sign-ins', async () => {
     const user = (await operator.query('SELECT email FROM identity."user" WHERE id=$1', [memberId])).rows[0];
-    const login = () => app.inject({ method: 'POST', url: '/api/auth/sign-in/email', headers: { origin: config.baseURL }, payload: { email: user.email, password } });
+    const login = () => app.inject({ method: 'POST', url: '/api/auth/sign-in/email', remoteAddress: testIP, headers: { origin: config.baseURL }, payload: { email: user.email, password } });
     const session = await login();
     expect(session.statusCode).toBe(200);
     const cookie = session.cookies.map((value) => `${value.name}=${value.value}`).join('; ');
@@ -134,7 +136,7 @@ describe('user and organization lifecycle metadata', () => {
     const id = await verifiedIdentity(`lifecycle-race-${randomBytes(8).toString('hex')}@example.test`);
     const writer = await operator.connect();
     const session = await identity.connect();
-    let pending: ReturnType<typeof session.query> | undefined;
+    let pending: Promise<QueryResult<Record<string, unknown>>> | undefined;
     try {
       const pid = (await session.query<{ pid: number }>('SELECT pg_backend_pid() pid')).rows[0]?.pid;
       await writer.query('BEGIN');

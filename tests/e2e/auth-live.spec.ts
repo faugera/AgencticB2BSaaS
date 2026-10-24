@@ -5,6 +5,7 @@ import { createMailer } from '../../apps/api/src/auth/mail';
 import { inviteIdentity } from '../../apps/api/src/auth/operator';
 import { resetTestLimits } from '../helpers/live-auth';
 import { totp } from '../helpers/totp';
+import { openSidebar } from './support/sidebar';
 
 test.beforeEach(resetTestLimits);
 
@@ -80,10 +81,10 @@ test('invited identity activates, sets password, signs in and signs out with Pos
   await page.getByLabel('Adresse email').fill(email);
   await page.getByLabel('Mot de passe', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Bienvenue, Browser test.' }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/app(?:\/security)?$/);
   expect((await page.request.get('/api/me')).status()).toBe(200);
+  expect((await (await page.request.get('/api/me')).json()).user.email).toBe(email);
+  await openSidebar(page);
   await page.getByRole('link', { name: 'Sécurité du compte' }).click();
   await page.getByLabel('Mot de passe actuel').fill(password);
   await page.getByRole('button', { name: 'Configurer la MFA' }).click();
@@ -93,6 +94,7 @@ test('invited identity activates, sets password, signs in and signs out with Pos
   await expect(
     page.getByRole('button', { name: 'Désactiver la MFA' }),
   ).toBeVisible();
+  await openSidebar(page);
   await page.getByRole('button', { name: 'Se déconnecter' }).click();
   await expect(
     page.getByRole('button', { name: 'Se connecter', exact: true }),
@@ -107,13 +109,14 @@ test('invited identity activates, sets password, signs in and signs out with Pos
   ).toBeVisible();
   await page.getByLabel('Authenticator code').fill(totp(uri));
   await page.getByRole('button', { name: 'Verify', exact: true }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Welcome, Browser test.' }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/app(?:\/security)?$/);
+  expect((await (await page.request.get('/api/me')).json()).user.email).toBe(email);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await openSidebar(page);
+  await page.getByRole('combobox', { name: /^(Langue|Language)$/ }).selectOption('en');
   await page.getByRole('button', { name: 'Sign out' }).click();
 });
