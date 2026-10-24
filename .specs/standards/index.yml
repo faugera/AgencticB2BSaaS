@@ -1,0 +1,21 @@
+standards:
+  - id: architecture-stack
+    path: .specs/standards/architecture-stack.md
+    summary: Stack, frontières de modules et commandes réelles.
+    when_to_load: Structure, dépendances, contrats partagés ou choix de vérification.
+  - id: b2b-tenancy-rbac
+    path: .specs/standards/b2b-tenancy-rbac.md
+    summary: Autorisation serveur, tenancy, privilèges et preuves de sécurité.
+    when_to_load: Obligatoire pour backend, données, DB, IAM ou autorisation.
+  - id: api-validation-errors
+    path: .specs/standards/api-validation-errors.md
+    summary: Routes Fastify, validation JSON Schema, erreurs et transactions.
+    when_to_load: Endpoint, contrat HTTP, validation ou accès aux données.
+  - id: ui-components-state
+    path: .specs/standards/ui-components-state.md
+    summary: Réutilisation React, formulaires, navigation, accessibilité et langues.
+    when_to_load: Interface utilisateur ou parcours navigateur.
+  - id: workflow
+    path: .specs/standards/workflow.md
+    summary: États SDD, preuves, reprise asynchrone et parcours direct.
+    when_to_load: Shaping, implémentation, vérification, archivage ou changement direct.
