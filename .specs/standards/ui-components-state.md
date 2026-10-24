@@ -25,7 +25,8 @@ patterns disponibles dans `Application`/`AuthPage` si cette évolution n'est pas
   Utiliser `Intl` pour tout nouveau format localisé ; aucune garantie globale
   d'usage actuel d'Intl ou conformité WCAG n'a été démontrée.
 - `apps/web/src/styles.css` : styles existants, tokens et media queries.
-  `DESIGN.md` reste la direction visuelle proposée ; ne pas créer de bibliothèque UI.
+`DESIGN_UI.md` est le contrat actif Brume ; `DESIGN.md` y renvoie. La couche
+`apps/web/src/ui` porte les primitives partagées, sans framework visuel concurrent.
 - `apps/web/src/auth/redirect.ts` : destinations sûres. Les gardes de `/admin`
   se fondent sur `/api/me` et ne remplacent jamais les contrôles API/SQL.
 - Ne conserver ni credentials ni jetons en localStorage. Les invitations passent
@@ -34,3 +35,15 @@ patterns disponibles dans `Application`/`AuthPage` si cette évolution n'est pas
   débordement horizontal ; réutiliser `tests/e2e/home.spec.ts`,
   `tests/e2e/auth.spec.ts`, `tests/e2e/admin.spec.ts`, `tests/e2e/tenant-scope.spec.ts`.
   Les sessions simulées des tests UI ne prouvent pas l'isolation serveur.
+
+## Brume — conventions actuelles
+
+`application.tsx` garde les gardes/transactions UI ; les compositions sont dans
+`pages`, les primitives et le shell dans `ui`. `http.ts` possède api/HttpError.
+`useLanguage` partage les préférences via un abonnement React ; le cache local est
+utilisé avant connexion puis la préférence propre au compte vient de l'API. Aucun
+jeton n'y est persisté. Les confirmations utilisent le dialogue HTML modal natif,
+avec focus restitué et annulation ; les listes ont filtres locaux et états distincts.
+La galerie interactive dans /docs est réservée aux super-admins et sans écriture
+métier. Les textes/mesures de DESIGN_UI.md supplantent les anciennes observations
+historiques ci-dessus. Les captures UI interceptées ne prouvent pas le backend SQL.

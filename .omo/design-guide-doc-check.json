@@ -1,0 +1,26 @@
+{
+  "scope": "documentation only",
+  "documents": [
+    "DESIGN.md",
+    "DESIGN_UI.md"
+  ],
+  "local_links_checked": 13,
+  "links": [
+    "DESIGN.md: DESIGN_UI.md",
+    "DESIGN.md: DESIGN_UI.md",
+    "DESIGN.md: apps/web/src/ui/tokens.css",
+    "DESIGN.md: apps/web/src/ui/components.css",
+    "DESIGN.md: apps/web/src/ui/shell.css",
+    "DESIGN.md: .specs/domains/product-map.md",
+    "DESIGN.md: apps/web/src/ui",
+    "DESIGN.md: DESIGN_UI.md#5-composants-réutilisables",
+    "DESIGN.md: apps/web/src/pages",
+    "DESIGN.md: .specs/standards/ui-components-state.md",
+    "DESIGN.md: docs/design/css-normalization.md",
+    "DESIGN.md: .specs/standards/doc-sync-map.yml",
+    "DESIGN_UI.md: DESIGN.md"
+  ],
+  "sections": 14,
+  "result": "PASS",
+  "runtime_tests": "NOT_RUN: no rendered code changed"
+}

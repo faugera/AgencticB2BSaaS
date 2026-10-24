@@ -8,6 +8,9 @@ import type { SendAuthMail } from '../auth/mail.js';
 import { inviteIdentity } from '../auth/operator.js';
 import { AccessError, businessTransaction } from './store.js';
 import type { AccessContext } from './store.js';
+import { registerUIRoutes } from './ui-routes.js';
+import { registerAuditRoutes } from './audit-routes.js';
+import { registerAccessRoutes } from './access-routes.js';
 
 const uuid = { type: 'string', format: 'uuid' } as const;
 const shortName = { type: 'string', minLength: 1, maxLength: 100 } as const;
@@ -100,6 +103,9 @@ export function registerBusinessRoutes(
     );
     return delivery;
   };
+  registerUIRoutes(app, transact);
+  registerAuditRoutes(app, transact);
+  registerAccessRoutes(app, { pool, origin: config.baseURL, transact, deliver });
   app.get('/api/me', async (request) =>
     transact(request, 'context.read', async (client, context) => {
       const session = await auth.api.getSession({
@@ -114,7 +120,7 @@ export function registerBusinessRoutes(
         access: context,
         workspaces: (
           await client.query(
-            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage FROM business.workspaces ORDER BY name',
+            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.workspace_color(id) color FROM business.workspaces ORDER BY name',
           )
         ).rows,
       };
@@ -190,7 +196,7 @@ export function registerBusinessRoutes(
         async (client) =>
           (
             await client.query(
-              'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage FROM business.workspaces ORDER BY name',
+              'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.workspace_color(id) color FROM business.workspaces ORDER BY name',
             )
           ).rows,
         request.query.tenantId,
@@ -246,7 +252,7 @@ export function registerBusinessRoutes(
         'workspace.read',
         async (client) => {
           const result = await client.query(
-            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage FROM business.workspaces WHERE id=$1',
+            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.workspace_color(id) color FROM business.workspaces WHERE id=$1',
             [request.params.id],
           );
           if (!result.rowCount) throw new AccessError(404, 'NOT_FOUND');

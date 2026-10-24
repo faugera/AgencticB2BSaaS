@@ -7,7 +7,9 @@ import { fileURLToPath } from 'node:url';
 const port = process.env.SMOKE_PORT ?? '3099';
 const child = spawn(process.execPath, [fileURLToPath(new URL('../apps/api/dist/server.js', import.meta.url))], {
   env: { ...process.env, PORT: port, HOST: '127.0.0.1' },
-  stdio: ['ignore', 'pipe', 'pipe'],
+  stdio: process.platform === 'win32'
+    ? ['ignore', 'pipe', 'pipe', 'ipc']
+    : ['ignore', 'pipe', 'pipe'],
 });
 let logs = '';
 child.stdout.on('data', (chunk) => { logs += chunk.toString(); });
@@ -30,7 +32,8 @@ try {
     } catch { await setTimeout(100); }
   }
   assert.ok(healthy, 'API did not become healthy');
-  child.kill('SIGTERM');
+  if (process.platform === 'win32') child.disconnect();
+  else child.kill('SIGTERM');
   const code = await Promise.race([exited, setTimeout(5000, 'timeout', { ref: false })]);
   assert.equal(code, 0, 'API must shut down gracefully');
   console.log('PASS: built API /health and graceful shutdown');

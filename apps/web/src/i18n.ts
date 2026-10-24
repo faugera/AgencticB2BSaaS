@@ -1,7 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useLocalPreferences, setLocalPreferences, localTheme } from './ui/preferences';
+import { designMessages } from './ui/messages';
+import { pageMessages } from './pages/messages';
+import { auditMessages } from './pages/audit-messages';
 
 export const uiMessages = {
   fr: {
+    ...pageMessages.fr,
+    ...auditMessages.fr,
+    ...designMessages.fr,
     access_denied: 'Accès refusé',
     access_denied_help:
       'Votre compte ne dispose plus des droits nécessaires. Contactez votre administrateur.',
@@ -21,6 +27,9 @@ export const uiMessages = {
     private_pilot: 'Pilote privé',
     welcome: 'Bienvenue',
     platform_administration: 'Administration de la plateforme',
+    overview: 'Vue d’ensemble',
+    organizations: 'Organisations',
+    organization_scope_help: 'Sélectionnez une organisation pour gérer ses espaces et ses membres.',
     active_organization: 'Organisation active',
     select_an_organization: 'Sélectionner une organisation',
     create_an_organization: 'Créer une organisation',
@@ -101,6 +110,9 @@ export const uiMessages = {
     foundation_001: 'Fondation / 001',
   },
   en: {
+    ...pageMessages.en,
+    ...auditMessages.en,
+    ...designMessages.en,
     access_denied: 'Access denied',
     access_denied_help:
       'Your account no longer has the required permissions. Contact your administrator.',
@@ -120,6 +132,9 @@ export const uiMessages = {
     private_pilot: 'Private pilot',
     welcome: 'Welcome',
     platform_administration: 'Platform administration',
+    overview: 'Overview',
+    organizations: 'Organizations',
+    organization_scope_help: 'Select an organization to manage its workspaces and members.',
     active_organization: 'Active organization',
     select_an_organization: 'Select an organization',
     create_an_organization: 'Create an organization',
@@ -200,24 +215,9 @@ export const uiMessages = {
   },
 } as const;
 export type UIMessage = keyof typeof uiMessages.fr;
-type Locale = keyof typeof uiMessages;
-function initialLocale(): Locale {
-  try {
-    return localStorage.getItem('locale') === 'en' ? 'en' : 'fr';
-  } catch {
-    return 'fr';
-  }
-}
 export function useLanguage() {
-  const [locale, setLocale] = useState<Locale>(initialLocale);
-  useEffect(() => {
-    document.documentElement.lang = locale;
-    try {
-      localStorage.setItem('locale', locale);
-    } catch {
-      /* Optional preference. */
-    }
-  }, [locale]);
+  const { locale } = useLocalPreferences();
+  const setLocale = (value: 'fr' | 'en') => setLocalPreferences({ locale: value, theme: localTheme() });
   const t = (key: UIMessage): string => uiMessages[locale][key];
   return { locale, setLocale, t };
 }

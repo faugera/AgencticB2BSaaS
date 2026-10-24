@@ -1,0 +1,57 @@
+ M .specs/domains/product-map.md
+ M .specs/standards/b2b-tenancy-rbac.md
+ M .specs/standards/ui-components-state.md
+ M CHANGELOG.md
+ M DESIGN.md
+ M README.md
+ M apps/api/migration.env.example
+ M apps/api/src/app.test.ts
+ M apps/api/src/app.ts
+ M apps/api/src/auth/routes.ts
+ M apps/api/src/business/isolation.integration.test.ts
+ M apps/api/src/business/routes.ts
+ M apps/api/src/server.ts
+ M apps/web/package.json
+ M apps/web/src/application.tsx
+ M apps/web/src/auth/AuthPage.tsx
+ M apps/web/src/auth/messages.ts
+ M apps/web/src/auth/redirect.test.ts
+ M apps/web/src/auth/redirect.ts
+ M apps/web/src/i18n.ts
+ M apps/web/src/main.tsx
+ M apps/web/src/styles.css
+ M docs/architecture.md
+ M docs/architecture/0005-private-pilot.md
+ M docs/data-model.md
+ M docs/features-b2b.md
+ M packages/shared/src/index.ts
+ M playwright.config.ts
+ M pnpm-lock.yaml
+ M scripts/smoke.mjs
+ M tests/e2e/login.spec.ts
+?? .omo/
+?? .specs/changes/2026-10-24-complete-frontend-pages/
+?? .specs/changes/2026-10-24-design-system-brume/
+?? DESIGN_UI.md
+?? apps/api/migrations/0007_enabled_administrator.sql
+?? apps/api/migrations/0008_access_requests.sql
+?? apps/api/migrations/0009_ui_preferences.sql
+?? apps/api/src/business/access-routes.ts
+?? apps/api/src/business/access.integration.test.ts
+?? apps/api/src/business/documentation.ts
+?? apps/api/src/business/lifecycle.integration.test.ts
+?? apps/api/src/business/ui-routes.test.ts
+?? apps/api/src/business/ui-routes.ts
+?? apps/web/src/admin/
+?? apps/web/src/auth/LocalTestAdminCredentials.tsx
+?? apps/web/src/http.ts
+?? apps/web/src/pages/
+?? apps/web/src/ui/
+?? docs/architecture/routes-verification.md
+?? docs/design/
+?? tests/e2e/admin-layout.spec.ts
+?? tests/e2e/admin.spec.ts
+?? tests/e2e/brume.spec.ts
+?? tests/e2e/frontend-pages.spec.ts
+?? tests/e2e/support/
+?? tests/e2e/tenant-scope.spec.ts

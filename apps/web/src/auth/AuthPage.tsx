@@ -1,37 +1,32 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
+import { useLanguage } from '../i18n';
 import { authClient } from './client';
 import { messages } from './messages';
 import type { Locale, MessageKey } from './messages';
 import { useNavigate } from 'react-router-dom';
 import { safeDestination } from './redirect';
+import { LocalTestAdminCredentials } from './LocalTestAdminCredentials';
 
-function savedLocale(): Locale {
-  try {
-    return localStorage.getItem('locale') === 'en' ? 'en' : 'fr';
-  } catch {
-    return 'fr';
-  }
-}
-
-export function AuthPage() {
+export function AuthPage({ admin = false }: { admin?: boolean }) {
   const navigate = useNavigate();
   const [destination] = useState(() =>
-    safeDestination(new URL(window.location.href).searchParams.get('returnTo')),
+    safeDestination(new URL(window.location.href).searchParams.get('returnTo'), admin ? '/admin' : '/app'),
   );
-  const mfa = window.location.pathname === '/login/mfa';
+  const loginPath = admin ? '/admin/login' : '/login';
+  const mfa = window.location.pathname === loginPath + '/mfa';
   const [code, setCode] = useState('');
   const [backup, setBackup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [locale, setLocale] = useState<Locale>(savedLocale);
+  const { locale, setLocale } = useLanguage();
   const t = messages[locale];
   const [token] = useState(
     () => new URL(window.location.href).searchParams.get('token') ?? '',
   );
   const [mode, setMode] = useState<'sign-in' | 'forgot' | 'reset'>(() =>
-    ['/auth/reset', '/reset-password'].includes(window.location.pathname)
+    ['/auth/reset', '/reset-password', '/admin/reset-password'].includes(window.location.pathname)
       ? 'reset'
-      : window.location.pathname === '/forgot-password'
+      : ['/forgot-password', '/admin/forgot-password'].includes(window.location.pathname)
         ? 'forgot'
         : new URL(window.location.href).searchParams.has('activate')
           ? 'forgot'
@@ -58,14 +53,6 @@ export function AuthPage() {
       void navigate(destination, { replace: true });
   }, [session, mode, mfa, destination, navigate]);
 
-  useEffect(() => {
-    document.documentElement.lang = locale;
-    try {
-      localStorage.setItem('locale', locale);
-    } catch {
-      /* Storage can be unavailable. */
-    }
-  }, [locale]);
   useEffect(() => {
     // Remove recovery/verification query data before navigation can leak it.
     if (window.location.search)
@@ -99,13 +86,13 @@ export function AuthPage() {
           setPassword('');
           if (result.data && 'twoFactorRedirect' in result.data)
             void navigate(
-              '/login/mfa?returnTo=' + encodeURIComponent(destination),
+              loginPath + '/mfa?returnTo=' + encodeURIComponent(destination),
             );
         }
       } else if (mode === 'forgot') {
         const result = await authClient.requestPasswordReset({
           email,
-          redirectTo: window.location.origin + '/reset-password',
+          redirectTo: window.location.origin + (admin ? '/admin/reset-password' : '/reset-password'),
         });
         if (result.error)
           setFailure(result.error.status === 429 ? 'limited' : 'failure');
@@ -137,7 +124,7 @@ export function AuthPage() {
     try {
       const result = await authClient.sendVerificationEmail({
         email,
-        callbackURL: window.location.origin + '/auth?verified=1',
+        callbackURL: window.location.origin + (admin ? '/admin/login?verified=1' : '/auth?verified=1'),
       });
       if (result.error) setFailure('failure');
       else setNotice('emailSent');
@@ -164,9 +151,7 @@ export function AuthPage() {
         </label>
       </div>
       <section className="auth-card" aria-busy={busy || isPending}>
-        <span className="brand-mark" aria-hidden="true">
-          e
-        </span>
+        <p className="ui-auth-brand">AgencticB2BSaaS</p>
         {isPending ? (
           <p role={notice ? undefined : 'status'}>{t.loading}</p>
         ) : mfa ? (
@@ -207,9 +192,9 @@ export function AuthPage() {
                 ? t.resetTitle
                 : mode === 'reset'
                   ? t.reset
-                  : t.title}
+                  : admin ? t.adminTitle : t.title}
             </h1>
-            <p>{mode === 'reset' ? t.resetSubtitle : t.subtitle}</p>
+            <p>{mode === 'reset' ? t.resetSubtitle : admin ? t.adminSubtitle : t.subtitle}</p>
             <form
               onSubmit={(event) => {
                 void submit(event);
@@ -294,6 +279,7 @@ export function AuthPage() {
               )}
             </div>
             <p className="auth-footnote">{t.invitation}</p>
+            {admin && mode === 'sign-in' && <LocalTestAdminCredentials locale={locale} />}
           </>
         )}
         {notice && <p role="status">{t[notice]}</p>}

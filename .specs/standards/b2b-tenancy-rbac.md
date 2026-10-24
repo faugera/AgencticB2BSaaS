@@ -38,3 +38,29 @@ certification de la DB déployée ni l'exécution des tests.
   son contexte. Ne jamais journaliser secrets, payloads sensibles ou erreurs SQL brutes.
 - Réutiliser `.agents/skills/tenant-boundary/SKILL.md` pour une évolution de sécurité
   et `.agents/skills/verify-change/SKILL.md` pour les gates applicatifs.
+
+## Access-request boundary
+
+An opaque organization link grants collection only, never tenant access. Public
+responses must not disclose whether an email or link exists. Tenant administrators
+review only their own tenant's requests through server-established context and
+narrow SQL functions. Approval reuses invitations and audit; permitted business
+roles are member/tenant_admin, never platform roles. `/api/platform/docs` requires
+super_admin independently of frontend navigation guards.
+
+## UI preferences and appearance
+
+Locale/theme belong to the current actor and cannot be addressed by a client actor
+ID. Workspace appearance changes require workspace_admin in the selected context.
+Private metadata tables remain ungranted; color reads join the RLS workspace and
+writes use narrow audited functions. Never treat theme/context UI as authorization.
+
+## Lecture du journal V0
+
+La lecture globale ou filtrée reste réservée au super-admin actif en HTTP et SQL
+(migration 0010, audit_events). Aucun grant direct privé ni opération de réécriture.
+Les événements de mutation sont atomiques, avec identifiants et clés autorisées
+seulement ; les anciennes traces restent distinguées. Ne jamais inférer l’auteur
+d’une modification d’identité depuis la seule identité cible. Les sources sans
+contexte authentifié restent non attribuées. La MFA demeure facultative en V0.
+Les IDs d’audit doivent survivre aux suppressions sans FK vers les lignes sources.

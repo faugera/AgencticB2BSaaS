@@ -1,0 +1,4 @@
+$ AUTH_LIVE_TEST=true playwright test tests/e2e/auth-live.spec.ts tests/e2e/business-live.spec.ts
+'AUTH_LIVE_TEST' n'est pas reconnu en tant que commande interne
+ou externe, un programme ex‚cutable ou un fichier de commandes.
+[ELIFECYCLE] Command failed with exit code 1.

@@ -54,3 +54,35 @@ Les suppressions de memberships sont des retraits physiques d'association avec
 cascade des affectations workspace, pas une suppression logique d'utilisateur/tenant.
 Pas de tables identifiées pour facturation, exécutions IA ou jobs durables.
 L'état réel des rôles, schémas et migrations déployés reste UNKNOWN sans inspection DB.
+
+## Access requests (migration 0008, 2026-10-24)
+
+`authorization_private.access_links` stores one opaque UUID link per tenant.
+`authorization_private.access_requests` stores first/last name, normalized email,
+status, creation/review dates and the resulting invitation ID. `(tenant_id,email)`
+is unique; duplicate public submissions receive the same generic response.
+Runtime access uses narrow SECURITY DEFINER functions, without private-table grants.
+Approval locks the request, checks tenant administration and calls `business.invite`.
+Migration 0008 has not been applied or verified against disposable PostgreSQL here.
+
+## UI preferences and workspace appearance (0009)
+
+`authorization_private.ui_preferences` stores locale fr/en and theme system/light/dark
+for the current enabled actor. Clients cannot select an actor. `workspace_appearance`
+stores nullable #RRGGBB colors with a composite tenant/workspace reference. Both
+private tables have no runtime grants; narrow functions own access. Reads of colors
+join the RLS-protected workspace; writes require workspace_admin and are audited.
+Migration 0009 is additive and has not yet been applied to a disposable database
+in this session; see the Brume verification checkpoint before release.
+
+## Journal V0 (migration 0010)
+
+La table privée audit ajoute resource_type et changed_fields (noms des champs,
+jamais leurs valeurs). Les identifiants auteur/tenant restent conservés sans FK
+vers les lignes sources afin de préserver l’historique après suppression. Index
+(tenant_id,id DESC), pagination bigint sans conversion en Number. Des triggers
+AFTER tracent les mutations effectives de tenants, workspaces, acteurs, identités,
+appartenances, invitations, demandes et apparence. Un UPDATE sans changement des
+champs autorisés ne génère pas de mutation ; rollback annule également l’audit.
+Les anciennes traces métier restent présentes et distinctes. Migration validée sur PostgreSQL 17.11 jetable (4 tests audit). Non appliquée
+à la base de développement ; historique existant conservé.

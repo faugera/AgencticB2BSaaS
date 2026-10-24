@@ -59,3 +59,34 @@ L'acceptation exige l'email vérifié correspondant ; elle ne promeut pas un rô
 préexistant. Le tenant-admin crée les workspaces et gère les accès ; retrait ou
 désactivation est revérifié à la prochaine opération métier. Les invitations
 expirées, réutilisées, révoquées ou inter-tenant sont refusées.
+
+## Frontend pages — 2026-10-24 implementation
+
+Added organization-link access requests (`/signup`), own profile/session management
+(`/app/profile`, `/admin/profile`), dedicated member/invitation pages and a
+super-admin-only `/docs` guide. Tenant admins review access requests from their
+invitations page. Code and mocked-browser coverage are present; migration 0008 and
+real PostgreSQL authorization/session tests remain pending, so this is not a
+production-readiness claim.
+
+## Brume design system — implementing
+
+App/admin/auth share a compact accessible component layer, role-aware collapsible
+sidebar, textual mobile navigation, organization invitation tables/forms and a
+super-admin component gallery. Own-account locale/theme and workspace-manager color
+customization have API/SQL implementations (0009); database validation is pending.
+This Brume lot adds no notification center, AI runtime or unused widget catalogue.
+The audit viewer is introduced separately by the V0 audit delta below.
+
+## Journal d’audit V0 — implementing
+
+`/admin/audit` : consultation super-admin globale ou filtrée par organisation,
+pagination de 50, FR/EN et états vide/erreur. API `/api/platform/audit` et SQL
+`business.audit_events` refusent les rôles ordinaires. Migration 0010 complète
+le journal privé : tenants/workspaces, identités/acteurs, appartenances, invitations,
+demandes et apparence ; mutations effectives avec cible et champs, sans valeurs.
+Auteur absent si aucun contexte métier authentifié ; aucune attribution inventée.
+MFA non obligatoire en V0. Les 9 scénarios UI interceptés sont complétés par 4 tests PostgreSQL audit,
+14 tests d’isolation et 6 vues navigateur avec le vrai backend et refus 401/403.
+La migration est validée uniquement en base jetable, pas appliquée au développement.
+Le gate global reste bloqué par le chantier lifecycle et une fixture profil 429.

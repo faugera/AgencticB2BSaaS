@@ -1,0 +1,15 @@
+$ tsc --noEmit && pnpm -r typecheck
+Scope: 3 of 4 workspace projects
+packages/shared typecheck$ tsc --noEmit
+packages/shared typecheck: Done
+apps/api typecheck$ tsc --noEmit
+apps/web typecheck$ tsc --noEmit
+apps/api typecheck: src/business/lifecycle.integration.test.ts(142,7): error TS2322: Type 'Promise<QueryResult<any>>' is not assignable to type 'void'.
+apps/api typecheck: src/business/lifecycle.integration.test.ts(145,14): error TS2532: Object is possibly 'undefined'.
+apps/api typecheck: src/business/lifecycle.integration.test.ts(149,22): error TS2339: Property 'catch' does not exist on type 'never'.
+apps/api typecheck: Failed
+D:\02-PROJETS_PERSO\AgencticB2BSaaS\apps\api:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @enterprise/api@ typecheck: `tsc --noEmit`
+Exit status 2
+apps/web typecheck: Failed
+[ELIFECYCLE] Command failed with exit code 2.

@@ -1,10 +1,16 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import '@fontsource/lato/400.css';
+import '@fontsource/lato/700.css';
+import './ui/tokens.css';
+import './ui/components.css';
+import './ui/shell.css';
 import { AuthPage } from './auth/AuthPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Application, AcceptInvitation, NotFound, AccessDenied } from './application';
 import { useLanguage } from './i18n';
+import { Signup } from './pages/Signup';
 
 function App() {
   const { locale, setLocale, t } = useLanguage();
@@ -136,6 +142,8 @@ createRoot(root).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/docs" element={<Application adminOnly />} />
         {[
           '/login',
           '/login/mfa',
@@ -144,11 +152,18 @@ createRoot(root).render(
           '/verify-email',
           '/auth',
           '/auth/reset',
+          '/admin/login',
+          '/admin/login/mfa',
+          '/admin/forgot-password',
+          '/admin/reset-password',
         ].map((path) => (
-          <Route key={path} path={path} element={<AuthPage />} />
+          <Route key={path} path={path} element={<AuthPage key={path} admin={path.startsWith('/admin/')} />} />
         ))}
-        {['/app', '/app/security', '/app/workspaces/:id'].map((path) => (
+        {['/app', '/app/security', '/app/profile', '/app/members', '/app/invitations', '/app/workspaces/:id'].map((path) => (
           <Route key={path} path={path} element={<Application />} />
+        ))}
+        {['/admin', '/admin/organizations', '/admin/workspaces', '/admin/members', '/admin/audit', '/admin/security', '/admin/profile', '/admin/workspaces/:id'].map((path) => (
+          <Route key={path} path={path} element={<Application key="admin" adminOnly />} />
         ))}
         <Route path="/invite" element={<AcceptInvitation />} />
       <Route path="/403" element={<AccessDenied />} />

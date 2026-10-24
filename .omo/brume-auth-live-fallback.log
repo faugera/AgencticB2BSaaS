@@ -1,0 +1,5 @@
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+[2m[WebServer] [22m[2m$ node --env-file-if-exists=.env dist/server.js[22m
+[2m[WebServer] [22mServer startup failed. Check private configuration and runtime privileges.
+Error: Process from config.webServer was not able to start. Exit code: 1
+
