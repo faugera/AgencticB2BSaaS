@@ -256,12 +256,18 @@ BEGIN
 END $$;
 ALTER POLICY tenant_create ON business.tenants WITH CHECK(business.organization_permission(organization_id,'organization.manage'));
 
-CREATE FUNCTION business.role_catalog() RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path=pg_catalog AS $$
-  SELECT coalesce(jsonb_agg(jsonb_build_object('id',r.id,'code',r.code,'name',r.name,'scope',r.scope,
+CREATE FUNCTION business.role_catalog() RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=pg_catalog AS $$
+BEGIN
+  IF NOT (business.is_super() OR business.organization_permission((SELECT organization_id FROM authorization_private.actors WHERE id=business.actor_id()),'roles.assign')
+    OR coalesce(business.can('roles.assign'),false) OR EXISTS(SELECT FROM authorization_private.workspace_scopes workspace
+      WHERE workspace.tenant_id=nullif(current_setting('app.tenant_id',true),'')::uuid AND business.can('roles.assign',workspace.workspace_id))) THEN
+    RAISE EXCEPTION 'ACCESS_DENIED' USING ERRCODE='42501'; END IF;
+  RETURN (SELECT coalesce(jsonb_agg(jsonb_build_object('id',r.id,'code',r.code,'name',r.name,'scope',r.scope,
     'permissions',r.permissions,'level',r.level,'delegable',r.delegable,'builtin',r.builtin,
     'archivedAt',r.archived_at,'updatedAt',r.updated_at,'impactCount',(SELECT count(*) FROM authorization_private.role_assignments a
       WHERE a.role_id=r.id AND (business.is_super() OR a.organization_id=(SELECT organization_id FROM authorization_private.actors WHERE id=business.actor_id())))) ORDER BY r.level DESC,r.name),'[]')
-    FROM authorization_private.role_catalog r WHERE business.actor_id() IS NOT NULL
+    FROM authorization_private.role_catalog r);
+END;
 $$;
 CREATE FUNCTION business.organization_admin_count(org uuid) RETURNS bigint LANGUAGE sql STABLE SECURITY DEFINER SET search_path=pg_catalog AS $$
   SELECT count(DISTINCT actor.id) FROM authorization_private.actors actor

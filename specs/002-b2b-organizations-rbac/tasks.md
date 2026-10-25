@@ -29,3 +29,13 @@ Aucun auteur ne modifie les fichiers d’un autre. T009 après schéma, T010 ava
 Branche codex/b2b-organizations-rbac depuis main f47449c, état initial propre.
 Arbitrages terminés ; aucune migration appliquée hors services jetables.
 Docker indisponible ; PostgreSQL17 portable et Mailpit isolés utilisés. Résultats dans evidence/verification.md. T012 reste ouvert jusqu’aux revues et à la PR.
+
+## Convergence après revue indépendante
+
+- [x] T013 Corriger l’identité invitée email seule : aucun prénom inventé ; assertion HTTP des champs null (FR-010/011).
+- [x] T014 Restreindre catalogue SQL aux administrateurs avec roles.assign dans leur portée ; refus membre et contrôles positifs (FR-006/007).
+- [x] T015 Corriger et prouver le focus clavier mobile au-dessus de la navigation fixe ; nouvelles captures ciblées (FR-009/SC-004).
+- [x] T016 Réconcilier research.md avec l’arbitrage nullable résolu et l’état implémenté (FR-018).
+- [ ] T017 Revoir les seuls deltas et le commit final, puis publier la PR sans merge (FR-018).
+
+- [x] T018 Garder le catalogue global utilisable sans requête roster hors portée tenant ; régression rouge/verte (FR-009).

@@ -83,7 +83,7 @@ export function registerBusinessRoutes(
         config,
         send,
         email,
-        email.split('@')[0] ?? 'Invited',
+        '',
         false,
       );
       await send({

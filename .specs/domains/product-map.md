@@ -1,6 +1,6 @@
 # Carte produit — état courant au 25 octobre 2026
 
-État de la branche codex/b2b-organizations-rbac depuis main f47449c (PR8). IMPLEMENTED signifie code
+État de la branche codex/b2b-organizations-rbac depuis main f47449c, qui inclut la PR8 fusionnée. IMPLEMENTED signifie code
 présent, PARTIAL couverture incomplète, PLANNED intention, NOT_FOUND absence identifiée,
 UNKNOWN état non vérifié. Aucun statut ne certifie un déploiement ou une conformité exhaustive.
 

@@ -64,6 +64,9 @@ describe('Organisation et RBAC persistés', () => {
     await expect(operator.query("INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'member')", [at(actors, 2), at(tenants, 2)])).rejects.toThrow();
     await expect(runtime.query('SELECT * FROM authorization_private.role_catalog')).rejects.toThrow();
     expect((await runtime.query('SELECT * FROM business.organizations')).rowCount).toBe(0);
+    await expect(tx(at(ids, 2), at(tenants, 0), client => client.query('SELECT business.role_catalog()'))).rejects.toThrow();
+    expect((await tx(at(ids, 1), at(tenants, 0), client => client.query<{ roles: unknown[] }>('SELECT business.role_catalog() roles'))).rows[0]?.roles.length).toBeGreaterThan(0);
+    expect((await tx(at(ids, 0), undefined, client => client.query<{ roles: unknown[] }>('SELECT business.role_catalog() roles'))).rows[0]?.roles.length).toBeGreaterThan(0);
   });
 
   it('organisation-admin traverse les workspaces privés de son client seulement', async () => {
@@ -140,6 +143,7 @@ describe('Organisation et RBAC persistés', () => {
     await operator.query("INSERT INTO authorization_private.workspace_members(tenant_id,workspace_id,actor_id,role) VALUES($1,$2,$3,'workspace_admin')", [at(tenants, 0), workspace, at(actors, 4)]);
     const scoped = await tx(at(ids, 4), at(tenants, 0), client => client.query<{ level: number; allowed: boolean; people: unknown[] }>("SELECT business.workspace_level($1) level,business.can('roles.assign',$1) allowed,business.role_people($2,$1) people", [workspace, at(tenants, 0)]));
     expect(scoped.rows[0]?.level).toBe(1);
+    expect((await tx(at(ids, 4), at(tenants, 0), client => client.query<{ roles: unknown[] }>('SELECT business.role_catalog() roles'))).rows[0]?.roles.length).toBeGreaterThan(0);
     expect(scoped.rows[0]?.allowed).toBe(true);
     expect(scoped.rows[0]?.people.length).toBeGreaterThan(0);
     expect((await tx(at(ids, 4), at(tenants, 0), client => client.query<{ level: number }>('SELECT business.workspace_level($1) level', [foreignWorkspace]))).rows[0]?.level).toBe(0);

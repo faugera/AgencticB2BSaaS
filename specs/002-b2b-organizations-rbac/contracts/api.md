@@ -7,7 +7,8 @@ pour la gestion dans sa portée exacte, sans élargir les permissions tenant.
 
 - GET/POST /api/organizations : annuaire autorisé, création super-admin ; organisation-admin
   lit/gère sa seule organisation. POST /api/organizations/:id/tenants crée un tenant.
-- GET /api/roles : catalogue autorisé, permissions, scope, niveau, impact et timestamp.
+- GET /api/roles : catalogue réservé au super-admin ou à roles.assign dans une portée
+  organisation/tenant/workspace autorisée ; un membre ordinaire reçoit403. Permissions, scope, niveau, impact et timestamp.
 - POST /api/roles et PUT /api/roles/:id : super-admin ; body name,scope,permissions,
   delegable,archived,confirmed ; contrôle d’impact/confirmation pour les modifications.
 - GET /api/role-assignments?tenantId=...&workspaceId=... : personnes et rôles dans la portée autorisée.

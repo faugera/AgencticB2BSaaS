@@ -4,7 +4,7 @@ for (const locale of ['fr', 'en'] as const) {
     await page.addInitScript((value) => localStorage.setItem('locale', value), locale);
     await page.route('**/api/**', (route) => {
       const path = new URL(route.request().url()).pathname;
-      if (path === '/api/me') return route.fulfill({ json: { user: { id: 'actor', name: 'Test Person', email: 'test@example.test' }, access: { actorId: 'actor', platformRole: 'super_admin', tenantId: null, tenantRole: null, handle: null, level: 100, permissions: ['roles.assign'] } } });
+      if (path === '/api/me') return route.fulfill({ json: { user: { id: 'actor', name: '', email: 'test@example.test' }, access: { actorId: 'actor', platformRole: 'super_admin', tenantId: null, tenantRole: null, handle: null, level: 100, permissions: ['roles.assign'] } } });
       if (path === '/api/profile') return route.fulfill({ json: { first_name: 'Test', last_name: 'Person', avatar_url: null, phone_number: null, job_title: null, department: null, email: 'test@example.test', is_email_verified: true, created_at: '2026-10-24T08:00:00Z', updated_at: '2026-10-24T08:00:00Z' } });
       if (path === '/api/role-assignments') return route.fulfill({ json: [{ id: 'other', name: 'Org admin', email: 'other@example.test', status: 'active', roles: [{ id: 'org-admin', code: 'organization_admin', name: 'Organization admin', scope: 'organization', level: 3, delegable: false, permissions: [], organizationId: 'org', tenantId: null, workspaceId: null }, { id: 'baseline', code: 'member', name: 'Member', scope: 'tenant', level: 0, delegable: true, permissions: [], organizationId: 'org', tenantId: 'tenant', workspaceId: null }] }] });
       if (path === '/api/roles') return route.fulfill({ json: [{ id: 'org-admin', code: 'organization_admin', name: 'Organization admin', scope: 'organization', level: 3, permissions: [], delegable: false, builtin: true, archivedAt: null, updatedAt: '2026-10-24T08:00:00Z', impactCount: 1 }, { id: 'role', code: 'custom', name: 'Support', scope: 'tenant', level: 20, permissions: ['members.read'], delegable: true, builtin: false, archivedAt: null, updatedAt: '2026-10-24T08:00:00Z', impactCount: 2 }] });
@@ -12,6 +12,8 @@ for (const locale of ['fr', 'en'] as const) {
       return route.fulfill({ json: [] });
     });
     await page.goto('/admin/profile');
+    await expect(page.locator('.ui-account summary')).toHaveText('test@example.test');
+    await expect(page.locator('.ui-account summary')).toHaveAttribute('title', 'test@example.test');
     await expect(page.getByLabel(locale === 'fr' ? 'Prénom' : 'First name', { exact: true })).toHaveValue('Test');
     await page.getByLabel(locale === 'fr' ? 'Prénom' : 'First name', { exact: true }).focus();
     await page.keyboard.press('Tab');
@@ -26,7 +28,7 @@ for (const locale of ['fr', 'en'] as const) {
     await page.getByRole('button', { name: locale === 'fr' ? 'Enregistrer' : 'Save', exact: true }).first().click();
     await expect(page.getByRole('alert')).toBeVisible();
     await expect(page.getByLabel(locale === 'fr' ? 'Prénom' : 'First name', { exact: true })).toHaveValue('Changed');
-    await page.goto('/admin/roles');
+    await page.goto('/admin/roles?tenantId=tenant');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(locale === 'fr' ? 'Rôles et permissions' : 'Roles and permissions');
     await expect(page.locator('strong').filter({ hasText: /^Support$/ })).toBeVisible();
     await expect(page.getByLabel(locale === 'fr' ? 'Sélectionner un rôle' : 'Select a role').locator('option[value=org-admin]')).toHaveCount(1);
@@ -104,6 +106,41 @@ test('workspace-only administration uses server capabilities and a scoped roster
  expect(queries.every((query) => query.includes('workspaceId=workspace'))).toBe(true);
  expect(writes[0]).toEqual({ actorId: 'member', roleId: 'workspace-reader', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace', operation: 'grant' });
  await expect(page.getByRole('button', { name: 'Suspendre', exact: true })).toHaveCount(0);
+});
+
+test('role navigation follows assignment capability rather than member management', async ({ page }) => {
+ let canAssignWorkspace = false;
+ await page.route('**/api/**', (route) => {
+  const path = new URL(route.request().url()).pathname;
+  if (path === '/api/me') return route.fulfill({ json: { user: { id: 'actor', name: '', email: 'person@example.test' }, access: { actorId: 'actor', platformRole: null, tenantRole: 'tenant_admin', tenantId: 'tenant', permissions: ['members.manage'] }, workspaces: [{ id: 'space', tenant_id: 'tenant', name: 'Space', visibility: 'private', can_assign_roles: canAssignWorkspace, role_level: canAssignWorkspace ? 1 : 0 }] } });
+  if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'light' } });
+  return route.fulfill({ json: [] });
+ });
+ await page.goto('/app');
+ await expect(page.getByRole('heading', { level: 1 })).toHaveText('Espaces de travail');
+ await expect(page.getByRole('link', { name: 'Rôles et permissions', exact: true })).toHaveCount(0);
+ await expect(page.locator('.ui-account summary')).toHaveText('person@example.test');
+ canAssignWorkspace = true; await page.reload();
+ await expect(page.getByRole('link', { name: 'Rôles et permissions', exact: true })).toHaveCount(1);
+});
+
+test('global catalog never loads a roster without a tenant selection', async ({ page }) => {
+ const rosterRequests: string[] = [];
+ await page.route('**/api/**', (route) => {
+  const path = new URL(route.request().url()).pathname;
+  if (path === '/api/me') return route.fulfill({ json: { user: { id: 'super', name: 'Operator', email: 'operator@example.test' }, access: { actorId: 'super', platformRole: 'super_admin', tenantId: null, tenantRole: null, permissions: ['roles.assign'], level: 4 } } });
+  if (path === '/api/roles') return route.fulfill({ json: [{ id: 'role', code: 'support', name: 'Support', scope: 'tenant', permissions: [], level: 0, delegable: true, builtin: false, archivedAt: null, updatedAt: '2026-10-25T00:00:00Z', impactCount: 0 }] });
+  if (path === '/api/role-assignments') { rosterRequests.push(route.request().url()); return route.fulfill({ status: 403, json: { code: 'FORBIDDEN' } }); }
+  if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'light' } });
+  return route.fulfill({ json: [] });
+ });
+ await page.goto('/admin/roles');
+ await expect(page.locator('strong').filter({ hasText: /^Support$/ })).toBeVisible();
+ await page.getByText('Modifier', { exact: true }).click();
+ await expect(page.locator('details[open]').getByLabel('Nom du rôle')).toHaveValue('Support');
+ expect(rosterRequests).toEqual([]);
+ await expect(page.getByRole('alert')).toHaveCount(0);
+ await expect(page.getByText('Le tenant sélectionné détermine les espaces, membres et événements affichés.', { exact: true }).last()).toBeVisible();
 });
 
 

@@ -83,6 +83,10 @@ describe('Contrats B2B HTTP avec sessions et PostgreSQL réels', () => {
     expect(persisted.rows.map((row) => row.organization_id)).toEqual([at(organizations, 0), at(organizations, 0), at(organizations, 1)]);
     expect((await write('POST', '/api/organizations', { name: 'Forbidden' }, 1)).statusCode).toBe(403);
     expect((await get('/api/tenants', 1)).json<{ id: string }[]>().map((tenant) => tenant.id).sort()).toEqual(tenants.slice(0, 2).sort());
+    const invited = await operator.query('SELECT u.name,u.first_name,u.last_name FROM identity."user" u JOIN authorization_private.invitations i ON lower(i.email)=lower(u.email) WHERE i.tenant_id=ANY($1)', [tenants]);
+    expect(invited.rows).toHaveLength(3);
+    for (const user of invited.rows) expect(user).toEqual({ name: '', first_name: null, last_name: null });
+    expect((await get('/api/roles', 1)).statusCode).toBe(403);
   });
 
   it('lit un ancien nom incomplet puis enregistre prénom et nom seuls dans la vérité SDK', async () => {

@@ -1,6 +1,6 @@
 # Architecture actuelle
 
-Branche B2B depuis main f47449c (PR8), 25 octobre 2026. Ce document décrit le code,
+Branche B2B depuis main f47449c, qui inclut la PR8 fusionnée, 25 octobre 2026. Ce document décrit le code,
 pas les migrations effectivement déployées. [Spec courante](../specs/002-b2b-organizations-rbac/spec.md),
 [modèle](data-model.md), [permissions](features-b2b.md), [runbook](setup/private-pilot.md).
 
@@ -36,7 +36,7 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 | GET/POST /api/organizations | Lecture client-scopée ; création super-admin |
 | POST /api/organizations/:id/tenants | Super-admin ou organisation-admin du client ; adminEmail fournit billing et invitation initiale |
 | GET/POST /api/platform/tenants | Compatibilité super-admin ; POST crée client + premier tenant |
-| GET/POST /api/roles ; PUT /api/roles/:id | Lecture catalogue ; édition super-admin, impact/confirmation si modification affectante |
+| GET/POST /api/roles ; PUT /api/roles/:id | Lecture avec roles.assign autorisé ; édition super-admin, impact/confirmation si modification affectante |
 | GET/POST /api/role-assignments | Portée et pyramide SQL ; grant/revoke explicites |
 | PATCH /api/members/:id/status | Statut invited/active/suspended ; inférieur seulement, dernier admin protégé |
 | GET/PUT /api/profile?tenantId | Compte propre ; PUT prénom/nom valides, champs personnels et emploi du tenant sélectionné |

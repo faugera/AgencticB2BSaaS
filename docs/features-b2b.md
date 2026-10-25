@@ -10,7 +10,7 @@ Les preuves PR7/PR8 restent [historiques](sdd/legacy-reconciliation.md).
 | MFA TOTP et récupération facultatives | IMPLEMENTED | V0 sans MFA obligatoire, y compris super-admin |
 | Organisations clients, plusieurs tenants et workspaces | IMPLEMENTED | Migrations 0013/0014, routes organisation ; un utilisateur ordinaire dans une seule organisation |
 | Appartenances multiples explicites dans le même client | IMPLEMENTED | Seul active donne accès ; invited/suspended refusés à la prochaine opération |
-| Catalogue global de rôles personnalisés cumulables | IMPLEMENTED | Édition super-admin ; attribution déléguée par portée et niveau |
+| Catalogue global de rôles personnalisés cumulables | IMPLEMENTED | Lecture administrative avec roles.assign, édition super-admin ; attribution déléguée par portée et niveau |
 | Pyramide et dernier administrateur actif | IMPLEMENTED | Fonctions SQL contrôlent soi/pairs/supérieurs et capacité administrative restante |
 | Invitations, demandes et pagination | IMPLEMENTED | SMTP après commit, retry manuel ; tenant-admin ne peut inviter un pair |
 | Profil complet et préférences du compte | IMPLEMENTED | Profil existant, noms inconnus acceptés à invitation ; PUT exige prénom et nom ; poste/département tenant-scopés |

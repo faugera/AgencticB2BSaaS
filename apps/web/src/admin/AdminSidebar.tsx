@@ -3,7 +3,7 @@ import { HouseSimpleIcon, BuildingsIcon, SquaresFourIcon, UsersIcon, ShieldCheck
 import type { UIMessage } from '../i18n';
 import { Select } from '../ui/primitives';
 
-export function FeatureNavigation({ admin, manager, canAudit, organizationAdmin, query, t, onNavigate }: { admin: boolean; manager: boolean; canAudit: boolean; organizationAdmin: boolean; query: string; t: (key: UIMessage) => string; onNavigate: () => void }) {
+export function FeatureNavigation({ admin, manager, canAudit, canRoles, organizationAdmin, query, t, onNavigate }: { admin: boolean; manager: boolean; canAudit: boolean; canRoles: boolean; organizationAdmin: boolean; query: string; t: (key: UIMessage) => string; onNavigate: () => void }) {
  const links = admin ? [
   { path: '/admin', label: 'overview', icon: HouseSimpleIcon },
   { path: '/admin/organizations', label: 'organizations', icon: BuildingsIcon },
@@ -17,7 +17,7 @@ export function FeatureNavigation({ admin, manager, canAudit, organizationAdmin,
  ] as const : [
   { path: '/app', label: 'workspaces', icon: SquaresFourIcon },
   ...(manager ? [{ path: '/app/members', label: 'members_page', icon: UsersIcon }, { path: '/app/invitations', label: 'invitations_page', icon: EnvelopeSimpleIcon }] as const : []),
-  { path: '/app/roles', label: 'roles_page', icon: ShieldCheckIcon },
+  ...(canRoles ? [{ path: '/app/roles', label: 'roles_page', icon: ShieldCheckIcon }] as const : []),
   ...(canAudit ? [{ path: '/app/audit', label: 'audit_log', icon: BookOpenIcon }] as const : []),
   ...(organizationAdmin ? [{ path: '/app/organizations', label: 'organizations', icon: BuildingsIcon }] as const : []),
   { path: '/app/security', label: 'account_security', icon: ShieldCheckIcon },

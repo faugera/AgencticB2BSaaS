@@ -1,1429 +1,1913 @@
 {
-  "generatedAt": "2026-10-25T18:12:30.000Z",
+  "generatedAt": "2026-10-25T18:31:16.859Z",
   "newestWebSource": {
-    "path": "apps/web/src/ui/AppShell.tsx",
-    "mtime": "2026-10-25T18:10:17.047Z"
+    "path": "apps/web/src/pages/Roles.tsx",
+    "mtime": "2026-10-25T18:29:54.146Z"
   },
-  "buildIndexMtime": "2026-10-25T18:10:30.105Z",
+  "buildIndexMtime": "2026-10-25T18:30:10.737Z",
   "freshBuild": true,
   "allScreenshotsAfterBuild": true,
-  "screenshotCount": 282,
+  "screenshotCount": 378,
   "bundle": [
     {
-      "path": "apps/web/dist/assets/index-DlhDGYCl.js",
-      "sha256": "b6cbf358ebc9390a881dfa909ee503c3ce4906155303d8d9ba8112d68547bc22"
+      "path": "apps/web/dist/assets/index-BK8HACMm.js",
+      "sha256": "a2357afc33321b1bad7bf7ec54736d76574b8dab37d8a068c9ae684229845173"
+    },
+    {
+      "path": "apps/web/dist/assets/index-CgrAQ84E.css",
+      "sha256": "fe931683253626108bc9a3c50f465abdcd4bcfe0bf18c95f9396bfb0762da875"
     }
   ],
   "screenshots": [
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-dark-en-1280.png",
-      "mtime": "2026-10-25T18:12:04.205Z",
+      "mtime": "2026-10-25T18:30:50.192Z",
       "bytes": 55337
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-dark-en-375.png",
-      "mtime": "2026-10-25T18:12:03.891Z",
+      "mtime": "2026-10-25T18:30:48.718Z",
       "bytes": 25156
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-dark-en-768.png",
-      "mtime": "2026-10-25T18:12:03.640Z",
+      "mtime": "2026-10-25T18:30:48.929Z",
       "bytes": 53548
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-dark-fr-1280.png",
-      "mtime": "2026-10-25T18:11:55.492Z",
+      "mtime": "2026-10-25T18:30:36.354Z",
       "bytes": 57949
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-dark-fr-375.png",
-      "mtime": "2026-10-25T18:11:55.715Z",
+      "mtime": "2026-10-25T18:30:35.774Z",
       "bytes": 26276
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-dark-fr-768.png",
-      "mtime": "2026-10-25T18:11:55.143Z",
+      "mtime": "2026-10-25T18:30:36.001Z",
       "bytes": 55278
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-empty-en-1280.png",
-      "mtime": "2026-10-25T18:12:02.613Z",
+      "mtime": "2026-10-25T18:30:47.823Z",
       "bytes": 41138
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-empty-en-375.png",
-      "mtime": "2026-10-25T18:12:02.571Z",
+      "mtime": "2026-10-25T18:30:46.810Z",
       "bytes": 14858
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-empty-en-768.png",
-      "mtime": "2026-10-25T18:12:02.234Z",
+      "mtime": "2026-10-25T18:30:46.972Z",
       "bytes": 39162
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-empty-fr-1280.png",
-      "mtime": "2026-10-25T18:11:54.035Z",
+      "mtime": "2026-10-25T18:30:33.994Z",
       "bytes": 41354
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-empty-fr-375.png",
-      "mtime": "2026-10-25T18:11:54.474Z",
+      "mtime": "2026-10-25T18:30:33.642Z",
       "bytes": 15039
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-empty-fr-768.png",
-      "mtime": "2026-10-25T18:11:53.852Z",
+      "mtime": "2026-10-25T18:30:33.739Z",
       "bytes": 39452
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-error-en-1280.png",
-      "mtime": "2026-10-25T18:12:02.941Z",
+      "mtime": "2026-10-25T18:30:48.102Z",
       "bytes": 42148
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-error-en-375.png",
-      "mtime": "2026-10-25T18:12:02.849Z",
+      "mtime": "2026-10-25T18:30:46.981Z",
       "bytes": 15829
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-error-en-768.png",
-      "mtime": "2026-10-25T18:12:02.484Z",
+      "mtime": "2026-10-25T18:30:47.132Z",
       "bytes": 40153
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-error-fr-1280.png",
-      "mtime": "2026-10-25T18:11:54.335Z",
+      "mtime": "2026-10-25T18:30:34.278Z",
       "bytes": 42415
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-error-fr-375.png",
-      "mtime": "2026-10-25T18:11:54.753Z",
+      "mtime": "2026-10-25T18:30:33.905Z",
       "bytes": 16111
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-error-fr-768.png",
-      "mtime": "2026-10-25T18:11:54.021Z",
+      "mtime": "2026-10-25T18:30:34.058Z",
       "bytes": 40533
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-global-en-1280.png",
-      "mtime": "2026-10-25T18:12:01.592Z",
+      "mtime": "2026-10-25T18:30:46.795Z",
       "bytes": 54721
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-global-en-375.png",
-      "mtime": "2026-10-25T18:12:01.763Z",
+      "mtime": "2026-10-25T18:30:45.971Z",
       "bytes": 24801
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-global-en-768.png",
-      "mtime": "2026-10-25T18:12:01.238Z",
+      "mtime": "2026-10-25T18:30:46.127Z",
       "bytes": 52894
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-global-fr-1280.png",
-      "mtime": "2026-10-25T18:11:53.072Z",
-      "bytes": 57033
+      "mtime": "2026-10-25T18:30:32.998Z",
+      "bytes": 57233
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-global-fr-375.png",
-      "mtime": "2026-10-25T18:11:53.700Z",
+      "mtime": "2026-10-25T18:30:32.682Z",
       "bytes": 26377
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-global-fr-768.png",
-      "mtime": "2026-10-25T18:11:52.965Z",
+      "mtime": "2026-10-25T18:30:32.712Z",
       "bytes": 54247
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-loading-en-1280.png",
-      "mtime": "2026-10-25T18:12:03.186Z",
+      "mtime": "2026-10-25T18:30:48.259Z",
       "bytes": 40653
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-loading-en-375.png",
-      "mtime": "2026-10-25T18:12:03.025Z",
+      "mtime": "2026-10-25T18:30:47.118Z",
       "bytes": 14362
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-loading-en-768.png",
-      "mtime": "2026-10-25T18:12:02.634Z",
+      "mtime": "2026-10-25T18:30:47.341Z",
       "bytes": 38682
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-loading-fr-1280.png",
-      "mtime": "2026-10-25T18:11:54.523Z",
+      "mtime": "2026-10-25T18:30:34.508Z",
       "bytes": 40842
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-loading-fr-375.png",
-      "mtime": "2026-10-25T18:11:54.909Z",
+      "mtime": "2026-10-25T18:30:34.045Z",
       "bytes": 14492
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-loading-fr-768.png",
-      "mtime": "2026-10-25T18:11:54.222Z",
+      "mtime": "2026-10-25T18:30:34.264Z",
       "bytes": 38966
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-older-page-en-1280.png",
-      "mtime": "2026-10-25T18:12:02.328Z",
+      "mtime": "2026-10-25T18:30:47.527Z",
       "bytes": 53504
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-older-page-en-375.png",
-      "mtime": "2026-10-25T18:12:02.322Z",
+      "mtime": "2026-10-25T18:30:46.548Z",
       "bytes": 24167
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-older-page-en-768.png",
-      "mtime": "2026-10-25T18:12:01.963Z",
+      "mtime": "2026-10-25T18:30:46.694Z",
       "bytes": 52316
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-older-page-fr-1280.png",
-      "mtime": "2026-10-25T18:11:53.741Z",
+      "mtime": "2026-10-25T18:30:33.671Z",
       "bytes": 55841
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-older-page-fr-375.png",
-      "mtime": "2026-10-25T18:11:54.211Z",
+      "mtime": "2026-10-25T18:30:33.366Z",
       "bytes": 25117
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-older-page-fr-768.png",
-      "mtime": "2026-10-25T18:11:53.561Z",
+      "mtime": "2026-10-25T18:30:33.445Z",
       "bytes": 53769
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-pagination-en-1280.png",
-      "mtime": "2026-10-25T18:12:02.086Z",
+      "mtime": "2026-10-25T18:30:47.263Z",
       "bytes": 53514
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-pagination-en-375.png",
-      "mtime": "2026-10-25T18:12:02.093Z",
+      "mtime": "2026-10-25T18:30:46.294Z",
       "bytes": 21177
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-pagination-en-768.png",
-      "mtime": "2026-10-25T18:12:01.716Z",
+      "mtime": "2026-10-25T18:30:46.578Z",
       "bytes": 50980
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-pagination-fr-1280.png",
-      "mtime": "2026-10-25T18:11:53.575Z",
-      "bytes": 55681
+      "mtime": "2026-10-25T18:30:33.519Z",
+      "bytes": 55905
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-pagination-fr-375.png",
-      "mtime": "2026-10-25T18:11:54.044Z",
+      "mtime": "2026-10-25T18:30:33.126Z",
       "bytes": 22270
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-pagination-fr-768.png",
-      "mtime": "2026-10-25T18:11:53.406Z",
+      "mtime": "2026-10-25T18:30:33.204Z",
       "bytes": 52079
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-table-end-en-1280.png",
-      "mtime": "2026-10-25T18:12:01.977Z",
+      "mtime": "2026-10-25T18:30:47.120Z",
       "bytes": 53514
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-table-end-en-375.png",
-      "mtime": "2026-10-25T18:12:02.014Z",
+      "mtime": "2026-10-25T18:30:46.224Z",
       "bytes": 21177
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-table-end-en-768.png",
-      "mtime": "2026-10-25T18:12:01.628Z",
+      "mtime": "2026-10-25T18:30:46.479Z",
       "bytes": 50980
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-table-end-fr-1280.png",
-      "mtime": "2026-10-25T18:11:53.468Z",
-      "bytes": 55681
+      "mtime": "2026-10-25T18:30:33.391Z",
+      "bytes": 55905
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-table-end-fr-375.png",
-      "mtime": "2026-10-25T18:11:53.953Z",
+      "mtime": "2026-10-25T18:30:33.041Z",
       "bytes": 22270
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-table-end-fr-768.png",
-      "mtime": "2026-10-25T18:11:53.321Z",
+      "mtime": "2026-10-25T18:30:33.114Z",
       "bytes": 52079
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-tenant-en-1280.png",
-      "mtime": "2026-10-25T18:12:01.880Z",
+      "mtime": "2026-10-25T18:30:47.007Z",
       "bytes": 53514
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-tenant-en-375.png",
-      "mtime": "2026-10-25T18:12:01.920Z",
+      "mtime": "2026-10-25T18:30:46.128Z",
       "bytes": 24129
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-tenant-en-768.png",
-      "mtime": "2026-10-25T18:12:01.514Z",
+      "mtime": "2026-10-25T18:30:46.401Z",
       "bytes": 52265
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-tenant-fr-1280.png",
-      "mtime": "2026-10-25T18:11:53.356Z",
-      "bytes": 55681
+      "mtime": "2026-10-25T18:30:33.277Z",
+      "bytes": 55905
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-tenant-fr-375.png",
-      "mtime": "2026-10-25T18:11:53.856Z",
+      "mtime": "2026-10-25T18:30:32.961Z",
       "bytes": 25528
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/audit-tenant-fr-768.png",
-      "mtime": "2026-10-25T18:11:53.231Z",
+      "mtime": "2026-10-25T18:30:33.020Z",
       "bytes": 53422
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-error-en-1280.png",
-      "mtime": "2026-10-25T18:12:00.123Z",
+      "mtime": "2026-10-25T18:30:43.357Z",
       "bytes": 63127
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-error-en-375.png",
-      "mtime": "2026-10-25T18:12:00.386Z",
+      "mtime": "2026-10-25T18:30:42.856Z",
       "bytes": 33852
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-error-en-768.png",
-      "mtime": "2026-10-25T18:11:59.618Z",
+      "mtime": "2026-10-25T18:30:42.729Z",
       "bytes": 60379
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-error-fr-1280.png",
-      "mtime": "2026-10-25T18:11:51.600Z",
+      "mtime": "2026-10-25T18:30:29.488Z",
       "bytes": 66267
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-error-fr-375.png",
-      "mtime": "2026-10-25T18:11:52.253Z",
+      "mtime": "2026-10-25T18:30:29.274Z",
       "bytes": 36110
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-error-fr-768.png",
-      "mtime": "2026-10-25T18:11:51.462Z",
+      "mtime": "2026-10-25T18:30:29.203Z",
       "bytes": 63392
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-filled-en-1280.png",
-      "mtime": "2026-10-25T18:11:59.491Z",
+      "mtime": "2026-10-25T18:30:42.149Z",
       "bytes": 64194
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-filled-en-375.png",
-      "mtime": "2026-10-25T18:11:58.912Z",
-      "bytes": 34536
+      "mtime": "2026-10-25T18:30:41.697Z",
+      "bytes": 32602
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-filled-en-768.png",
-      "mtime": "2026-10-25T18:11:59.186Z",
+      "mtime": "2026-10-25T18:30:41.675Z",
       "bytes": 61447
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-filled-fr-1280.png",
-      "mtime": "2026-10-25T18:11:50.923Z",
+      "mtime": "2026-10-25T18:30:28.443Z",
       "bytes": 66658
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-filled-fr-375.png",
-      "mtime": "2026-10-25T18:11:50.865Z",
-      "bytes": 36183
+      "mtime": "2026-10-25T18:30:28.095Z",
+      "bytes": 34408
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-filled-fr-768.png",
-      "mtime": "2026-10-25T18:11:50.861Z",
+      "mtime": "2026-10-25T18:30:28.187Z",
       "bytes": 63824
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-last-action-en-1280.png",
-      "mtime": "2026-10-25T18:11:59.813Z",
-      "bytes": 61551
+      "mtime": "2026-10-25T18:30:43.003Z",
+      "bytes": 62229
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-last-action-en-375.png",
-      "mtime": "2026-10-25T18:11:59.207Z",
-      "bytes": 29934
+      "mtime": "2026-10-25T18:30:42.526Z",
+      "bytes": 30578
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-last-action-en-768.png",
-      "mtime": "2026-10-25T18:11:59.403Z",
-      "bytes": 58837
+      "mtime": "2026-10-25T18:30:42.404Z",
+      "bytes": 59505
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-last-action-fr-1280.png",
-      "mtime": "2026-10-25T18:11:51.214Z",
-      "bytes": 63625
+      "mtime": "2026-10-25T18:30:29.216Z",
+      "bytes": 64306
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-last-action-fr-375.png",
-      "mtime": "2026-10-25T18:11:51.096Z",
-      "bytes": 31441
+      "mtime": "2026-10-25T18:30:28.944Z",
+      "bytes": 32102
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-last-action-fr-768.png",
-      "mtime": "2026-10-25T18:11:51.110Z",
-      "bytes": 60897
+      "mtime": "2026-10-25T18:30:28.974Z",
+      "bytes": 61566
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-success-en-1280.png",
-      "mtime": "2026-10-25T18:11:59.726Z",
+      "mtime": "2026-10-25T18:30:42.370Z",
       "bytes": 61984
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-success-en-375.png",
-      "mtime": "2026-10-25T18:11:59.125Z",
+      "mtime": "2026-10-25T18:30:41.929Z",
       "bytes": 32971
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-success-en-768.png",
-      "mtime": "2026-10-25T18:11:59.316Z",
+      "mtime": "2026-10-25T18:30:41.798Z",
       "bytes": 59290
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-success-fr-1280.png",
-      "mtime": "2026-10-25T18:11:51.104Z",
+      "mtime": "2026-10-25T18:30:28.581Z",
       "bytes": 64998
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-success-fr-375.png",
-      "mtime": "2026-10-25T18:11:50.991Z",
+      "mtime": "2026-10-25T18:30:28.242Z",
       "bytes": 35245
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-success-fr-768.png",
-      "mtime": "2026-10-25T18:11:51.007Z",
+      "mtime": "2026-10-25T18:30:28.342Z",
       "bytes": 62214
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-revoke-dialog-en-1280.png",
-      "mtime": "2026-10-25T18:11:59.910Z",
+      "mtime": "2026-10-25T18:30:43.127Z",
       "bytes": 74143
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-revoke-dialog-en-375.png",
-      "mtime": "2026-10-25T18:11:59.300Z",
+      "mtime": "2026-10-25T18:30:42.624Z",
       "bytes": 40083
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-revoke-dialog-en-768.png",
-      "mtime": "2026-10-25T18:11:59.498Z",
+      "mtime": "2026-10-25T18:30:42.512Z",
       "bytes": 66939
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-revoke-dialog-fr-1280.png",
-      "mtime": "2026-10-25T18:11:51.335Z",
+      "mtime": "2026-10-25T18:30:29.327Z",
       "bytes": 76820
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-revoke-dialog-fr-375.png",
-      "mtime": "2026-10-25T18:11:51.206Z",
+      "mtime": "2026-10-25T18:30:29.051Z",
       "bytes": 42518
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/client-revoke-dialog-fr-768.png",
-      "mtime": "2026-10-25T18:11:51.235Z",
+      "mtime": "2026-10-25T18:30:29.081Z",
       "bytes": 69280
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-create-tenant-en-1280.png",
-      "mtime": "2026-10-25T18:12:00.528Z",
+      "mtime": "2026-10-25T18:30:43.779Z",
       "bytes": 54758
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-create-tenant-en-375.png",
-      "mtime": "2026-10-25T18:12:00.777Z",
+      "mtime": "2026-10-25T18:30:43.211Z",
       "bytes": 25566
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-create-tenant-en-768.png",
-      "mtime": "2026-10-25T18:12:00.002Z",
+      "mtime": "2026-10-25T18:30:43.132Z",
       "bytes": 52193
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-create-tenant-fr-1280.png",
-      "mtime": "2026-10-25T18:11:52.073Z",
+      "mtime": "2026-10-25T18:30:29.880Z",
       "bytes": 54942
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-create-tenant-fr-375.png",
-      "mtime": "2026-10-25T18:11:52.768Z",
+      "mtime": "2026-10-25T18:30:29.703Z",
       "bytes": 25878
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-create-tenant-fr-768.png",
-      "mtime": "2026-10-25T18:11:51.885Z",
+      "mtime": "2026-10-25T18:30:29.716Z",
       "bytes": 52327
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-created-en-1280.png",
-      "mtime": "2026-10-25T18:12:00.674Z",
+      "mtime": "2026-10-25T18:30:43.995Z",
       "bytes": 52300
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-created-en-375.png",
-      "mtime": "2026-10-25T18:12:00.927Z",
+      "mtime": "2026-10-25T18:30:43.433Z",
       "bytes": 25352
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-created-en-768.png",
-      "mtime": "2026-10-25T18:12:00.209Z",
+      "mtime": "2026-10-25T18:30:43.346Z",
       "bytes": 49878
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-created-fr-1280.png",
-      "mtime": "2026-10-25T18:11:52.243Z",
+      "mtime": "2026-10-25T18:30:30.101Z",
       "bytes": 52857
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-created-fr-375.png",
-      "mtime": "2026-10-25T18:11:52.987Z",
+      "mtime": "2026-10-25T18:30:29.904Z",
       "bytes": 26013
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-created-fr-768.png",
-      "mtime": "2026-10-25T18:11:52.040Z",
+      "mtime": "2026-10-25T18:30:29.933Z",
       "bytes": 50394
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-dark-en-1280.png",
-      "mtime": "2026-10-25T18:12:03.963Z",
+      "mtime": "2026-10-25T18:30:49.954Z",
       "bytes": 52081
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-dark-en-375.png",
-      "mtime": "2026-10-25T18:12:03.674Z",
+      "mtime": "2026-10-25T18:30:48.527Z",
       "bytes": 24579
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-dark-en-768.png",
-      "mtime": "2026-10-25T18:12:03.421Z",
+      "mtime": "2026-10-25T18:30:48.741Z",
       "bytes": 49260
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-dark-fr-1280.png",
-      "mtime": "2026-10-25T18:11:55.259Z",
+      "mtime": "2026-10-25T18:30:36.016Z",
       "bytes": 52603
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-dark-fr-375.png",
-      "mtime": "2026-10-25T18:11:55.530Z",
+      "mtime": "2026-10-25T18:30:35.596Z",
       "bytes": 25016
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-dark-fr-768.png",
-      "mtime": "2026-10-25T18:11:54.924Z",
+      "mtime": "2026-10-25T18:30:35.773Z",
       "bytes": 49739
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-empty-en-1280.png",
-      "mtime": "2026-10-25T18:12:01.157Z",
-      "bytes": 48987
+      "mtime": "2026-10-25T18:30:46.353Z",
+      "bytes": 49231
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-empty-en-375.png",
-      "mtime": "2026-10-25T18:12:01.347Z",
+      "mtime": "2026-10-25T18:30:45.570Z",
       "bytes": 22516
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-empty-en-768.png",
-      "mtime": "2026-10-25T18:12:00.724Z",
-      "bytes": 46745
+      "mtime": "2026-10-25T18:30:45.582Z",
+      "bytes": 46986
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-empty-fr-1280.png",
-      "mtime": "2026-10-25T18:11:52.603Z",
-      "bytes": 49406
+      "mtime": "2026-10-25T18:30:32.508Z",
+      "bytes": 49703
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-empty-fr-375.png",
-      "mtime": "2026-10-25T18:11:53.376Z",
+      "mtime": "2026-10-25T18:30:32.167Z",
       "bytes": 23110
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-empty-fr-768.png",
-      "mtime": "2026-10-25T18:11:52.506Z",
-      "bytes": 47112
+      "mtime": "2026-10-25T18:30:32.246Z",
+      "bytes": 47356
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-error-en-1280.png",
-      "mtime": "2026-10-25T18:12:00.835Z",
-      "bytes": 54463
+      "mtime": "2026-10-25T18:30:45.104Z",
+      "bytes": 54212
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-error-en-375.png",
-      "mtime": "2026-10-25T18:12:01.069Z",
-      "bytes": 27413
+      "mtime": "2026-10-25T18:30:44.470Z",
+      "bytes": 27162
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-error-en-768.png",
-      "mtime": "2026-10-25T18:12:00.433Z",
-      "bytes": 51938
+      "mtime": "2026-10-25T18:30:44.466Z",
+      "bytes": 51698
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-error-fr-1280.png",
-      "mtime": "2026-10-25T18:11:52.408Z",
-      "bytes": 55001
+      "mtime": "2026-10-25T18:30:31.194Z",
+      "bytes": 54771
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-error-fr-375.png",
-      "mtime": "2026-10-25T18:11:53.112Z",
-      "bytes": 28129
+      "mtime": "2026-10-25T18:30:30.867Z",
+      "bytes": 27805
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-error-fr-768.png",
-      "mtime": "2026-10-25T18:11:52.180Z",
-      "bytes": 52381
+      "mtime": "2026-10-25T18:30:30.986Z",
+      "bytes": 52171
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-loading-en-1280.png",
-      "mtime": "2026-10-25T18:12:01.372Z",
+      "mtime": "2026-10-25T18:30:46.506Z",
       "bytes": 36377
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-loading-en-375.png",
-      "mtime": "2026-10-25T18:12:01.516Z",
+      "mtime": "2026-10-25T18:30:45.723Z",
       "bytes": 10458
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-loading-en-768.png",
-      "mtime": "2026-10-25T18:12:00.927Z",
+      "mtime": "2026-10-25T18:30:45.805Z",
       "bytes": 34409
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-loading-fr-1280.png",
-      "mtime": "2026-10-25T18:11:52.807Z",
+      "mtime": "2026-10-25T18:30:32.682Z",
       "bytes": 36388
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-loading-fr-375.png",
-      "mtime": "2026-10-25T18:11:53.526Z",
+      "mtime": "2026-10-25T18:30:32.312Z",
       "bytes": 10760
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-loading-fr-768.png",
-      "mtime": "2026-10-25T18:11:52.710Z",
+      "mtime": "2026-10-25T18:30:32.434Z",
       "bytes": 34387
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-populated-en-1280.png",
-      "mtime": "2026-10-25T18:12:00.374Z",
+      "mtime": "2026-10-25T18:30:43.537Z",
       "bytes": 51240
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-populated-en-375.png",
-      "mtime": "2026-10-25T18:12:00.647Z",
+      "mtime": "2026-10-25T18:30:43.104Z",
       "bytes": 24446
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-populated-en-768.png",
-      "mtime": "2026-10-25T18:11:59.882Z",
+      "mtime": "2026-10-25T18:30:43.006Z",
       "bytes": 48857
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-populated-fr-1280.png",
-      "mtime": "2026-10-25T18:11:51.867Z",
+      "mtime": "2026-10-25T18:30:29.742Z",
       "bytes": 51631
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-populated-fr-375.png",
-      "mtime": "2026-10-25T18:11:52.556Z",
+      "mtime": "2026-10-25T18:30:29.594Z",
       "bytes": 24827
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-populated-fr-768.png",
-      "mtime": "2026-10-25T18:11:51.725Z",
+      "mtime": "2026-10-25T18:30:29.592Z",
       "bytes": 49168
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-dark-en-1280.png",
-      "mtime": "2026-10-25T18:12:03.452Z",
+      "mtime": "2026-10-25T18:30:48.526Z",
       "bytes": 56768
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-dark-en-375.png",
-      "mtime": "2026-10-25T18:12:03.258Z",
-      "bytes": 26419
+      "mtime": "2026-10-25T18:30:47.354Z",
+      "bytes": 26424
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-dark-en-768.png",
-      "mtime": "2026-10-25T18:12:02.903Z",
-      "bytes": 54219
+      "mtime": "2026-10-25T18:30:47.530Z",
+      "bytes": 54223
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-dark-fr-1280.png",
-      "mtime": "2026-10-25T18:11:54.784Z",
+      "mtime": "2026-10-25T18:30:34.750Z",
       "bytes": 57164
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-dark-fr-375.png",
-      "mtime": "2026-10-25T18:11:55.129Z",
+      "mtime": "2026-10-25T18:30:34.267Z",
       "bytes": 26421
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-dark-fr-768.png",
-      "mtime": "2026-10-25T18:11:54.459Z",
-      "bytes": 54682
+      "mtime": "2026-10-25T18:30:34.553Z",
+      "bytes": 54612
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-error-en-1280.png",
-      "mtime": "2026-10-25T18:11:56.752Z",
+      "mtime": "2026-10-25T18:30:37.481Z",
       "bytes": 53911
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-error-en-375.png",
-      "mtime": "2026-10-25T18:11:56.058Z",
+      "mtime": "2026-10-25T18:30:37.001Z",
       "bytes": 25367
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-error-en-768.png",
-      "mtime": "2026-10-25T18:11:56.480Z",
+      "mtime": "2026-10-25T18:30:37.117Z",
       "bytes": 51415
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-error-fr-1280.png",
-      "mtime": "2026-10-25T18:11:46.715Z",
+      "mtime": "2026-10-25T18:30:23.610Z",
       "bytes": 54526
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-error-fr-375.png",
-      "mtime": "2026-10-25T18:11:46.693Z",
+      "mtime": "2026-10-25T18:30:23.520Z",
       "bytes": 26199
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-error-fr-768.png",
-      "mtime": "2026-10-25T18:11:46.728Z",
+      "mtime": "2026-10-25T18:30:23.575Z",
       "bytes": 51896
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-preferences-sessions-en-1280.png",
-      "mtime": "2026-10-25T18:11:56.542Z",
+      "mtime": "2026-10-25T18:30:37.336Z",
       "bytes": 56099
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-preferences-sessions-en-375.png",
-      "mtime": "2026-10-25T18:11:55.922Z",
+      "mtime": "2026-10-25T18:30:36.845Z",
       "bytes": 26775
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-preferences-sessions-en-768.png",
-      "mtime": "2026-10-25T18:11:56.316Z",
+      "mtime": "2026-10-25T18:30:36.973Z",
       "bytes": 53493
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-preferences-sessions-fr-1280.png",
-      "mtime": "2026-10-25T18:11:46.440Z",
+      "mtime": "2026-10-25T18:30:23.467Z",
       "bytes": 56456
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-preferences-sessions-fr-375.png",
-      "mtime": "2026-10-25T18:11:46.418Z",
+      "mtime": "2026-10-25T18:30:23.394Z",
       "bytes": 27262
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-preferences-sessions-fr-768.png",
-      "mtime": "2026-10-25T18:11:46.453Z",
+      "mtime": "2026-10-25T18:30:23.438Z",
       "bytes": 53812
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-top-en-1280.png",
-      "mtime": "2026-10-25T18:11:56.385Z",
+      "mtime": "2026-10-25T18:30:37.188Z",
       "bytes": 56145
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-top-en-375.png",
-      "mtime": "2026-10-25T18:11:55.811Z",
+      "mtime": "2026-10-25T18:30:36.686Z",
       "bytes": 25982
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-top-en-768.png",
-      "mtime": "2026-10-25T18:11:56.170Z",
+      "mtime": "2026-10-25T18:30:36.818Z",
       "bytes": 53662
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-top-fr-1280.png",
-      "mtime": "2026-10-25T18:11:46.243Z",
+      "mtime": "2026-10-25T18:30:23.328Z",
       "bytes": 56270
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-top-fr-375.png",
-      "mtime": "2026-10-25T18:11:46.202Z",
+      "mtime": "2026-10-25T18:30:23.273Z",
       "bytes": 25986
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/profile-top-fr-768.png",
-      "mtime": "2026-10-25T18:11:46.300Z",
+      "mtime": "2026-10-25T18:30:23.316Z",
       "bytes": 53760
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-assignment-last-action-en-1280.png",
-      "mtime": "2026-10-25T18:11:57.300Z",
-      "bytes": 58387
+      "mtime": "2026-10-25T18:30:39.811Z",
+      "bytes": 58908
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-assignment-last-action-en-375.png",
-      "mtime": "2026-10-25T18:11:56.792Z",
+      "mtime": "2026-10-25T18:30:39.628Z",
       "bytes": 27436
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-assignment-last-action-en-768.png",
-      "mtime": "2026-10-25T18:11:57.049Z",
-      "bytes": 55772
+      "mtime": "2026-10-25T18:30:39.489Z",
+      "bytes": 56297
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-assignment-last-action-fr-1280.png",
-      "mtime": "2026-10-25T18:11:47.411Z",
-      "bytes": 61122
+      "mtime": "2026-10-25T18:30:26.071Z",
+      "bytes": 61484
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-assignment-last-action-fr-375.png",
-      "mtime": "2026-10-25T18:11:47.365Z",
+      "mtime": "2026-10-25T18:30:26.061Z",
       "bytes": 29292
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-assignment-last-action-fr-768.png",
-      "mtime": "2026-10-25T18:11:47.611Z",
-      "bytes": 58506
+      "mtime": "2026-10-25T18:30:26.058Z",
+      "bytes": 58872
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-catalog-top-en-1280.png",
-      "mtime": "2026-10-25T18:11:57.047Z",
-      "bytes": 61929
+      "mtime": "2026-10-25T18:30:39.597Z",
+      "bytes": 62448
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-catalog-top-en-375.png",
-      "mtime": "2026-10-25T18:11:56.424Z",
+      "mtime": "2026-10-25T18:30:39.431Z",
       "bytes": 31487
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-catalog-top-en-768.png",
-      "mtime": "2026-10-25T18:11:56.855Z",
-      "bytes": 59142
+      "mtime": "2026-10-25T18:30:39.287Z",
+      "bytes": 59625
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-catalog-top-fr-1280.png",
-      "mtime": "2026-10-25T18:11:47.106Z",
-      "bytes": 65265
+      "mtime": "2026-10-25T18:30:25.835Z",
+      "bytes": 65610
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-catalog-top-fr-375.png",
-      "mtime": "2026-10-25T18:11:47.098Z",
+      "mtime": "2026-10-25T18:30:25.847Z",
       "bytes": 34506
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-catalog-top-fr-768.png",
-      "mtime": "2026-10-25T18:11:47.187Z",
-      "bytes": 62445
+      "mtime": "2026-10-25T18:30:25.824Z",
+      "bytes": 62777
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-en-1280.png",
-      "mtime": "2026-10-25T18:11:57.592Z",
-      "bytes": 58352
+      "mtime": "2026-10-25T18:30:40.086Z",
+      "bytes": 58996
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-en-375.png",
-      "mtime": "2026-10-25T18:11:57.035Z",
-      "bytes": 28257
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-en-768.png",
-      "mtime": "2026-10-25T18:11:57.347Z",
-      "bytes": 55764
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-fr-1280.png",
-      "mtime": "2026-10-25T18:11:47.877Z",
-      "bytes": 60031
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-fr-375.png",
-      "mtime": "2026-10-25T18:11:47.853Z",
-      "bytes": 30067
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-fr-768.png",
-      "mtime": "2026-10-25T18:11:48.033Z",
-      "bytes": 57394
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-en-1280.png",
-      "mtime": "2026-10-25T18:11:57.712Z",
-      "bytes": 56586
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-en-375.png",
-      "mtime": "2026-10-25T18:11:57.147Z",
+      "mtime": "2026-10-25T18:30:39.865Z",
       "bytes": 26695
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-en-768.png",
-      "mtime": "2026-10-25T18:11:57.467Z",
-      "bytes": 54034
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-en-768.png",
+      "mtime": "2026-10-25T18:30:39.754Z",
+      "bytes": 56408
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-fr-1280.png",
-      "mtime": "2026-10-25T18:11:48.033Z",
-      "bytes": 58379
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-fr-1280.png",
+      "mtime": "2026-10-25T18:30:26.336Z",
+      "bytes": 60538
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-fr-375.png",
-      "mtime": "2026-10-25T18:11:48.003Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-fr-375.png",
+      "mtime": "2026-10-25T18:30:26.311Z",
       "bytes": 28229
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-fr-768.png",
-      "mtime": "2026-10-25T18:11:48.183Z",
-      "bytes": 55761
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-0-fr-768.png",
+      "mtime": "2026-10-25T18:30:26.305Z",
+      "bytes": 57877
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.654Z",
-      "bytes": 54054
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-en-1280.png",
+      "mtime": "2026-10-25T18:30:40.183Z",
+      "bytes": 57094
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-en-375.png",
-      "mtime": "2026-10-25T18:11:58.059Z",
-      "bytes": 23804
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-en-768.png",
-      "mtime": "2026-10-25T18:11:58.355Z",
-      "bytes": 51583
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-fr-1280.png",
-      "mtime": "2026-10-25T18:11:49.451Z",
-      "bytes": 55641
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-fr-375.png",
-      "mtime": "2026-10-25T18:11:49.390Z",
-      "bytes": 25492
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-fr-768.png",
-      "mtime": "2026-10-25T18:11:49.452Z",
-      "bytes": 53190
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.766Z",
-      "bytes": 55666
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-en-375.png",
-      "mtime": "2026-10-25T18:11:58.138Z",
-      "bytes": 23932
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-en-768.png",
-      "mtime": "2026-10-25T18:11:58.444Z",
-      "bytes": 53132
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-fr-1280.png",
-      "mtime": "2026-10-25T18:11:49.639Z",
-      "bytes": 57363
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-fr-375.png",
-      "mtime": "2026-10-25T18:11:49.550Z",
-      "bytes": 25802
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-fr-768.png",
-      "mtime": "2026-10-25T18:11:49.630Z",
-      "bytes": 54868
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.857Z",
-      "bytes": 55277
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-en-375.png",
-      "mtime": "2026-10-25T18:11:58.246Z",
-      "bytes": 26965
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-en-768.png",
-      "mtime": "2026-10-25T18:11:58.536Z",
-      "bytes": 52794
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-fr-1280.png",
-      "mtime": "2026-10-25T18:11:49.776Z",
-      "bytes": 56945
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-fr-375.png",
-      "mtime": "2026-10-25T18:11:49.733Z",
-      "bytes": 28514
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-fr-768.png",
-      "mtime": "2026-10-25T18:11:49.765Z",
-      "bytes": 54442
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-en-1280.png",
-      "mtime": "2026-10-25T18:11:57.821Z",
-      "bytes": 55803
-    },
-    {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-en-375.png",
-      "mtime": "2026-10-25T18:11:57.257Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-en-375.png",
+      "mtime": "2026-10-25T18:30:39.957Z",
       "bytes": 26561
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-en-768.png",
-      "mtime": "2026-10-25T18:11:57.576Z",
-      "bytes": 53202
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-en-768.png",
+      "mtime": "2026-10-25T18:30:39.843Z",
+      "bytes": 54549
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-fr-1280.png",
-      "mtime": "2026-10-25T18:11:48.180Z",
-      "bytes": 57418
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-fr-1280.png",
+      "mtime": "2026-10-25T18:30:26.442Z",
+      "bytes": 58727
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-fr-375.png",
-      "mtime": "2026-10-25T18:11:48.169Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-fr-375.png",
+      "mtime": "2026-10-25T18:30:26.404Z",
       "bytes": 28072
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-fr-768.png",
-      "mtime": "2026-10-25T18:11:48.321Z",
-      "bytes": 54799
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-1-fr-768.png",
+      "mtime": "2026-10-25T18:30:26.397Z",
+      "bytes": 56131
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-en-1280.png",
-      "mtime": "2026-10-25T18:11:57.929Z",
-      "bytes": 52615
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-en-1280.png",
+      "mtime": "2026-10-25T18:30:41.237Z",
+      "bytes": 54593
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-en-375.png",
-      "mtime": "2026-10-25T18:11:57.383Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-en-375.png",
+      "mtime": "2026-10-25T18:30:40.904Z",
+      "bytes": 23932
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-en-768.png",
+      "mtime": "2026-10-25T18:30:40.746Z",
+      "bytes": 52103
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-fr-1280.png",
+      "mtime": "2026-10-25T18:30:27.402Z",
+      "bytes": 55998
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-fr-375.png",
+      "mtime": "2026-10-25T18:30:27.254Z",
+      "bytes": 25802
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-10-fr-768.png",
+      "mtime": "2026-10-25T18:30:27.282Z",
+      "bytes": 53559
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-en-1280.png",
+      "mtime": "2026-10-25T18:30:41.333Z",
+      "bytes": 56219
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-en-375.png",
+      "mtime": "2026-10-25T18:30:40.996Z",
+      "bytes": 26549
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-en-768.png",
+      "mtime": "2026-10-25T18:30:40.862Z",
+      "bytes": 53686
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-fr-1280.png",
+      "mtime": "2026-10-25T18:30:27.493Z",
+      "bytes": 57811
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-fr-375.png",
+      "mtime": "2026-10-25T18:30:27.344Z",
+      "bytes": 28190
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-11-fr-768.png",
+      "mtime": "2026-10-25T18:30:27.374Z",
+      "bytes": 55292
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-en-1280.png",
+      "mtime": "2026-10-25T18:30:41.440Z",
+      "bytes": 55777
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-en-375.png",
+      "mtime": "2026-10-25T18:30:41.087Z",
+      "bytes": 26963
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-en-768.png",
+      "mtime": "2026-10-25T18:30:40.961Z",
+      "bytes": 53288
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-fr-1280.png",
+      "mtime": "2026-10-25T18:30:27.617Z",
+      "bytes": 57298
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-fr-375.png",
+      "mtime": "2026-10-25T18:30:27.426Z",
+      "bytes": 28579
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-12-fr-768.png",
+      "mtime": "2026-10-25T18:30:27.453Z",
+      "bytes": 54796
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-en-1280.png",
+      "mtime": "2026-10-25T18:30:40.274Z",
+      "bytes": 56334
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-en-375.png",
+      "mtime": "2026-10-25T18:30:40.035Z",
       "bytes": 24279
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-en-768.png",
-      "mtime": "2026-10-25T18:11:57.681Z",
-      "bytes": 50108
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-en-768.png",
+      "mtime": "2026-10-25T18:30:39.939Z",
+      "bytes": 53731
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-fr-1280.png",
-      "mtime": "2026-10-25T18:11:48.355Z",
-      "bytes": 54012
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-fr-1280.png",
+      "mtime": "2026-10-25T18:30:26.553Z",
+      "bytes": 57787
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-fr-375.png",
-      "mtime": "2026-10-25T18:11:48.325Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-fr-375.png",
+      "mtime": "2026-10-25T18:30:26.497Z",
       "bytes": 25967
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-fr-768.png",
-      "mtime": "2026-10-25T18:11:48.506Z",
-      "bytes": 51481
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-2-fr-768.png",
+      "mtime": "2026-10-25T18:30:26.493Z",
+      "bytes": 55130
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.023Z",
-      "bytes": 52860
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-en-1280.png",
+      "mtime": "2026-10-25T18:30:40.384Z",
+      "bytes": 53157
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-en-375.png",
-      "mtime": "2026-10-25T18:11:57.471Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-en-375.png",
+      "mtime": "2026-10-25T18:30:40.113Z",
       "bytes": 23797
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-en-768.png",
-      "mtime": "2026-10-25T18:11:57.761Z",
-      "bytes": 50232
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-en-768.png",
+      "mtime": "2026-10-25T18:30:40.030Z",
+      "bytes": 50644
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-fr-1280.png",
-      "mtime": "2026-10-25T18:11:48.526Z",
-      "bytes": 54559
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-fr-1280.png",
+      "mtime": "2026-10-25T18:30:26.641Z",
+      "bytes": 54396
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-fr-375.png",
-      "mtime": "2026-10-25T18:11:48.500Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-fr-375.png",
+      "mtime": "2026-10-25T18:30:26.590Z",
       "bytes": 25318
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-fr-768.png",
-      "mtime": "2026-10-25T18:11:48.698Z",
-      "bytes": 51666
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-3-fr-768.png",
+      "mtime": "2026-10-25T18:30:26.585Z",
+      "bytes": 51856
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.126Z",
-      "bytes": 50460
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-en-1280.png",
+      "mtime": "2026-10-25T18:30:40.474Z",
+      "bytes": 53401
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-en-375.png",
-      "mtime": "2026-10-25T18:11:57.580Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-en-375.png",
+      "mtime": "2026-10-25T18:30:40.204Z",
       "bytes": 21650
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-en-768.png",
-      "mtime": "2026-10-25T18:11:57.856Z",
-      "bytes": 48031
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-en-768.png",
+      "mtime": "2026-10-25T18:30:40.125Z",
+      "bytes": 50599
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-fr-1280.png",
-      "mtime": "2026-10-25T18:11:48.718Z",
-      "bytes": 51597
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-fr-1280.png",
+      "mtime": "2026-10-25T18:30:26.755Z",
+      "bytes": 54932
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-fr-375.png",
-      "mtime": "2026-10-25T18:11:48.703Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-fr-375.png",
+      "mtime": "2026-10-25T18:30:26.714Z",
       "bytes": 22737
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-fr-768.png",
-      "mtime": "2026-10-25T18:11:48.850Z",
-      "bytes": 49148
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-4-fr-768.png",
+      "mtime": "2026-10-25T18:30:26.715Z",
+      "bytes": 52080
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.225Z",
-      "bytes": 51838
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-en-1280.png",
+      "mtime": "2026-10-25T18:30:40.610Z",
+      "bytes": 51024
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-en-375.png",
-      "mtime": "2026-10-25T18:11:57.687Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-en-375.png",
+      "mtime": "2026-10-25T18:30:40.301Z",
       "bytes": 23093
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-en-768.png",
-      "mtime": "2026-10-25T18:11:57.949Z",
-      "bytes": 49418
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-en-768.png",
+      "mtime": "2026-10-25T18:30:40.218Z",
+      "bytes": 48550
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-fr-1280.png",
-      "mtime": "2026-10-25T18:11:48.877Z",
-      "bytes": 53024
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-fr-1280.png",
+      "mtime": "2026-10-25T18:30:26.867Z",
+      "bytes": 51989
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-fr-375.png",
-      "mtime": "2026-10-25T18:11:48.917Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-fr-375.png",
+      "mtime": "2026-10-25T18:30:26.806Z",
       "bytes": 24449
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-fr-768.png",
-      "mtime": "2026-10-25T18:11:49.005Z",
-      "bytes": 50559
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-5-fr-768.png",
+      "mtime": "2026-10-25T18:30:26.802Z",
+      "bytes": 49532
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.332Z",
-      "bytes": 52720
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-en-1280.png",
+      "mtime": "2026-10-25T18:30:40.775Z",
+      "bytes": 52430
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-en-375.png",
-      "mtime": "2026-10-25T18:11:57.796Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-en-375.png",
+      "mtime": "2026-10-25T18:30:40.389Z",
       "bytes": 22052
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-en-768.png",
-      "mtime": "2026-10-25T18:11:58.057Z",
-      "bytes": 50281
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-en-768.png",
+      "mtime": "2026-10-25T18:30:40.326Z",
+      "bytes": 49986
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-fr-1280.png",
-      "mtime": "2026-10-25T18:11:49.096Z",
-      "bytes": 54145
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-fr-1280.png",
+      "mtime": "2026-10-25T18:30:26.984Z",
+      "bytes": 53392
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-fr-375.png",
-      "mtime": "2026-10-25T18:11:49.083Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-fr-375.png",
+      "mtime": "2026-10-25T18:30:26.899Z",
       "bytes": 23356
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-fr-768.png",
-      "mtime": "2026-10-25T18:11:49.144Z",
-      "bytes": 51710
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-6-fr-768.png",
+      "mtime": "2026-10-25T18:30:26.883Z",
+      "bytes": 50907
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.441Z",
-      "bytes": 52538
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-en-1280.png",
+      "mtime": "2026-10-25T18:30:40.913Z",
+      "bytes": 53269
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-en-375.png",
-      "mtime": "2026-10-25T18:11:57.892Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-en-375.png",
+      "mtime": "2026-10-25T18:30:40.467Z",
       "bytes": 23782
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-en-768.png",
-      "mtime": "2026-10-25T18:11:58.150Z",
-      "bytes": 50097
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-en-768.png",
+      "mtime": "2026-10-25T18:30:40.419Z",
+      "bytes": 50823
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-fr-1280.png",
-      "mtime": "2026-10-25T18:11:49.217Z",
-      "bytes": 54020
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-fr-1280.png",
+      "mtime": "2026-10-25T18:30:27.098Z",
+      "bytes": 54551
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-fr-375.png",
-      "mtime": "2026-10-25T18:11:49.190Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-fr-375.png",
+      "mtime": "2026-10-25T18:30:26.993Z",
       "bytes": 25166
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-fr-768.png",
-      "mtime": "2026-10-25T18:11:49.250Z",
-      "bytes": 51557
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-7-fr-768.png",
+      "mtime": "2026-10-25T18:30:26.989Z",
+      "bytes": 52106
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.550Z",
-      "bytes": 51662
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-en-1280.png",
+      "mtime": "2026-10-25T18:30:41.021Z",
+      "bytes": 53133
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-en-375.png",
-      "mtime": "2026-10-25T18:11:57.968Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-en-375.png",
+      "mtime": "2026-10-25T18:30:40.578Z",
       "bytes": 24158
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-en-768.png",
-      "mtime": "2026-10-25T18:11:58.257Z",
-      "bytes": 49302
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-en-768.png",
+      "mtime": "2026-10-25T18:30:40.495Z",
+      "bytes": 50674
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-fr-1280.png",
-      "mtime": "2026-10-25T18:11:49.339Z",
-      "bytes": 53241
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-fr-1280.png",
+      "mtime": "2026-10-25T18:30:27.200Z",
+      "bytes": 54383
     },
     {
-      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-fr-375.png",
-      "mtime": "2026-10-25T18:11:49.297Z",
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-fr-375.png",
+      "mtime": "2026-10-25T18:30:27.085Z",
       "bytes": 25842
     },
     {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-8-fr-768.png",
+      "mtime": "2026-10-25T18:30:27.082Z",
+      "bytes": 51894
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-en-1280.png",
+      "mtime": "2026-10-25T18:30:41.132Z",
+      "bytes": 52274
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-en-375.png",
+      "mtime": "2026-10-25T18:30:40.786Z",
+      "bytes": 23804
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-en-768.png",
+      "mtime": "2026-10-25T18:30:40.598Z",
+      "bytes": 49882
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-fr-1280.png",
+      "mtime": "2026-10-25T18:30:27.293Z",
+      "bytes": 53628
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-fr-375.png",
+      "mtime": "2026-10-25T18:30:27.176Z",
+      "bytes": 25492
+    },
+    {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-control-9-fr-768.png",
-      "mtime": "2026-10-25T18:11:49.358Z",
-      "bytes": 50873
+      "mtime": "2026-10-25T18:30:27.188Z",
+      "bytes": 51224
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-dark-en-1280.png",
-      "mtime": "2026-10-25T18:12:03.735Z",
-      "bytes": 62555
+      "mtime": "2026-10-25T18:30:48.812Z",
+      "bytes": 63120
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-dark-en-375.png",
-      "mtime": "2026-10-25T18:12:03.477Z",
+      "mtime": "2026-10-25T18:30:47.541Z",
       "bytes": 31731
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-dark-en-768.png",
-      "mtime": "2026-10-25T18:12:03.211Z",
-      "bytes": 59711
+      "mtime": "2026-10-25T18:30:47.755Z",
+      "bytes": 60243
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-dark-fr-1280.png",
-      "mtime": "2026-10-25T18:11:55.036Z",
-      "bytes": 66135
+      "mtime": "2026-10-25T18:30:34.991Z",
+      "bytes": 66476
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-dark-fr-375.png",
-      "mtime": "2026-10-25T18:11:55.334Z",
+      "mtime": "2026-10-25T18:30:34.549Z",
       "bytes": 34957
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-dark-fr-768.png",
-      "mtime": "2026-10-25T18:11:54.721Z",
-      "bytes": 63233
+      "mtime": "2026-10-25T18:30:34.793Z",
+      "bytes": 63569
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-end-en-1280.png",
-      "mtime": "2026-10-25T18:11:58.949Z",
-      "bytes": 55277
+      "mtime": "2026-10-25T18:30:41.556Z",
+      "bytes": 55777
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-end-en-375.png",
-      "mtime": "2026-10-25T18:11:58.341Z",
-      "bytes": 26965
+      "mtime": "2026-10-25T18:30:41.181Z",
+      "bytes": 26963
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-end-en-768.png",
-      "mtime": "2026-10-25T18:11:58.631Z",
-      "bytes": 52794
+      "mtime": "2026-10-25T18:30:41.056Z",
+      "bytes": 53288
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-end-fr-1280.png",
-      "mtime": "2026-10-25T18:11:49.907Z",
-      "bytes": 56945
+      "mtime": "2026-10-25T18:30:27.751Z",
+      "bytes": 57298
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-end-fr-375.png",
-      "mtime": "2026-10-25T18:11:49.848Z",
-      "bytes": 28514
+      "mtime": "2026-10-25T18:30:27.502Z",
+      "bytes": 28579
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-end-fr-768.png",
-      "mtime": "2026-10-25T18:11:49.872Z",
-      "bytes": 54442
+      "mtime": "2026-10-25T18:30:27.529Z",
+      "bytes": 54796
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-top-en-1280.png",
-      "mtime": "2026-10-25T18:11:57.464Z",
-      "bytes": 57001
+      "mtime": "2026-10-25T18:30:39.967Z",
+      "bytes": 57499
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-top-en-375.png",
-      "mtime": "2026-10-25T18:11:56.942Z",
+      "mtime": "2026-10-25T18:30:39.772Z",
       "bytes": 28259
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-top-en-768.png",
-      "mtime": "2026-10-25T18:11:57.209Z",
-      "bytes": 54473
+      "mtime": "2026-10-25T18:30:39.644Z",
+      "bytes": 54949
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-top-fr-1280.png",
-      "mtime": "2026-10-25T18:11:47.703Z",
-      "bytes": 58995
+      "mtime": "2026-10-25T18:30:26.213Z",
+      "bytes": 59345
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-top-fr-375.png",
-      "mtime": "2026-10-25T18:11:47.669Z",
+      "mtime": "2026-10-25T18:30:26.203Z",
       "bytes": 30069
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-editor-top-fr-768.png",
-      "mtime": "2026-10-25T18:11:47.831Z",
-      "bytes": 56336
+      "mtime": "2026-10-25T18:30:26.201Z",
+      "bytes": 56660
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-error-en-1280.png",
-      "mtime": "2026-10-25T18:11:59.279Z",
-      "bytes": 58278
+      "mtime": "2026-10-25T18:30:41.904Z",
+      "bytes": 58789
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-error-en-375.png",
-      "mtime": "2026-10-25T18:11:58.676Z",
+      "mtime": "2026-10-25T18:30:41.466Z",
       "bytes": 28392
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-error-en-768.png",
-      "mtime": "2026-10-25T18:11:58.980Z",
-      "bytes": 55765
+      "mtime": "2026-10-25T18:30:41.427Z",
+      "bytes": 56296
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-error-fr-1280.png",
-      "mtime": "2026-10-25T18:11:50.447Z",
-      "bytes": 60275
+      "mtime": "2026-10-25T18:30:28.153Z",
+      "bytes": 60616
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-error-fr-375.png",
-      "mtime": "2026-10-25T18:11:50.363Z",
+      "mtime": "2026-10-25T18:30:27.830Z",
       "bytes": 30340
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-error-fr-768.png",
-      "mtime": "2026-10-25T18:11:50.373Z",
-      "bytes": 57681
+      "mtime": "2026-10-25T18:30:27.926Z",
+      "bytes": 58010
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-global-catalog-en-1280.png",
+      "mtime": "2026-10-25T18:30:39.312Z",
+      "bytes": 52047
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-global-catalog-en-375.png",
+      "mtime": "2026-10-25T18:30:39.161Z",
+      "bytes": 25255
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-global-catalog-en-768.png",
+      "mtime": "2026-10-25T18:30:39.006Z",
+      "bytes": 49676
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-global-catalog-fr-1280.png",
+      "mtime": "2026-10-25T18:30:25.644Z",
+      "bytes": 54357
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-global-catalog-fr-375.png",
+      "mtime": "2026-10-25T18:30:25.519Z",
+      "bytes": 27207
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-global-catalog-fr-768.png",
+      "mtime": "2026-10-25T18:30:25.518Z",
+      "bytes": 51702
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-impact-dialog-en-1280.png",
-      "mtime": "2026-10-25T18:11:59.079Z",
-      "bytes": 72378
+      "mtime": "2026-10-25T18:30:41.695Z",
+      "bytes": 72943
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-impact-dialog-en-375.png",
-      "mtime": "2026-10-25T18:11:58.483Z",
+      "mtime": "2026-10-25T18:30:41.291Z",
       "bytes": 38549
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-impact-dialog-en-768.png",
-      "mtime": "2026-10-25T18:11:58.769Z",
-      "bytes": 65869
+      "mtime": "2026-10-25T18:30:41.208Z",
+      "bytes": 66402
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-impact-dialog-fr-1280.png",
-      "mtime": "2026-10-25T18:11:50.101Z",
-      "bytes": 73994
+      "mtime": "2026-10-25T18:30:27.910Z",
+      "bytes": 74317
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-impact-dialog-fr-375.png",
-      "mtime": "2026-10-25T18:11:50.094Z",
+      "mtime": "2026-10-25T18:30:27.654Z",
       "bytes": 40343
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-impact-dialog-fr-768.png",
-      "mtime": "2026-10-25T18:11:50.062Z",
-      "bytes": 67921
+      "mtime": "2026-10-25T18:30:27.693Z",
+      "bytes": 68249
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-populated-assignments-en-1280.png",
-      "mtime": "2026-10-25T18:11:57.172Z",
-      "bytes": 62066
+      "mtime": "2026-10-25T18:30:39.720Z",
+      "bytes": 62686
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-populated-assignments-en-375.png",
-      "mtime": "2026-10-25T18:11:56.597Z",
-      "bytes": 31497
+      "mtime": "2026-10-25T18:30:39.527Z",
+      "bytes": 29333
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-populated-assignments-en-768.png",
-      "mtime": "2026-10-25T18:11:56.957Z",
-      "bytes": 59371
+      "mtime": "2026-10-25T18:30:39.384Z",
+      "bytes": 59953
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-populated-assignments-fr-1280.png",
-      "mtime": "2026-10-25T18:11:47.234Z",
-      "bytes": 65472
+      "mtime": "2026-10-25T18:30:25.958Z",
+      "bytes": 65912
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-populated-assignments-fr-375.png",
-      "mtime": "2026-10-25T18:11:47.205Z",
-      "bytes": 34514
+      "mtime": "2026-10-25T18:30:25.960Z",
+      "bytes": 32030
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/roles-populated-assignments-fr-768.png",
-      "mtime": "2026-10-25T18:11:47.315Z",
-      "bytes": 62743
+      "mtime": "2026-10-25T18:30:25.945Z",
+      "bytes": 63146
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/sidebar-collapsed-en-1280.png",
-      "mtime": "2026-10-25T18:12:04.352Z",
+      "mtime": "2026-10-25T18:30:50.338Z",
       "bytes": 33039
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/sidebar-collapsed-en-768.png",
-      "mtime": "2026-10-25T18:12:03.767Z",
+      "mtime": "2026-10-25T18:30:49.055Z",
       "bytes": 31556
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/sidebar-collapsed-fr-1280.png",
-      "mtime": "2026-10-25T18:11:55.650Z",
+      "mtime": "2026-10-25T18:30:36.541Z",
       "bytes": 35054
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/sidebar-collapsed-fr-768.png",
-      "mtime": "2026-10-25T18:11:55.260Z",
+      "mtime": "2026-10-25T18:30:36.173Z",
       "bytes": 34458
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/sidebar-mobile-open-en-375.png",
-      "mtime": "2026-10-25T18:12:04.032Z",
+      "mtime": "2026-10-25T18:30:48.845Z",
       "bytes": 28287
     },
     {
       "path": "specs/002-b2b-organizations-rbac/evidence/ui/current/sidebar-mobile-open-fr-375.png",
-      "mtime": "2026-10-25T18:11:55.826Z",
+      "mtime": "2026-10-25T18:30:35.956Z",
       "bytes": 28235
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-en-1280-form-0-action-3.png",
+      "mtime": "2026-10-25T18:30:42.896Z",
+      "bytes": 64989
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-en-1280-form-0-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:42.627Z",
+      "bytes": 61551
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-en-375-form-0-action-3.png",
+      "mtime": "2026-10-25T18:30:42.456Z",
+      "bytes": 33341
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-en-375-form-0-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:42.219Z",
+      "bytes": 29934
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-en-768-form-0-action-3.png",
+      "mtime": "2026-10-25T18:30:42.319Z",
+      "bytes": 62240
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-en-768-form-0-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:42.091Z",
+      "bytes": 58837
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-fr-1280-form-0-action-3.png",
+      "mtime": "2026-10-25T18:30:29.122Z",
+      "bytes": 67498
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-fr-1280-form-0-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:28.871Z",
+      "bytes": 63625
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-fr-375-form-0-action-3.png",
+      "mtime": "2026-10-25T18:30:28.862Z",
+      "bytes": 35217
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-fr-375-form-0-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:28.588Z",
+      "bytes": 31441
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-fr-768-form-0-action-3.png",
+      "mtime": "2026-10-25T18:30:28.879Z",
+      "bytes": 64641
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/client-assignment-success-fr-768-form-0-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:28.615Z",
+      "bytes": 60897
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-1280-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:44.351Z",
+      "bytes": 53062
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-1280-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:44.182Z",
+      "bytes": 52179
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-1280-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:44.849Z",
+      "bytes": 50967
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-1280-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:44.586Z",
+      "bytes": 50951
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-375-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:43.779Z",
+      "bytes": 26036
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-375-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:43.585Z",
+      "bytes": 25291
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-375-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:44.266Z",
+      "bytes": 23056
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-375-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:44.031Z",
+      "bytes": 23075
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-768-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:43.778Z",
+      "bytes": 50612
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-768-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:43.519Z",
+      "bytes": 49733
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-768-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:44.246Z",
+      "bytes": 48530
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-en-768-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:44.014Z",
+      "bytes": 48529
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-1280-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:30.443Z",
+      "bytes": 53619
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-1280-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:30.269Z",
+      "bytes": 52761
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-1280-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:30.996Z",
+      "bytes": 51733
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-1280-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:30.719Z",
+      "bytes": 51728
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-375-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:30.216Z",
+      "bytes": 26693
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-375-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:30.059Z",
+      "bytes": 25908
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-375-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:30.752Z",
+      "bytes": 23792
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-375-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:30.495Z",
+      "bytes": 23808
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-768-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:30.227Z",
+      "bytes": 51086
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-768-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:30.088Z",
+      "bytes": 50305
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-768-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:30.740Z",
+      "bytes": 49245
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-created-fr-768-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:30.490Z",
+      "bytes": 49249
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-1280-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:45.498Z",
+      "bytes": 54980
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-1280-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:45.283Z",
+      "bytes": 54226
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-1280-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:46.074Z",
+      "bytes": 52902
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-1280-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:45.805Z",
+      "bytes": 52935
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-375-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:44.792Z",
+      "bytes": 27842
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-375-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:44.625Z",
+      "bytes": 27099
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-375-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:45.324Z",
+      "bytes": 24857
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-375-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:45.061Z",
+      "bytes": 24871
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-768-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:44.789Z",
+      "bytes": 52400
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-768-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:44.620Z",
+      "bytes": 51705
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-768-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:45.304Z",
+      "bytes": 50419
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-en-768-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:45.036Z",
+      "bytes": 50424
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-1280-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:31.637Z",
+      "bytes": 55509
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-1280-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:31.407Z",
+      "bytes": 54817
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-1280-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:32.194Z",
+      "bytes": 53643
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-1280-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:31.927Z",
+      "bytes": 53652
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-375-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:31.290Z",
+      "bytes": 28481
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-375-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:31.090Z",
+      "bytes": 27699
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-375-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:31.920Z",
+      "bytes": 25607
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-375-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:31.659Z",
+      "bytes": 25610
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-768-form-0-action-1.png",
+      "mtime": "2026-10-25T18:30:31.411Z",
+      "bytes": 52850
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-768-form-0-scroll-action-1.png",
+      "mtime": "2026-10-25T18:30:31.211Z",
+      "bytes": 52219
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-768-form-1-action-3.png",
+      "mtime": "2026-10-25T18:30:31.968Z",
+      "bytes": 51070
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/organizations-error-fr-768-form-1-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:31.719Z",
+      "bytes": 51106
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-1280-form-0-action-7.png",
+      "mtime": "2026-10-25T18:30:38.525Z",
+      "bytes": 54609
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-1280-form-0-scroll-action-7.png",
+      "mtime": "2026-10-25T18:30:38.045Z",
+      "bytes": 58204
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-1280-form-1-action-2.png",
+      "mtime": "2026-10-25T18:30:39.018Z",
+      "bytes": 56900
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-1280-form-1-scroll-action-2.png",
+      "mtime": "2026-10-25T18:30:38.776Z",
+      "bytes": 56838
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-375-form-0-action-7.png",
+      "mtime": "2026-10-25T18:30:38.408Z",
+      "bytes": 25556
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-375-form-0-scroll-action-7.png",
+      "mtime": "2026-10-25T18:30:37.723Z",
+      "bytes": 27243
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-375-form-1-action-2.png",
+      "mtime": "2026-10-25T18:30:38.870Z",
+      "bytes": 27501
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-375-form-1-scroll-action-2.png",
+      "mtime": "2026-10-25T18:30:38.640Z",
+      "bytes": 27507
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-768-form-0-action-7.png",
+      "mtime": "2026-10-25T18:30:38.273Z",
+      "bytes": 52104
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-768-form-0-scroll-action-7.png",
+      "mtime": "2026-10-25T18:30:37.755Z",
+      "bytes": 55619
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-768-form-1-action-2.png",
+      "mtime": "2026-10-25T18:30:38.701Z",
+      "bytes": 54297
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-en-768-form-1-scroll-action-2.png",
+      "mtime": "2026-10-25T18:30:38.479Z",
+      "bytes": 54237
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-1280-form-0-action-7.png",
+      "mtime": "2026-10-25T18:30:24.792Z",
+      "bytes": 55232
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-1280-form-0-scroll-action-7.png",
+      "mtime": "2026-10-25T18:30:24.216Z",
+      "bytes": 58845
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-1280-form-1-action-2.png",
+      "mtime": "2026-10-25T18:30:25.284Z",
+      "bytes": 57253
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-1280-form-1-scroll-action-2.png",
+      "mtime": "2026-10-25T18:30:25.036Z",
+      "bytes": 57245
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-375-form-0-action-7.png",
+      "mtime": "2026-10-25T18:30:24.794Z",
+      "bytes": 26523
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-375-form-0-scroll-action-7.png",
+      "mtime": "2026-10-25T18:30:24.173Z",
+      "bytes": 27562
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-375-form-1-action-2.png",
+      "mtime": "2026-10-25T18:30:25.342Z",
+      "bytes": 28006
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-375-form-1-scroll-action-2.png",
+      "mtime": "2026-10-25T18:30:25.025Z",
+      "bytes": 28008
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-768-form-0-action-7.png",
+      "mtime": "2026-10-25T18:30:24.745Z",
+      "bytes": 52601
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-768-form-0-scroll-action-7.png",
+      "mtime": "2026-10-25T18:30:24.188Z",
+      "bytes": 56213
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-768-form-1-action-2.png",
+      "mtime": "2026-10-25T18:30:25.223Z",
+      "bytes": 54617
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/profile-error-fr-768-form-1-scroll-action-2.png",
+      "mtime": "2026-10-25T18:30:24.989Z",
+      "bytes": 54602
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/roles-dark-en-1280-form-2-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:49.525Z",
+      "bytes": 59351
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/roles-dark-en-375-form-2-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:48.131Z",
+      "bytes": 27788
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/roles-dark-en-768-form-2-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:48.311Z",
+      "bytes": 56698
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/roles-dark-fr-1280-form-2-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:35.575Z",
+      "bytes": 62056
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/roles-dark-fr-375-form-2-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:35.212Z",
+      "bytes": 29814
+    },
+    {
+      "path": "specs/002-b2b-organizations-rbac/evidence/ui/reachability/roles-dark-fr-768-form-2-scroll-action-3.png",
+      "mtime": "2026-10-25T18:30:35.409Z",
+      "bytes": 59288
     }
   ]
 }

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
+import { proveFormReachability } from './support/reachability';
 
 async function capture(page: Page, name: string, target?: Locator) {
   if (target) await target.evaluate((element) => element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }));
@@ -53,9 +54,13 @@ for (const locale of ['fr', 'en'] as const) for (const width of [375, 768, 1280]
     await shot('profile-preferences-sessions', page.getByRole('heading', { name: label('Sessions actives', 'Active sessions'), exact: true }));
     failWrites = true;
     await page.getByRole('button', { name: label('Enregistrer', 'Save'), exact: true }).first().click();
-    await expect(page.getByRole('alert')).toBeVisible(); await shot('profile-error'); failWrites = false;
+    await expect(page.getByRole('alert')).toBeVisible(); await shot('profile-error');
+    await proveFormReachability(page, `profile-error-${locale}-${width}`); failWrites = false;
 
-    await page.goto('/admin/roles'); await expect(page.getByText('Support international', { exact: true }).first()).toBeVisible();
+    await page.goto('/admin/roles');
+    await expect(page.locator('strong').filter({ hasText: /^Support international$/ })).toBeVisible();
+    await expect(page.getByRole('alert')).toHaveCount(0); await shot('roles-global-catalog');
+    await page.goto('/admin/roles?tenantId=tenant'); await expect(page.getByText('Support international', { exact: true }).first()).toBeVisible();
     await shot('roles-catalog-top');
     await shot('roles-populated-assignments', page.getByRole('heading', { name: label('Attributions de rôles', 'Role assignments'), exact: true }));
     await shot('roles-assignment-last-action', page.getByRole('button', { name: label('Suspendre', 'Suspend'), exact: true }));
@@ -78,6 +83,7 @@ for (const locale of ['fr', 'en'] as const) for (const width of [375, 768, 1280]
     await shot('client-assignment-filled', member);
     await page.getByRole('button', { name: label('Attribuer', 'Assign'), exact: true }).click();
     await expect(page.getByRole('status')).toContainText(label('Modification enregistrée', 'Changes saved')); await shot('client-assignment-success');
+    await proveFormReachability(page, `client-assignment-success-${locale}-${width}`);
     await shot('client-assignment-last-action', page.getByRole('button', { name: label('Suspendre', 'Suspend'), exact: true }));
     await page.getByRole('button', { name: label('Retirer le rôle', 'Revoke role'), exact: true }).click();
     await shot('client-revoke-dialog'); await page.keyboard.press('Escape');
@@ -92,9 +98,11 @@ for (const locale of ['fr', 'en'] as const) for (const width of [375, 768, 1280]
     const createTenant = page.getByRole('button', { name: label('Créer et inviter', 'Create and invite'), exact: true });
     await shot('organizations-create-tenant', createTenant); await createTenant.click();
     await expect(page.getByRole('status')).toContainText(label('Modification enregistrée', 'Changes saved')); await shot('organizations-created');
+    await proveFormReachability(page, `organizations-created-${locale}-${width}`);
     failWrites = true; await page.getByLabel(label('Nom de l’organisation', 'Organization name'), { exact: true }).fill('Nouvelle organisation');
     await page.getByRole('button', { name: label('Créer l’organisation cliente', 'Create client organization'), exact: true }).click();
-    await expect(page.getByRole('alert')).toBeVisible(); await shot('organizations-error'); failWrites = false;
+    await expect(page.getByRole('alert')).toBeVisible(); await shot('organizations-error');
+    await proveFormReachability(page, `organizations-error-${locale}-${width}`); failWrites = false;
     mode = 'empty'; await page.reload(); await expect(page.getByText(label('Aucune organisation cliente.', 'No client organizations.'), { exact: true })).toBeVisible(); await shot('organizations-empty');
     mode = 'normal'; let release = () => {}; gate = new Promise<void>((resolve) => { release = resolve; });
     await page.reload(); await expect(page.getByRole('status')).toContainText(label('Chargement', 'Loading')); await shot('organizations-loading'); release(); gate = null;
@@ -110,12 +118,13 @@ for (const locale of ['fr', 'en'] as const) for (const width of [375, 768, 1280]
     await page.reload(); await expect(page.getByRole('status')).toContainText(label('Chargement', 'Loading')); await shot('audit-loading'); release(); gate = null;
     theme = 'dark';
     for (const path of ['profile', 'roles', 'organizations', 'audit']) {
-      await page.goto('/admin/' + path);
+      await page.goto('/admin/' + path + (path === 'roles' ? '?tenantId=tenant' : ''));
       await expect(page.locator('main h1')).toBeVisible();
       await expect(page.locator('main [aria-busy=true]')).toHaveCount(0);
       await expect(page.getByRole('status').filter({ hasText: /Chargement|Loading/ })).toHaveCount(0);
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
       await shot(path + '-dark');
+      if (path === 'roles') await proveFormReachability(page, `roles-dark-${locale}-${width}`);
     }
     if (width < 768) {
       await page.getByRole('button', { name: 'Menu', exact: true }).click();
