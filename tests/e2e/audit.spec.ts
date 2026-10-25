@@ -25,9 +25,7 @@ async function fixture(page: Page, role: 'super_admin' | 'tenant_admin' | 'membe
 }
 
 for (const locale of ['fr', 'en'] as const) {
-  for (const width of [375, 768, 1280]) {
-    test(`audit consultation, paging and tenant scope (${locale}, ${width}px)`, async ({ page }, testInfo) => {
-      await page.setViewportSize({ width, height: 900 });
+    test(`audit consultation, paging and tenant scope (${locale})`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem('locale', value), locale);
       const queries = await fixture(page);
       let releaseAudit = () => {};
@@ -36,32 +34,23 @@ for (const locale of ['fr', 'en'] as const) {
       await page.goto('/admin/audit');
       await expect(page.getByRole('heading', { name: locale === 'fr' ? 'Journal d’audit' : 'Audit log' })).toBeVisible();
       await expect(page.getByRole('status')).toContainText(locale === 'fr' ? 'Chargement' : 'Loading');
-      await page.screenshot({ path: testInfo.outputPath('audit-loading.png'), fullPage: true });
       releaseAudit();
       await expect(page.getByRole('cell', { name: locale === 'fr' ? 'Création Mutation enregistrée' : 'Created Recorded mutation', exact: true })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await page.screenshot({ path: testInfo.outputPath('audit-list.png'), fullPage: true });
-      await page.emulateMedia({ colorScheme: 'dark' });
-      await page.screenshot({ path: testInfo.outputPath('audit-list-dark.png'), fullPage: true });
-      await page.emulateMedia({ colorScheme: 'light' });
       await page.getByRole('button', { name: locale === 'fr' ? 'Événements plus anciens' : 'Older events' }).click();
       await expect(page.getByRole('cell', { name: locale === 'fr' ? 'Modification Mutation enregistrée' : 'Updated Recorded mutation', exact: true })).toBeVisible();
       expect(queries.some((query) => query.includes('before=20'))).toBe(true);
       await expect(page.getByRole('button', { name: locale === 'fr' ? 'Événements plus anciens' : 'Older events' })).toBeDisabled();
-      await page.screenshot({ path: testInfo.outputPath('audit-last-page.png'), fullPage: true });
       await page.goto('/admin/audit?tenantId=' + tenant);
       await expect(page.getByText(locale === 'fr' ? 'Événements de l’organisation sélectionnée.' : 'Events for the selected organization.', { exact: true })).toBeVisible();
       await expect.poll(() => queries.some((query) => query.includes('tenantId=' + tenant) && !query.includes('before='))).toBe(true);
       await page.route('**/api/platform/audit?*', (route) => route.fulfill({ json: { events: [], nextCursor: null } }));
       await page.getByRole('button', { name: locale === 'fr' ? 'Revenir aux plus récents' : 'Back to latest events' }).click();
       await expect(page.getByText(locale === 'fr' ? 'Aucun événement à afficher.' : 'No events to display.', { exact: true })).toBeVisible();
-      await page.screenshot({ path: testInfo.outputPath('audit-empty.png'), fullPage: true });
       await page.route('**/api/platform/audit?*', (route) => route.fulfill({ status: 503, json: { code: 'INTERNAL_ERROR' } }));
       await page.getByRole('button', { name: locale === 'fr' ? 'Revenir aux plus récents' : 'Back to latest events' }).click();
       await expect(page.getByRole('alert')).toBeVisible();
-      await page.screenshot({ path: testInfo.outputPath('audit-error.png'), fullPage: true });
     });
-  }
 }
 
 for (const role of ['tenant_admin', 'member', 'anonymous'] as const) {

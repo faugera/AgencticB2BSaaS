@@ -133,8 +133,4 @@ test('login remains usable in dark mode with visible keyboard focus', async ({
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.screenshot({
-    path: test.info().outputPath('login-dark.png'),
-    fullPage: true,
-  });
 });

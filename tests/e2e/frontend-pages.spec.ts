@@ -28,9 +28,7 @@ async function fixture(page: Page, role: 'super_admin' | 'tenant_admin' | 'membe
 }
 
 for (const locale of ['fr', 'en'] as const) {
-  for (const width of [375, 768, 1280]) {
-    test(`new pages, persistence calls and navigation (${locale}, ${width}px)`, async ({ page }, testInfo) => {
-      await page.setViewportSize({ width, height: 900 });
+    test(`new pages, persistence calls and navigation (${locale})`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem('locale', value), locale);
       const writes = await fixture(page, 'tenant_admin');
       await page.goto('/signup');
@@ -43,14 +41,9 @@ for (const locale of ['fr', 'en'] as const) {
       await page.getByLabel(locale === 'fr' ? 'Prénom' : 'First name', { exact: true }).fill('Test');
       await page.getByLabel(locale === 'fr' ? 'Nom de famille' : 'Last name', { exact: true }).fill('Candidate');
       await page.getByLabel(locale === 'fr' ? 'Adresse email' : 'Email address', { exact: true }).fill('candidate@example.test');
-      await page.screenshot({ path: testInfo.outputPath('signup-form.png'), fullPage: true });
-      await page.emulateMedia({ colorScheme: 'dark' });
-      await page.screenshot({ path: testInfo.outputPath('signup-form-dark.png'), fullPage: true });
-      await page.emulateMedia({ colorScheme: 'light' });
       await page.getByRole('button', { name: locale === 'fr' ? 'Demander un accès' : 'Request access', exact: true }).click();
       await expect(page.getByRole('status')).toContainText(locale === 'fr' ? 'votre demande a été enregistrée' : 'your request has been recorded');
       expect(writes.find((entry) => entry.path === '/api/access-requests')?.body).toEqual({ link, firstName: 'Test', lastName: 'Candidate', email: 'candidate@example.test' });
-      await page.screenshot({ path: testInfo.outputPath('signup.png'), fullPage: true });
       for (const path of ['/app/profile', '/app/members', '/app/invitations']) {
         await page.goto(path);
         const title = path.endsWith('profile') ? (locale === 'fr' ? 'Mon profil' : 'My profile') : path.endsWith('members') ? (locale === 'fr' ? 'Membres' : 'Members') : (locale === 'fr' ? 'Invitations' : 'Invitations');
@@ -64,23 +57,24 @@ for (const locale of ['fr', 'en'] as const) {
           await page.getByRole('dialog').getByRole('button', { name: locale === 'fr' ? 'Confirmer' : 'Confirm', exact: true }).click();
           await expect(page.getByText('Other browser', { exact: true })).toHaveCount(0);
           await expect(page.getByText('Test browser', { exact: true })).toBeVisible();
+          await expect(page.getByRole('button', { name: locale === 'fr' ? 'Déconnecter mes autres appareils' : 'Sign out my other devices' })).toBeDisabled();
         }
         if (path.endsWith('invitations')) {
+          const email = page.getByLabel(locale === 'fr' ? 'Adresse email' : 'Email address', { exact: true });
+          await email.fill('invalid');
+          await page.getByRole('button', { name: locale === 'fr' ? 'Inviter' : 'Invite', exact: true }).click();
+          expect(await email.evaluate((element: HTMLInputElement) => element.validity.valid)).toBe(false);
+          expect(writes.some((entry) => entry.path === '/api/invitations')).toBe(false);
           await expect(page.getByText(locale === 'fr' ? 'Aucune invitation.' : 'No invitations.', { exact: true })).toBeVisible();
           await page.getByRole('button', { name: locale === 'fr' ? 'Obtenir le lien de demande d’accès' : 'Get an access-request link' }).click();
           await expect(page.getByLabel(locale === 'fr' ? 'Lien à partager avec les candidats' : 'Link to share with applicants')).toHaveValue(/signup\?link=/);
         }
         if (path.endsWith('members')) await expect(page.getByText(locale === 'fr' ? 'Aucun membre.' : 'No members.', { exact: true })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-        await page.screenshot({ path: testInfo.outputPath(path.split('/').at(-1) + '.png'), fullPage: true });
-        await page.emulateMedia({ colorScheme: 'dark' });
-        await page.screenshot({ path: testInfo.outputPath(path.split('/').at(-1) + '-dark.png'), fullPage: true });
-        await page.emulateMedia({ colorScheme: 'light' });
       }
       expect(writes.find((entry) => entry.path === '/api/auth/update-user')?.body).toEqual({ name: 'Updated' });
     });
-    test(`super-admin profile and protected documentation (${locale}, ${width}px)`, async ({ page }, testInfo) => {
-      await page.setViewportSize({ width, height: 900 });
+    test(`super-admin profile and protected documentation (${locale})`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem('locale', value), locale);
       await fixture(page, 'super_admin');
       for (const path of ['/admin/profile', '/docs']) {
@@ -88,13 +82,8 @@ for (const locale of ['fr', 'en'] as const) {
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(path === '/docs' ? 'Documentation' : locale === 'fr' ? 'Mon profil' : 'My profile');
         if (path === '/docs') await expect(page.getByRole('heading', { name: locale === 'fr' ? 'Guide des organisations' : 'Organization guide' })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-        await page.screenshot({ path: testInfo.outputPath(path === '/docs' ? 'docs.png' : 'admin-profile.png'), fullPage: true });
-        await page.emulateMedia({ colorScheme: 'dark' });
-        await page.screenshot({ path: testInfo.outputPath(path === '/docs' ? 'docs-dark.png' : 'admin-profile-dark.png'), fullPage: true });
-        await page.emulateMedia({ colorScheme: 'light' });
       }
     });
-  }
 }
 test('anonymous visitors and ordinary members cannot access protected pages', async ({ page }) => {
   await fixture(page, 'anonymous');

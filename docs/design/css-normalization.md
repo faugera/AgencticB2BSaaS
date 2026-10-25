@@ -47,9 +47,11 @@ viewport, avec haut et bas de galerie séparés : signatures PNG et dimensions
 Les captures pleine page de régression peuvent ajouter une bande vide hors du
 shell à défilement interne ; cette bande est un artefact de capture et n'est pas
 utilisée comme preuve de composition. La série ciblée la remplace.
-Tests reproductibles :
-`pnpm exec playwright test --config=playwright.css.config.ts` après build,
-puis `pnpm exec playwright test --headed` pour la régression complète.
+Ces preuves décrivent le lot CSS historique. Le 25 octobre 2026, les tests
+cosmétiques et leur configuration dédiée ont été supprimés à la demande de
+l'utilisateur. La suite actuelle se lance avec `pnpm test:e2e` après build ;
+voir [la couverture conservée](../testing.md). Les mesures ci-dessus ne sont
+pas une certification de la suite actuelle.
 
 Les tests UI interceptent l'API avec des fixtures synthétiques : ils vérifient les
 consommateurs et gardes frontend, sans certifier les permissions serveur ou SQL.

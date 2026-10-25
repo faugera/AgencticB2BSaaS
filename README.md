@@ -50,6 +50,12 @@ by the API's graceful shutdown path. Use `SMOKE_PORT=3100 pnpm smoke` if port 30
 Playwright starts the built frontend preview on port 4173 and checks navigation
 and overflow on desktop and mobile. Vitest tests run without Docker or secrets.
 
+The browser suite contains 72 behavioral checks. Cosmetic pixel/font/color tests
+and repeated theme/viewport matrices were removed; FR/EN, desktop/mobile, keyboard
+access, permissions and business regressions remain covered. See
+[test coverage and reduction](docs/testing.md). Database/security/live-auth gates
+are separate and unchanged.
+
 Production entrypoints after `pnpm build`:
 `pnpm --filter @enterprise/api start` and `apps/web/dist` for static hosting.
 `vite preview` is only for local verification, not production hosting.

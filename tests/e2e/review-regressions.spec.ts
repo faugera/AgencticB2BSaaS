@@ -26,7 +26,7 @@ async function fixture(page: Page, locale: string) {
 }
 
 for (const locale of ['fr', 'en'] as const) {
-  test(`mobile menu releases desktop content and stays closed on return (${locale})`, async ({ page }, info) => {
+  test(`mobile menu releases desktop content and stays closed on return (${locale})`, async ({ page }) => {
     await fixture(page, locale);
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto('/admin/security');
@@ -38,12 +38,10 @@ for (const locale of ['fr', 'en'] as const) {
       const password = page.getByLabel(locale === 'fr' ? 'Mot de passe actuel' : 'Current password');
       await password.fill('synthetic-secret');
       await expect(password).toHaveValue('synthetic-secret');
-      await page.screenshot({ path: info.outputPath(`resize-${width}.png`) });
     }
     await page.setViewportSize({ width: 375, height: 812 });
     await expect(page.locator('.ui-sidebar')).toBeHidden();
     await expect(page.locator('.ui-main-content')).not.toHaveAttribute('inert');
-    await page.screenshot({ path: info.outputPath('resize-375.png') });
   });
 
   test(`super-admin invitations redirect preserves tenant (${locale})`, async ({ page }) => {
@@ -55,10 +53,8 @@ for (const locale of ['fr', 'en'] as const) {
     }
   });
 
-  for (const width of [375, 768, 1280]) {
-    test(`audit login and MFA preserve tenant destination (${locale}, ${width})`, async ({ page }, info) => {
+    test(`audit login and MFA preserve tenant destination (${locale})`, async ({ page }) => {
       await fixture(page, locale);
-      await page.setViewportSize({ width, height: 900 });
       let authenticated = false;
       await page.route('**/api/me', (route) => route.fulfill(authenticated
         ? { json: { user: { id: 'op', name: 'Operator', email: 'op@example.test' }, access: { platformRole: 'super_admin', tenantRole: null } } }
@@ -81,11 +77,9 @@ for (const locale of ['fr', 'en'] as const) {
       await page.getByRole('button', { name: locale === 'fr' ? 'Vérifier' : 'Verify', exact: true }).click();
       await expect(page).toHaveURL('/admin/audit?tenantId=' + tenant);
       await expect(page.getByRole('heading', { name: locale === 'fr' ? 'Journal d’audit' : 'Audit log', exact: true })).toBeVisible();
-      await page.screenshot({ path: info.outputPath('audit-return.png') });
     });
-    test(`request pagination and failed delivery refresh (${locale}, ${width})`, async ({ page }, info) => {
+    test(`request pagination and failed delivery refresh (${locale})`, async ({ page }) => {
       await fixture(page, locale);
-      await page.setViewportSize({ width, height: 900 });
       await page.goto('/admin/members?tenantId=' + tenant);
       const next = page.getByRole('button', { name: locale === 'fr' ? 'Demandes suivantes' : 'Next requests', exact: true });
       const previous = page.getByRole('button', { name: locale === 'fr' ? 'Demandes précédentes' : 'Previous requests', exact: true });
@@ -96,15 +90,12 @@ for (const locale of ['fr', 'en'] as const) {
       await expect(page.getByText('older@example.test', { exact: true })).toBeVisible();
       await expect(next).toBeDisabled();
       await previous.scrollIntoViewIfNeeded();
-      await page.screenshot({ path: info.outputPath('requests-last.png') });
       await previous.click();
       await page.getByRole('button', { name: locale === 'fr' ? 'Approuver et inviter' : 'Approve and invite', exact: true }).first().click();
       const row = page.getByRole('row').filter({ hasText: 'candidate1@example.test' });
       await expect(row).toBeVisible();
       await expect(row.getByRole('button', { name: locale === 'fr' ? 'Renvoyer' : 'Resend', exact: true })).toBeVisible();
       await row.scrollIntoViewIfNeeded();
-      await page.screenshot({ path: info.outputPath('invitation-refreshed.png') });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     });
-  }
 }
