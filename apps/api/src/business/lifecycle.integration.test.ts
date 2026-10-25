@@ -46,13 +46,14 @@ describe('user and organization lifecycle metadata', () => {
     candidateId = await verifiedIdentity(candidateEmail);
     controlId = await verifiedIdentity(`lifecycle-control-${randomBytes(8).toString('hex')}@example.test`);
     const existing = await operator.query<{ identity_id: string }>("SELECT identity_id FROM authorization_private.actors WHERE platform_role='super_admin'");
-    superId = existing.rows[0]?.identity_id ?? candidateId;
+    superId = existing.rows[0]?.identity_id ?? await verifiedIdentity(`lifecycle-operator-${randomBytes(8).toString('hex')}@example.test`);
     if (!existing.rowCount) await operator.query('SELECT business.bootstrap_super($1,$2)', [superId, 'lifecycle-operator']);
     for (const [id, role] of [[adminId, 'tenant_admin'], [memberId, 'member'], [controlId, 'tenant_admin']] as const) {
       const actor = await tx(id, undefined, async (_client, context) => context.actorId);
       let tenant = tenantA;
       if (id !== memberId) tenant = await tx(superId, undefined, async (client) => {
-        const result = await client.query<{ id: string }>('INSERT INTO business.tenants(name) VALUES($1) RETURNING id', ['Lifecycle organization']);
+        const organization = (await client.query<{ id: string }>("SELECT business.create_organization('Lifecycle organization') id")).rows[0]?.id;
+        const result = await client.query<{ id: string }>("SELECT business.create_tenant($1,'Lifecycle tenant','lifecycle@example.test') id", [organization]);
         const row = result.rows[0];
         if (!row) throw new Error('Tenant fixture missing');
         await client.query("SELECT set_config('app.tenant_id',$1,true)", [row.id]);
@@ -121,8 +122,8 @@ describe('user and organization lifecycle metadata', () => {
     await tx(adminId, tenantA, async (client) => client.query("SELECT business.invite($1,'member',$2)", [candidateEmail, hash]));
     await operator.query('UPDATE business.tenants SET deleted_at=now() WHERE id=$1', [tenantA]);
     expect((await operator.query('SELECT deleted_at FROM business.tenants WHERE id=$1', [tenantA])).rows[0].deleted_at).toBeInstanceOf(Date);
-    expect(await tx(adminId, tenantA, async (client) => (await client.query('SELECT * FROM business.workspaces')).rowCount)).toBe(0);
-    expect(await tx(superId, tenantA, async (client) => (await client.query('SELECT * FROM business.workspaces')).rowCount)).toBe(0);
+    await expect(tx(adminId, tenantA, async () => null)).rejects.toThrow('ACCESS_DENIED');
+    await expect(tx(superId, tenantA, async () => null)).rejects.toThrow('ACCESS_DENIED');
     expect(await tx(controlId, tenantB, async (client) => (await client.query('SELECT * FROM business.workspaces')).rowCount)).toBe(1);
     await expect(tx(candidateId, undefined, async (client) => client.query('SELECT business.accept_invitation($1)', [hash]))).rejects.toThrow('INVITATION_INVALID');
     await expect(tx(adminId, tenantA, async (client) => client.query("SELECT business.invite($1,'member',$2)", [candidateEmail, hash]))).rejects.toThrow('ACCESS_DENIED');

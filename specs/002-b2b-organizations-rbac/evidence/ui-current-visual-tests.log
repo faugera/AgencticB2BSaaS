@@ -1,0 +1,12 @@
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+
+Running 6 tests using 3 workers
+
+  ok 2 [chromium-full] › tests\e2e\b2b-visual.spec.ts:22:3 › current B2B surfaces fr 768 (10.1s)
+  ok 3 [chromium-full] › tests\e2e\b2b-visual.spec.ts:22:3 › current B2B surfaces fr 1280 (10.5s)
+  ok 1 [chromium-full] › tests\e2e\b2b-visual.spec.ts:22:3 › current B2B surfaces fr 375 (10.6s)
+  ok 5 [chromium-full] › tests\e2e\b2b-visual.spec.ts:22:3 › current B2B surfaces en 768 (8.1s)
+  ok 4 [chromium-full] › tests\e2e\b2b-visual.spec.ts:22:3 › current B2B surfaces en 375 (8.7s)
+  ok 6 [chromium-full] › tests\e2e\b2b-visual.spec.ts:22:3 › current B2B surfaces en 1280 (8.5s)
+
+  6 passed (24.4s)

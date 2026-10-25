@@ -1,0 +1,27 @@
+$ node scripts/security.mjs && pnpm audit --audit-level high && pnpm test:auth
+PASS: pnpm-only locks, no private env files, no Clerk imports, credential patterns clear. Not a substitute for a secret-scanning service.
+No known vulnerabilities found
+$ vitest run --config vitest.auth.config.ts
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90mD:/02-PROJETS_PERSO/AgencticB2BSaaS[39m
+
+ [32m✓[39m apps/api/src/business/isolation.integration.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 2277[2mms[22m[39m
+     [33m[2m✓[22m[39m exposes generic HTTP failures, disables business access immediately, preserves SDK and liveness [33m 314[2mms[22m[39m
+ [32m✓[39m apps/api/src/auth/flow.integration.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 3004[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps MFA optional and supports TOTP challenges and single-use recovery codes [33m 743[2mms[22m[39m
+     [33m[2m✓[22m[39m supports invitation, verification, password reset, session and revocation [33m 474[2mms[22m[39m
+     [33m[2m✓[22m[39m rate limits sign-in attempts despite forged client IP headers [33m 333[2mms[22m[39m
+     [33m[2m✓[22m[39m does not claim successful invitation delivery when SMTP fails, and allows retry [33m 683[2mms[22m[39m
+ [32m✓[39m apps/api/src/business/b2b-http.integration.test.ts [2m([22m[2m5 tests[22m[2m)[22m[33m 2243[2mms[22m[39m
+     [33m[2m✓[22m[39m applique les rôles custom dès la requête suivante et exige confirmation de leur impact [33m 435[2mms[22m[39m
+ [32m✓[39m apps/api/src/business/access.integration.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 1876[2mms[22m[39m
+ [32m✓[39m apps/api/src/business/audit.integration.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 1855[2mms[22m[39m
+ [32m✓[39m apps/api/src/business/organizations.integration.test.ts [2m([22m[2m13 tests[22m[2m)[22m[33m 1476[2mms[22m[39m
+ [32m✓[39m apps/api/src/business/lifecycle.integration.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 1014[2mms[22m[39m
+ [2m[90m↓[39m[22m apps/api/src/business/migration-preservation.integration.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+
+[2m Test Files [22m [1m[32m7 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (8)[39m
+[2m      Tests [22m [1m[32m65 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (66)[39m
+[2m   Start at [22m 19:13:46
+[2m   Duration [22m 22.02s[2m (transform 281ms, setup 0ms, import 6.37s, tests 13.74s, environment 1ms)[22m
+

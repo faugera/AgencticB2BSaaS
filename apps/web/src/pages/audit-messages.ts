@@ -1,11 +1,11 @@
 export const auditMessages = {
   fr: {
     audit_log: 'Journal d’audit', audit_global: 'Événements de toutes les organisations et de la plateforme.',
-    audit_scoped: 'Événements de l’organisation sélectionnée.',
+    audit_scoped: 'Événements du tenant actif.',
     audit_privacy: 'Identifiants et noms des champs uniquement, sans leurs valeurs. Les écritures sans contexte authentifié ont un auteur non renseigné.',
     audit_refresh: 'Revenir aux plus récents', audit_empty: 'Aucun événement à afficher.',
     audit_date: 'Date', audit_event: 'Événement', audit_target: 'Élément concerné', audit_author: 'Auteur (ID)',
-    audit_tenant: 'Organisation (ID)', audit_fields: 'Champs concernés', audit_older: 'Événements plus anciens',
+    audit_tenant: 'Tenant (ID)', audit_fields: 'Champs concernés', audit_older: 'Événements plus anciens',
     audit_page_size: '50 événements maximum par page', audit_created: 'Création', audit_updated: 'Modification',
     audit_deleted: 'Suppression', audit_change: 'Mutation enregistrée', audit_legacy: 'Trace métier',
     audit_user: 'Identité utilisateur', audit_actor: 'Acteur applicatif', audit_membership: 'Appartenance à une organisation',
@@ -14,11 +14,11 @@ export const auditMessages = {
   },
   en: {
     audit_log: 'Audit log', audit_global: 'Events across all organizations and the platform.',
-    audit_scoped: 'Events for the selected organization.',
+    audit_scoped: 'Events for the active tenant.',
     audit_privacy: 'Identifiers and field names only, without their values. Writes without authenticated context have an unspecified author.',
     audit_refresh: 'Back to latest events', audit_empty: 'No events to display.',
     audit_date: 'Date', audit_event: 'Event', audit_target: 'Affected resource', audit_author: 'Author (ID)',
-    audit_tenant: 'Organization (ID)', audit_fields: 'Affected fields', audit_older: 'Older events',
+    audit_tenant: 'Tenant (ID)', audit_fields: 'Affected fields', audit_older: 'Older events',
     audit_page_size: 'Up to 50 events per page', audit_created: 'Created', audit_updated: 'Updated',
     audit_deleted: 'Deleted', audit_change: 'Recorded mutation', audit_legacy: 'Business trace',
     audit_user: 'User identity', audit_actor: 'Application actor', audit_membership: 'Organization membership',

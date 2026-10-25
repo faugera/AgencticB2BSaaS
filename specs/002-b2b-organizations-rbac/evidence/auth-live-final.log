@@ -1,0 +1,19 @@
+$ node scripts/auth-e2e.mjs "--config" "specs/002-b2b-organizations-rbac/evidence/playwright-live.config.ts"
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+[2m[WebServer] [22m[2m$ node --env-file-if-exists=.env dist/server.js[22m
+
+Running 2 tests using 1 worker
+
+  ok 1 [desktop] › tests\e2e\auth-live.spec.ts:12:1 › invited identity activates, sets password, signs in and signs out with PostgreSQL and SMTP (3.3s)
+  ok 2 [desktop] › tests\e2e\business-live.spec.ts:14:1 › operator creates a tenant; verified invitee accepts and manages a private workspace (3.8s)
+
+  2 passed (16.7s)
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+[2m[WebServer] [22m[2m$ node --env-file-if-exists=.env dist/server.js[22m
+
+Running 2 tests using 1 worker
+
+  ok 1 [mobile] › tests\e2e\auth-live.spec.ts:12:1 › invited identity activates, sets password, signs in and signs out with PostgreSQL and SMTP (3.4s)
+  ok 2 [mobile] › tests\e2e\business-live.spec.ts:14:1 › operator creates a tenant; verified invitee accepts and manages a private workspace (6.9s)
+
+  2 passed (19.6s)

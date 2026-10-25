@@ -8,7 +8,7 @@ describe('UI preference trust-boundary schemas', () => {
   const transact = vi.fn();
   registerUIRoutes(app, async () => { transact(); throw new Error('Session required'); });
   try {
-   for (const payload of [{ locale: 'es', theme: 'system' }, { locale: 'fr', theme: 'auto' }, { locale: 'fr', theme: 'light', actorId: 'other' }]) {
+   for (const payload of [{ locale: 'es', theme: 'system' }, { locale: 'fr', theme: 'auto' }, { locale: 'fr', theme: 'light', actorId: 'other' }, { locale: 'fr', theme: 'light', timezone: '' }, { locale: 'fr', theme: 'light', date_format: 'invalid' }]) {
     expect((await app.inject({ method: 'PUT', url: '/api/preferences', payload })).statusCode).toBe(400);
    }
    const id = '10000000-0000-4000-8000-000000000001';
@@ -19,6 +19,8 @@ describe('UI preference trust-boundary schemas', () => {
    expect(transact).not.toHaveBeenCalled();
    await app.inject({ method: 'PUT', url: '/api/preferences', payload: { locale: 'en', theme: 'dark' } });
    expect(transact).toHaveBeenCalledTimes(1);
+   await app.inject({ method: 'PUT', url: '/api/preferences', payload: { locale: 'fr', theme: 'system', timezone: 'Europe/Paris', date_format: 'YYYY-MM-DD' } });
+   expect(transact).toHaveBeenCalledTimes(2);
   } finally { await app.close(); }
  });
 });

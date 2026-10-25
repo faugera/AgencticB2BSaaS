@@ -65,7 +65,7 @@ for (const locale of ['fr', 'en'] as const) {
   await page.getByLabel(locale === 'fr' ? 'Thème' : 'Theme', { exact: true }).selectOption('dark');
   await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
   await closeSidebar(page);
-  expect(writes.find((item) => item.path === '/api/preferences')?.body).toEqual({ locale, theme: 'dark' });
+  expect(writes.find((item) => item.path === '/api/preferences')?.body).toEqual({ locale, theme: 'dark', timezone: 'Europe/Paris', date_format: 'DD/MM/YYYY' });
   await page.reload();
   await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

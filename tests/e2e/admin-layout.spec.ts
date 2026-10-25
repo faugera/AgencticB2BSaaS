@@ -10,7 +10,7 @@ for (const locale of ['fr', 'en'] as const) {
       const path = new URL(route.request().url()).pathname;
       return route.fulfill({ json: path === '/api/me'
         ? { user: { id: 'op', name: 'Operator', email: 'operator@example.test' }, access: { platformRole: 'super_admin', tenantRole: null } }
-        : path === '/api/platform/tenants' ? [{ id: tenant, name: 'Organization A' }]
+        : path === '/api/tenants' ? [{ id: tenant, name: 'Organization A' }]
           : path === '/api/workspaces' ? [space] : path === '/api/auth/get-session' ? null : [] });
     });
     await page.goto('/admin');
@@ -18,18 +18,18 @@ for (const locale of ['fr', 'en'] as const) {
     const navigation = page.getByRole('navigation', { name: locale === 'fr' ? 'Navigation principale' : 'Main navigation' });
     const organizations = navigation.getByRole('link', { name: locale === 'fr' ? 'Organisations' : 'Organizations', exact: true });
     await expect(organizations).toBeVisible();
-    await page.getByLabel(locale === 'fr' ? 'Organisation active' : 'Active organization').selectOption(tenant);
+    await page.getByLabel(locale === 'fr' ? 'Tenant actif' : 'Active tenant').selectOption(tenant);
     await organizations.click();
     await expect(page).toHaveURL('/admin/organizations?tenantId=' + tenant);
     await openSidebar(page);
     await expect(organizations).toHaveAttribute('aria-current', 'page');
     await closeSidebar(page);
-    await expect(page.getByRole('heading', { name: locale === 'fr' ? 'Créer une organisation' : 'Create an organization', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: locale === 'fr' ? 'Créer l’organisation cliente' : 'Create client organization', exact: true })).toBeVisible();
     await openSidebar(page);
     await navigation.getByRole('link', { name: locale === 'fr' ? 'Espaces de travail' : 'Workspaces', exact: true }).click();
     await expect(page).toHaveURL('/admin/workspaces?tenantId=' + tenant);
     await expect(page.getByRole('link', { name: /Private workspace/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: locale === 'fr' ? 'Créer une organisation' : 'Create an organization', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: locale === 'fr' ? 'Créer l’organisation cliente' : 'Create client organization', exact: true })).toHaveCount(0);
     await openSidebar(page);
     await navigation.getByRole('link', { name: locale === 'fr' ? 'Invitations et membres' : 'Invitations and members', exact: true }).click();
     await expect(page).toHaveURL('/admin/members?tenantId=' + tenant);

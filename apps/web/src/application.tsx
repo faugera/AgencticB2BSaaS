@@ -1,3 +1,5 @@
+import { Roles } from './pages/Roles';
+import { Organizations } from './pages/Organizations';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -39,31 +41,33 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
   const [selected, setSelected] = useState<Workspace | null>(null);
   const [loadedPath, setLoadedPath] = useState('');
   const superAdmin = me?.access?.platformRole === 'super_admin';
-  const admin = superAdmin || me?.access?.tenantRole === 'tenant_admin';
+  const admin = superAdmin || me?.access?.tenantRole === 'tenant_admin' || me?.access?.organizationRole === 'organization_admin' || Boolean(me?.access?.permissions?.includes('members.manage'));
   const query = scope ? `?tenantId=${encodeURIComponent(scope)}` : '';
   const adminPage = location.pathname.replace(/\/$/, '');
   const overview = adminPage === '/admin';
-  const showOrganizations = !adminOnly || overview || adminPage === '/admin/organizations';
+  const organizationPage = adminPage === basePath + '/organizations';
+  const rolesPage = adminPage === basePath + '/roles';
+  const showOrganizations = overview || organizationPage;
   const showWorkspaces = adminOnly ? overview || adminPage.startsWith('/admin/workspaces') : adminPage === '/app' || adminPage.startsWith('/app/workspaces/');
   const showMembers = adminOnly ? overview || adminPage === '/admin/members' : adminPage === '/app/members';
   const showInvitations = adminOnly ? showMembers : adminPage === '/app/invitations';
   const profilePage = adminPage === basePath + '/profile';
   const docsPage = adminPage === '/docs';
-  const auditPage = adminPage === '/admin/audit';
+  const auditPage = adminPage === basePath + '/audit';
   const adminHeading: UIMessage = overview ? 'overview'
     : adminPage === '/admin/organizations' ? 'organizations'
       : adminPage === '/admin/members' ? 'invitations_and_members'
-        : auditPage ? 'audit_log' : docsPage ? 'docs' : profilePage ? 'profile' : adminPage === '/admin/security' ? 'account_security' : 'workspaces';
+        : rolesPage ? 'roles_page' : auditPage ? 'audit_log' : docsPage ? 'docs' : profilePage ? 'profile' : adminPage === '/admin/security' ? 'account_security' : 'workspaces';
   useEffect(() => {
     let active = true;
-    void api<Me>('/api/me')
+    void api<Me>('/api/me' + query)
       .then(async (data) => {
         if (!active) return;
         if (adminOnly && data.access?.platformRole !== 'super_admin') {
           void navigate('/403', { replace: true });
           return;
         }
-        if (!adminOnly && ['/app/members', '/app/invitations'].includes(location.pathname) && data.access?.tenantRole !== 'tenant_admin' && data.access?.platformRole !== 'super_admin') {
+        if (!adminOnly && ['/app/members', '/app/invitations'].includes(location.pathname) && data.access?.tenantRole !== 'tenant_admin' && data.access?.organizationRole !== 'organization_admin' && !data.access?.permissions?.includes('members.manage') && data.access?.platformRole !== 'super_admin') {
           void navigate('/403', { replace: true });
           return;
         }
@@ -72,9 +76,10 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
           void navigate(path + location.search, { replace: true });
           return;
         }
+        if (!adminOnly && auditPage && !data.access?.permissions?.includes('audit.read')) { void navigate('/403', { replace: true }); return; }
         setMe(data);
-        if (data.access?.platformRole === 'super_admin') {
-          const directory = await api<Tenant[]>('/api/platform/tenants');
+        if (data.access?.platformRole === 'super_admin' || data.access?.tenants) {
+          const directory = data.access?.platformRole === 'super_admin' ? await api<Tenant[]>('/api/tenants') : [...(data.access?.tenants ?? [])];
           if (active) setTenants(directory);
         }
       })
@@ -93,10 +98,10 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     return () => {
       active = false;
     };
-  }, [navigate, location.pathname, location.search, revision, adminOnly, loginPath, adminPage]);
+  }, [navigate, location.pathname, location.search, revision, adminOnly, loginPath, adminPage, auditPage, query]);
   useEffect(() => {
     if (!me || (adminOnly && !superAdmin)) return;
-    if (profilePage || docsPage || auditPage) return;
+    if (profilePage || docsPage || auditPage || rolesPage || organizationPage) return;
     let active = true;
     void (async () => {
       const workspaceId = location.pathname.match(
@@ -138,7 +143,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     return () => {
       active = false;
     };
-  }, [me, query, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, docsPage, auditPage]);
+  }, [me, query, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, docsPage, auditPage, rolesPage, organizationPage]);
   async function action(run: () => Promise<unknown>) {
     setBusy(true);
     setError('');
@@ -166,14 +171,13 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
       return result;
     });
   }
-  const text = (form: FormData, key: string) => String(form.get(key) ?? '');
   if (!me) return <main className="auth-page"><p role={error ? 'alert' : 'status'}>{t(error ? 'access_unavailable_or_denied_contact_your_administrator' : 'loading')}</p></main>;
   return (
     <AppShell me={me} admin={adminOnly} scope={scope} tenants={tenants} workspaces={workspaces} selected={selected} busy={busy} onSignOut={() => {
       void action(async () => { const result = await authClient.signOut(); if (result.error) throw new Error(); void navigate(loginPath); });
     }} onScopeChange={(value) => {
       setSelected(null); setWorkspaces([]); setMembers([]); setInvitations([]); setError('');
-      const path = adminPage.startsWith('/admin/workspaces/') ? '/admin/workspaces' : adminPage;
+      const path = adminPage.includes('/workspaces/') ? basePath : adminPage;
       void navigate(path + (value ? '?tenantId=' + encodeURIComponent(value) : ''));
     }}>
       {error && (
@@ -195,44 +199,14 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
       ) : (
         me && (!adminOnly || superAdmin) && (
           <main id="app-main" aria-busy={busy}>
-            <header className="ui-page-header"><h1>{adminOnly ? t(adminHeading) : t(profilePage ? 'profile' : adminPage.endsWith('/security') ? 'account_security' : showMembers ? 'members_page' : showInvitations ? 'invitations_page' : 'workspaces')}</h1>{showInvitations && <p>{t('access_description')}</p>}</header>
-            {auditPage ? <AuditLog key={scope} query={query} /> : profilePage ? <Profile me={me} onSaved={() => setRevision((value) => value + 1)} /> : docsPage ? <Documentation /> : loadedPath !== location.pathname + query ? (
+            <header className="ui-page-header"><h1>{adminOnly ? t(adminHeading) : t(rolesPage ? 'roles_page' : auditPage ? 'audit_log' : organizationPage ? 'organizations' : profilePage ? 'profile' : adminPage.endsWith('/security') ? 'account_security' : showMembers ? 'members_page' : showInvitations ? 'invitations_page' : 'workspaces')}</h1>{showInvitations && <p>{t('access_description')}</p>}</header>
+            {rolesPage && me.access ? <Roles key={query} access={me.access} query={query} /> : organizationPage ? <Organizations superAdmin={superAdmin} /> : auditPage ? <AuditLog key={scope} query={query} global={superAdmin} /> : profilePage ? <Profile me={me} onSaved={() => setRevision((value) => value + 1)} /> : docsPage ? <Documentation /> : loadedPath !== location.pathname + query ? (
               <p role="status">{t('loading')}</p>
             ) : location.pathname === basePath + '/security' ? (
               <Security t={t} />
             ) : (
               <>
-                {superAdmin && showOrganizations && (
-                  <section className="panel">
-                    <h2>{t('platform_administration')}</h2>
-                    <form
-                      onSubmit={(e) =>
-                        submit(e, (form) =>
-                          api('/api/platform/tenants', {
-                            name: text(form, 'name'),
-                            adminEmail: text(form, 'email'),
-                          }),
-                        )
-                      }
-                    >
-                      <h3>{t('create_an_organization')}</h3>
-                      <label>
-                        {t('organization_name')}
-                        <input name="name" required maxLength={100} />
-                      </label>
-                      <label>
-                        {t('administrator_email')}
-                        <input
-                          name="email"
-                          type="email"
-                          required
-                          autoComplete="email"
-                        />
-                      </label>
-                      <button disabled={busy}>{t('create_and_invite')}</button>
-                    </form>
-                  </section>
-                )}
+                {superAdmin && showOrganizations && <Organizations superAdmin />}
                 {showWorkspaces && <WorkspaceManagement selected={selected} workspaces={workspaces} members={members} admin={admin} superAdmin={superAdmin} scope={scope} query={query} basePath={basePath} busy={busy} submit={submit} action={action} />}
                 {selected?.can_manage && showWorkspaces && <WorkspaceAppearance key={selected.id} workspace={selected} query={query} onSaved={() => setRevision((value) => value + 1)} />}
                 {(showMembers || showInvitations) && adminOnly && !scope && (
@@ -252,4 +226,3 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     </AppShell>
   );
 }
-

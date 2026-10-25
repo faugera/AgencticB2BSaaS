@@ -1,0 +1,11 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90mD:/02-PROJETS_PERSO/AgencticB2BSaaS[39m
+
+ [32m✓[39m apps/api/src/business/migration-preservation.integration.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 366[2mms[22m[39m
+     [33m[2m✓[22m[39m préserve identité/dates et refuse atomiquement le billing impossible avant reprise [33m 365[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 19:14:15
+[2m   Duration [22m 735ms[2m (transform 51ms, setup 0ms, import 123ms, tests 366ms, environment 0ms)[22m
+

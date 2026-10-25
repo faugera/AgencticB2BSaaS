@@ -151,3 +151,22 @@ par ses gestionnaires via une palette ou une couleur hexadécimale. La migration
 0009 est requise ; voir le registre de réconciliation pour les preuves et limites.
 La page marketing conserve son identité. Aucune notification ou capacité IA fictive
 n'est ajoutée à l'application.
+
+### Modèle B2B organisation/tenant
+
+Une organisation représente un client et possède plusieurs tenants, chacun avec ses
+workspaces. Un utilisateur ordinaire reste dans un seul client et reçoit explicitement
+ses tenants. Catalogue global de rôles cumulables, édition super-admin et gestion
+strictement descendante dans chaque portée. Seul un membership active autorise l’accès.
+Mon profil complète prénom/nom et préférences, sans onboarding obligatoire ; les noms
+inconnus restent null jusqu’à l’enregistrement complet. Le journal courant est
+/api/audit-logs, avec accès client autorisé et événements plateforme super-admin seuls.
+
+Avant pnpm auth:migrate (0013–0015), consulter le [runbook](docs/setup/private-pilot.md)
+et éprouver une copie isolée : billing_email doit provenir d’un admin/invité admissible,
+sinon la migration échoue atomiquement. Aucun ancien SQL ne doit être réécrit.
+Test de reprise : AUTH_TEST_MIGRATION_PRESERVATION=true avec AUTH_TEST_DATABASE_URL et
+AUTH_TEST_MIGRATION_DATABASE_URL pointant vers une base vide dédiée nommée
+enterprise_auth_test_b2b_migration, puis pnpm exec vitest run --config vitest.auth.config.ts
+apps/api/src/business/migration-preservation.integration.test.ts.
+[Contrat et preuves](specs/002-b2b-organizations-rbac/quickstart.md).

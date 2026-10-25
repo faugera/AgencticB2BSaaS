@@ -34,18 +34,20 @@ export async function businessTransaction<T>(
   tenant: string | undefined,
   action: string,
   run: (client: PoolClient, context: AccessContext) => Promise<T>,
+  metadata?: { readonly ip: string; readonly userAgent: string | null },
 ): Promise<T> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
     await client.query(
-      "SELECT set_config('app.identity_id',$1,true),set_config('app.tenant_id','',true)",
-      [identityId],
+      "SELECT set_config('app.identity_id',$1,true),set_config('app.tenant_id',$2,true),set_config('app.request_ip',$3,true),set_config('app.user_agent',$4,true)",
+      [identityId, tenant ?? '', metadata?.ip ?? '', metadata?.userAgent?.slice(0, 512) ?? ''],
     );
     const result = await client.query<{ context: AccessContext }>(
       'SELECT business.context() context',
     );
-    const context = result.rows[0]!.context;
+    const context = result.rows[0]?.context;
+    if (!context) throw new AccessError(403, 'ACCESS_DENIED');
     if (
       tenant &&
       tenant !== context.tenantId &&
@@ -56,8 +58,7 @@ export async function businessTransaction<T>(
     if (scope)
       await client.query("SELECT set_config('app.tenant_id',$1,true)", [scope]);
     const response = await run(client, context);
-    // Every successful super-admin read, including directory reads, is audited.
-    if (context.platformRole === 'super_admin' || !action.endsWith('.read')) {
+    if (context.platformRole === 'super_admin' || context.organizationRole === 'organization_admin' || context.level === 3 || !action.endsWith('.read')) {
       await client.query('SELECT business.record_audit($1)', [action]);
     }
     await client.query('COMMIT');

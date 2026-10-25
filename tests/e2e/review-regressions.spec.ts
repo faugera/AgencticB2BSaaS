@@ -11,8 +11,8 @@ async function fixture(page: Page, locale: string) {
     const url = new URL(route.request().url());
     const path = url.pathname;
     if (path === '/api/me') return route.fulfill({ json: { user: { id: 'op', name: 'Operator', email: 'op@example.test' }, access: { platformRole: 'super_admin', tenantRole: null } } });
-    if (path === '/api/platform/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization A' }] });
-    if (path === '/api/platform/audit') return route.fulfill({ json: { events: [], nextCursor: null } });
+    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization A' }] });
+    if (path === '/api/audit-logs') return route.fulfill({ json: { events: [], nextCursor: null } });
     if (path.startsWith('/api/access-requests/')) {
       approved = true;
       return route.fulfill({ json: { delivery: 'failed' } });
@@ -56,7 +56,7 @@ for (const locale of ['fr', 'en'] as const) {
     test(`audit login and MFA preserve tenant destination (${locale})`, async ({ page }) => {
       await fixture(page, locale);
       let authenticated = false;
-      await page.route('**/api/me', (route) => route.fulfill(authenticated
+      await page.route('**/api/me*', (route) => route.fulfill(authenticated
         ? { json: { user: { id: 'op', name: 'Operator', email: 'op@example.test' }, access: { platformRole: 'super_admin', tenantRole: null } } }
         : { status: 401, json: { code: 'UNAUTHENTICATED' } }));
       await page.route('**/api/auth/sign-in/email', (route) => route.fulfill({ json: { twoFactorRedirect: true } }));

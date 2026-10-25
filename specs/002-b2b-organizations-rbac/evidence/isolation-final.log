@@ -1,0 +1,13 @@
+$ vitest run --config vitest.auth.config.ts apps/api/src/business/isolation.integration.test.ts
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90mD:/02-PROJETS_PERSO/AgencticB2BSaaS[39m
+
+ [32m✓[39m apps/api/src/business/isolation.integration.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 2624[2mms[22m[39m
+     [33m[2m✓[22m[39m does not leak transaction context between concurrent pooled queries, even after errors [33m 380[2mms[22m[39m
+     [33m[2m✓[22m[39m exposes generic HTTP failures, disables business access immediately, preserves SDK and liveness [33m 332[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m15 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 19:14:09
+[2m   Duration [22m 4.14s[2m (transform 244ms, setup 0ms, import 1.27s, tests 2.62s, environment 0ms)[22m
+

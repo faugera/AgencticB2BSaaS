@@ -74,11 +74,15 @@ test('operator creates a tenant; verified invitee accepts and manages a private 
   await page.getByLabel('Mot de passe', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
   await expect(
-    page.getByRole('heading', { name: 'Administration de la plateforme' }),
+    page.getByRole('heading', { name: 'Vue d’ensemble' }),
   ).toBeVisible();
   const tenantName = 'Pilot ' + randomBytes(5).toString('hex');
   const adminEmail = `browser-admin-${randomBytes(8).toString('hex')}@example.test`;
   await page.getByLabel('Nom de l’organisation').fill(tenantName);
+  await page.getByRole('button', { name: 'Créer l’organisation cliente', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText('Modification enregistrée');
+  await page.getByLabel('Organisation cliente', { exact: true }).selectOption({ label: tenantName });
+  await page.getByLabel('Nom du tenant', { exact: true }).fill(tenantName + ' — Paris');
   await page.getByLabel('Email de l’administrateur').fill(adminEmail);
   await page
     .getByRole('button', { name: 'Créer et inviter', exact: true })

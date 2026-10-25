@@ -1,3 +1,5 @@
+import { ProfileDetailsForm } from './ProfileDetailsForm';
+import { ProfilePreferences } from './ProfilePreferences';
 import { useEffect, useState } from 'react';
 import type { MeResponse } from '@enterprise/shared';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
@@ -25,25 +27,11 @@ export function Profile({ me, onSaved }: { me: MeResponse; onSaved: () => void }
   }, []);
   const role = me.access?.platformRole ?? me.access?.tenantRole;
   return <section className="panel profile-panel" aria-busy={busy}>
-    <h2>{t('account_email')}</h2>
     {error && <p role="alert">{t('unable_to_complete_this_request_try_again_later')}</p>}
     {notice && <p role="status">{t(notice === 'name' ? 'profile_saved' : 'sessions_revoked')}</p>}
-    <form onSubmit={(event) => {
-      event.preventDefault();
-      const name = String(new FormData(event.currentTarget).get('name') ?? '').trim();
-      if (!name) return;
-      setBusy(true); setError(false); setNotice(null);
-      void authClient.updateUser({ name }).then(async (result) => {
-        if (result.error) { setError(true); return; }
-        await authClient.getSession({ query: { disableCookieCache: true } });
-        setNotice('name'); onSaved();
-      }).catch(() => setError(true)).finally(() => setBusy(false));
-    }}>
-      <label>{t('display_name')}<input name="name" required maxLength={100} defaultValue={me.user.name} key={me.user.name} autoComplete="name" /></label>
-      <label>{t('account_email')}<input readOnly value={me.user.email} /></label>
-      <p>{t('account_roles')} : {role === 'super_admin' ? t('super_admin') : role === 'tenant_admin' ? t('tenant_admin') : role === 'member' ? t('member') : t('no_role')}</p>
-      <button disabled={busy}>{t('save')}</button>
-    </form>
+    <ProfileDetailsForm query={me.access?.tenantId ? '?tenantId=' + encodeURIComponent(me.access.tenantId) : ''} onSaved={onSaved} />
+    <p>{t('account_roles')} : {(me.access?.roles ?? [role ?? t('no_role')]).join(', ')}</p>
+    <ProfilePreferences identity={me.user.id} />
     <h3>{t('active_sessions')}</h3>
     {loading ? <p role="status">{t('loading')}</p> : <ul className="session-list">{sessions.map((session) => <li key={session.id}>
       <strong>{session.id === current?.session.id ? t('current_session') : t('session_device')}</strong>

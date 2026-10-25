@@ -1,71 +1,49 @@
 # Sécurité B2B : exigences et preuves
 
-Les curseurs de demandes d'accès (0012) sont relus dans le tenant établi côté serveur,
-jamais globalement. Conserver le refus des rôles ordinaires, l'ordre date/ID stable,
-le plafond100 et les tests de curseur étranger ; les boutons UI ne sont pas une preuve
-d'autorisation. GET `/api/access-requests` valide `before` comme UUID.
+Références : [ADR-005](../../docs/architecture/0005-private-pilot.md),
+[matrice](../../docs/features-b2b.md), [spec courante](../../specs/002-b2b-organizations-rbac/spec.md).
+IMPLEMENTED décrit le code ; aucune certification production n'est déduite des tests locaux.
 
-Référence décisionnelle : `docs/architecture/0005-private-pilot.md`.
-Matrice : `docs/features-b2b.md`. Statuts décrivent le code inspecté, pas une
-certification de la DB déployée ni l'exécution des tests.
-
-| Mécanisme | Statut réel | Preuve et lacune |
+| Mécanisme | Statut | Contrat |
 | --- | --- | --- |
-| Session vérifiée côté serveur | IMPLEMENTED | `apps/api/src/auth/service.ts`, `apps/api/src/business/routes.ts` ; MFA facultative, y compris super-admin |
-| Organisation = tenant ; une appartenance ordinaire | IMPLEMENTED | `apps/api/migrations/0002_business.sql` : PK actor de memberships |
-| Rôles persistés et acteur actif | IMPLEMENTED | `apps/api/migrations/0002_business.sql`, `apps/api/src/business/store.ts` |
-| Contexte transactionnel et refus par défaut | IMPLEMENTED | `businessTransaction` dans `apps/api/src/business/store.ts` ; session serveur, BEGIN, set_config local, COMMIT/ROLLBACK |
-| RLS tenants/workspaces | IMPLEMENTED | `apps/api/migrations/0002_business.sql` : ENABLE/FORCE et politiques ; ne couvre pas toutes les tables |
-| Métadonnées privées | IMPLEMENTED | `authorization_private`, fonctions SECURITY DEFINER à search_path fixe ; aucun grant runtime direct |
-| Références composites workspace/tenant | IMPLEMENTED | `apps/api/migrations/0002_business.sql`, correction de portée `apps/api/migrations/0006_workspace_scope.sql` |
-| Runtimes sans propriété/BYPASSRLS | IMPLEMENTED | `apps/api/src/auth/provision.ts`, `assertRuntimePrivileges` dans `apps/api/src/business/store.ts` ; état DB courant UNKNOWN |
-| Super-admin distinct du tenant-admin | IMPLEMENTED | `requireSuper` dans `apps/api/src/business/routes.ts` ; accès permanent explicite, pas impersonation |
-| Audit privilégié | PARTIAL | `businessTransaction`, `business.record_audit` dans `apps/api/migrations/0002_business.sql` ; succès métier et bootstrap, pas tous les refus/auth ni ledger externe |
-| Tests négatifs HTTP/SQL | IMPLEMENTED | `apps/api/src/business/isolation.integration.test.ts`, `tests/e2e/business-live.spec.ts` ; résultats à exécuter pour chaque évolution |
-| Exports, jobs, événements, agents IA | PLANNED | `docs/sdd/000-foundation-v1.3.md` ; aucun runtime identifié |
-| Rôle support dédié / moteur ABAC | NOT_FOUND | Aucun mécanisme identifié dans routes, contrats et migrations inspectés |
-| Suppression logique utilisateurs/tenants et dates métier | IMPLEMENTED | Migration 0011 ; révocation sessions et acteur, session concurrente sérialisée, RLS tenant actif ; SQL opérateur uniquement |
+| Identité vérifiée, acteur actif | IMPLEMENTED | Better Auth fournit identité ; rôle/portée persistés relus par opération |
+| Client/organisation distinct du tenant | IMPLEMENTED | Un client possède plusieurs tenants/workspaces ; un acteur ordinaire reste dans un seul client |
+| Multi-tenant explicite, statut | IMPLEMENTED | Membership composite acteur+tenant ; seul active autorise |
+| Catalogue global et rôles cumulables | IMPLEMENTED | Édition super-admin, délégation explicite et union dans la portée |
+| Pyramide stricte | IMPLEMENTED | Aucun soi/pair/supérieur ; dernier administrateur actif protégé contre concurrence |
+| Organisation-admin transversal | IMPLEMENTED | Son client seulement, privé compris, contrôlé et audité |
+| Transaction locale et RLS FORCE | IMPLEMENTED | Organisations/tenants/workspaces/journal ; fonctions étroites privées sans grants runtime |
+| Runtimes sans propriété/BYPASSRLS | IMPLEMENTED | Provisioning et assertRuntimePrivileges ; état production UNKNOWN |
+| Journal unique append-only runtime | IMPLEMENTED | business.audit_logs ; archive privée figée, pas de valeurs sensibles |
+| Tests négatifs HTTP/SQL | IMPLEMENTED | Suites integration réexécutées pour chaque changement ; mocks insuffisants |
+| Export/rétention externe, ledger inviolable | PLANNED | Hors V0 |
+| Runtime IA / jobs / support dédié | NOT_FOUND | Garde-fous constitutionnels, aucun runtime |
 
 ## Prescriptions
 
-- Préserver l'isolation tenant et workspace, l'autorisation serveur et le refus
-  sans permission. Un `tenantId` client demande une portée, il ne l'autorise pas.
-- Passer par la transaction existante ; ne jamais réutiliser une connexion avec
-  contexte persistant. Une requête frontend filtrée ne garantit aucune autorisation.
-- Conserver la distinction RLS du contenu / fonctions étroites des métadonnées.
-  Nouveau contenu tenant : appliquer la frontière existante et tester deux tenants,
-  absence de contexte, accès refusés et références composites.
-- Ne pas confondre super-admin applicatif et superuser SQL. Les opérations
-  privilégiées doivent rester explicitement autorisées et traçables.
-- Pour de futurs exports/jobs/agents : rétablir et revérifier acteur et portée
-  côté serveur à l'exécution ; aucun contournement implicite par travail différé.
-- RLS ne protège pas d'un serveur ou credential SQL compromis pouvant forger
-  son contexte. Ne jamais journaliser secrets, payloads sensibles ou erreurs SQL brutes.
-- Réutiliser `.agents/skills/tenant-boundary/SKILL.md` pour une évolution de sécurité
-  et `.agents/skills/verify-change/SKILL.md` pour les gates applicatifs.
+Le tenantId client demande une portée ; il ne la prouve pas. Même transaction pour
+contexte local et requête, sans contexte persistant sur connexion mutualisée. Les
+permissions workspace exigent leur workspace exact ; une permission d'un autre tenant
+ou client ne s'hérite jamais. Références composites et refus sans contexte obligatoires.
 
-## Access-request boundary
+Un administrateur ne modifie que les niveaux inférieurs de sa portée. Le super-admin
+applicatif n'est pas un superuser SQL. Le catalogue ne permet aucune attribution de
+rôle plateforme. Les rôles fixes sont protégés ; changements globaux affectants exigent
+impact et confirmation, et tracent auteur/date/capacités ajoutées ou retirées.
 
-An opaque organization link grants collection only, never tenant access. Public
-responses must not disclose whether an email or link exists. Tenant administrators
-review only their own tenant's requests through server-established context and
-narrow SQL functions. Approval reuses invitations and audit; permitted business
-roles are member/tenant_admin, never platform roles. `/api/platform/docs` requires
-super_admin independently of frontend navigation guards.
+Les membres invited/suspended n'ouvrent pas le tenant même avec session valide.
+L'organisation-admin traverse sans membership mais un statut explicite inactif refuse
+ce tenant. Suppression logique révoque accès et conserve IDs ; aucune purge implicite.
 
-## UI preferences and appearance
+Audit : événements plateforme tenant=null super-admin seulement ; événements tenant
+selon audit.read, jamais autre client. Sans contexte authentifié, auteur null ; la cible
+ne devient pas auteur. IP/user-agent dérivés serveur et bornés. Historique copié avec
+legacy_id ; ancienne route /api/platform/audit retirée, aucun second journal actif.
 
-Locale/theme belong to the current actor and cannot be addressed by a client actor
-ID. Workspace appearance changes require workspace_admin in the selected context.
-Private metadata tables remain ungranted; color reads join the RLS workspace and
-writes use narrow audited functions. Never treat theme/context UI as authorization.
-
-## Lecture du journal V0
-
-La lecture globale ou filtrée reste réservée au super-admin actif en HTTP et SQL
-(migration 0010, audit_events). Aucun grant direct privé ni opération de réécriture.
-Les événements de mutation sont atomiques, avec identifiants et clés autorisées
-seulement ; les anciennes traces restent distinguées. Ne jamais inférer l’auteur
-d’une modification d’identité depuis la seule identité cible. Les sources sans
-contexte authentifié restent non attribuées. La MFA demeure facultative en V0.
-Les IDs d’audit doivent survivre aux suppressions sans FK vers les lignes sources.
+Les demandes publiques via lien opaque ne créent ni identité ni accès. Réponse générique,
+origine/validation/limite ; approbation réutilise invitations et contrôle de niveau.
+Pagination UUID des demandes100 et du journal50 résolue dans la portée autorisée.
+Profil et préférences n'acceptent aucun sélecteur d'identité ni champ de rôle/tenant/statut.
+MFA facultative V0 ; pas de secrets dans navigateur/logs/preuves. RLS ne neutralise pas
+un serveur compromis capable de forger le contexte. Jobs/IA futurs doivent réautoriser
+acteur et portée à l'exécution conformément à la constitution.

@@ -11,17 +11,18 @@ async function fixture(page: Page, role: 'super_admin' | 'tenant_admin' | 'membe
   await page.route('**/api/**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'POST') writes.push({ path, body: request.postDataJSON() });
+    if (['POST', 'PUT'].includes(request.method())) writes.push({ path, body: request.postDataJSON() });
     const user = { id: 'fixture', name, email: 'fixture@example.test' };
     if (path === '/api/me') return route.fulfill({ status: role === 'anonymous' ? 401 : 200, json: { user, access: { actorId: 'fixture', platformRole: role === 'super_admin' ? role : null, tenantRole: role === 'super_admin' ? null : role, tenantId: role === 'super_admin' ? null : tenant, handle: null } } });
+    if (path === '/api/profile') { if (request.method() === 'PUT') name = request.postDataJSON().first_name + ' ' + request.postDataJSON().last_name; return route.fulfill({ json: { first_name: name.split(' ')[0], last_name: 'Person', avatar_url: null, phone_number: null, job_title: null, department: null, email: user.email, is_email_verified: true, created_at: '2026-10-24T08:00:00Z', updated_at: '2026-10-24T08:00:00Z' } }); }
     if (path === '/api/auth/get-session') return route.fulfill({ json: role === 'anonymous' ? null : { user, session } });
     if (path === '/api/auth/list-sessions') return route.fulfill({ json: others ? [session, { ...session, id: 'other', token: 'synthetic-other', userAgent: 'Other browser' }] : [session] });
     if (path === '/api/auth/update-user') { name = request.postDataJSON().name; return route.fulfill({ json: { status: true } }); }
     if (path === '/api/auth/revoke-other-sessions') { others = false; return route.fulfill({ json: { status: true } }); }
-    if (path === '/api/platform/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization' }] });
+    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization' }] });
     if (path === '/api/platform/docs') return route.fulfill({ status: role === 'super_admin' ? 200 : 403, json: { fr: [{ title: 'Guide des organisations', text: 'Contenu réservé aux super-admins.' }], en: [{ title: 'Organization guide', text: 'Content restricted to super-admins.' }] } });
     if (path === '/api/access-link') return route.fulfill({ json: { url: 'http://127.0.0.1:4173/signup?link=' + link } });
-    if (path === '/api/access-requests') return route.fulfill({ status: request.method() === 'POST' ? 202 : 200, json: request.method() === 'POST' ? { received: true } : [] });
+    if (path === '/api/access-requests') return route.fulfill({ status: ['POST', 'PUT'].includes(request.method()) ? 202 : 200, json: ['POST', 'PUT'].includes(request.method()) ? { received: true } : [] });
     return route.fulfill({ json: [] });
   });
   return writes;
@@ -49,9 +50,10 @@ for (const locale of ['fr', 'en'] as const) {
         const title = path.endsWith('profile') ? (locale === 'fr' ? 'Mon profil' : 'My profile') : path.endsWith('members') ? (locale === 'fr' ? 'Membres' : 'Members') : (locale === 'fr' ? 'Invitations' : 'Invitations');
         await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
         if (path.endsWith('profile')) {
-          await page.getByLabel(locale === 'fr' ? 'Nom affiché' : 'Display name').fill('Updated');
-          await page.getByRole('button', { name: locale === 'fr' ? 'Enregistrer' : 'Save', exact: true }).click();
-          await expect(page.getByRole('status')).toContainText(locale === 'fr' ? 'Votre nom a été enregistré' : 'Your name has been saved');
+          await page.getByLabel(locale === 'fr' ? 'Prénom' : 'First name').fill('Updated');
+          await page.getByLabel(locale === 'fr' ? 'Nom de famille' : 'Last name', { exact: true }).fill('Person');
+          await page.getByRole('button', { name: locale === 'fr' ? 'Enregistrer' : 'Save', exact: true }).first().click();
+          await expect(page.getByRole('status')).toContainText(locale === 'fr' ? 'Profil enregistré' : 'Profile saved');
           await expect(page.getByLabel(locale === 'fr' ? 'Email du compte' : 'Account email')).toHaveAttribute('readonly', '');
           await page.getByRole('button', { name: locale === 'fr' ? 'Déconnecter mes autres appareils' : 'Sign out my other devices' }).click();
           await page.getByRole('dialog').getByRole('button', { name: locale === 'fr' ? 'Confirmer' : 'Confirm', exact: true }).click();
@@ -72,7 +74,7 @@ for (const locale of ['fr', 'en'] as const) {
         if (path.endsWith('members')) await expect(page.getByText(locale === 'fr' ? 'Aucun membre.' : 'No members.', { exact: true })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       }
-      expect(writes.find((entry) => entry.path === '/api/auth/update-user')?.body).toEqual({ name: 'Updated' });
+      expect(writes.find((entry) => entry.path === '/api/profile')?.body).toEqual({ first_name: 'Updated', last_name: 'Person', avatar_url: null, phone_number: null, job_title: null, department: null });
     });
     test(`super-admin profile and protected documentation (${locale})`, async ({ page }) => {
       await page.addInitScript((value) => localStorage.setItem('locale', value), locale);

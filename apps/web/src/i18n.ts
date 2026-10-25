@@ -1,3 +1,4 @@
+import { b2bMessages } from './pages/b2b-messages';
 import { useLocalPreferences, setLocalPreferences, localTheme } from './ui/preferences';
 import { designMessages } from './ui/messages';
 import { pageMessages } from './pages/messages';
@@ -5,7 +6,7 @@ import { auditMessages } from './pages/audit-messages';
 
 export const uiMessages = {
   fr: {
-    ...pageMessages.fr,
+    ...pageMessages.fr, ...b2bMessages.fr,
     ...auditMessages.fr,
     ...designMessages.fr,
     access_denied: 'Accès refusé',
@@ -110,7 +111,7 @@ export const uiMessages = {
     foundation_001: 'Fondation / 001',
   },
   en: {
-    ...pageMessages.en,
+    ...pageMessages.en, ...b2bMessages.en,
     ...auditMessages.en,
     ...designMessages.en,
     access_denied: 'Access denied',
