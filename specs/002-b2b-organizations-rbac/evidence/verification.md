@@ -50,3 +50,11 @@ MFA V0 facultative ; SMTP synchrone avec retry manuel, pas d'outbox. Metadata ab
 sans paiement. L'heuristique de nom premier mot/reste ne détermine pas les noms composés ;
 Mon profil permet correction. L'audit protège contre mutations runtime, pas contre
 opérateur SQL de confiance ; ni export/rétention externe ni certification accessibilité.
+
+## Stabilité des checksums au checkout
+
+Le contrôle d’un checkout Windows neuf a révélé la conversion CRLF des nouveaux SQL
+par core.autocrlf, qui changeait leurs checksums sans changer le SQL. Les seules nouvelles
+migrations0013–0015 sont désormais fixées LF dans .gitattributes ; aucune ancienne
+migration ni règle de validation du migrateur n’est modifiée. Les checksums de la base
+jetable primaire restent canoniques et le checkout doit conserver les mêmes octets.

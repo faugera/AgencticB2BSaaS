@@ -1,3 +1,6 @@
 .specify/** text eol=lf
 .agents/skills/speckit-*/** text eol=lf
 .claude/skills/speckit-*/** text eol=lf
+apps/api/migrations/0013_profile_metadata.sql text eol=lf
+apps/api/migrations/0014_organizations_rbac.sql text eol=lf
+apps/api/migrations/0015_unified_audit.sql text eol=lf
