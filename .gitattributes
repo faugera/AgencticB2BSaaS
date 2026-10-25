@@ -1,0 +1,3 @@
+.specify/** text eol=lf
+.agents/skills/speckit-*/** text eol=lf
+.claude/skills/speckit-*/** text eol=lf

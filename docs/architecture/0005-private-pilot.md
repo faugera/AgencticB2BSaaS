@@ -110,7 +110,8 @@ selected tenant (or an explicitly scoped super-admin) can review it. Approval us
 the existing invitation/audit path; no platform role can be assigned. Public
 collection checks Origin, validates input and limits submissions to three/minute.
 The operational `/docs` guide requires a super-admin on both page and API.
-Migration 0008 is additive; its disposable database/isolation verification is pending.
+La migration 0008 est additive ; les preuves SQL/HTTP et CI sont réconciliées dans
+[le registre historique](../sdd/legacy-reconciliation.md).
 
 ### Brume preferences boundary
 
@@ -120,7 +121,8 @@ functions. These functions retain transaction-local identity and tenant context;
 workspace membership alone cannot mutate appearance. Hex input is validated before
 SQL, and raw colors never determine text, status or action colors. The gallery has
 no public route and performs no synthetic business writes. New migration 0009 and
-adversarial tests are present; DB execution remains unverified in this environment.
+adversarial tests are present ; leurs preuves historiques sont réconciliées dans
+le registre, sans inspection de la DB courante.
 
 ### Journal V0 et décision MFA (2026-10-24)
 

@@ -3,7 +3,7 @@ name: tenant-boundary
 description: Change business authorization, SQL or tenant/workspace APIs safely.
 ---
 
-1. Read `docs/architecture/0005-private-pilot.md` before changing permissions.
+1. Read `.specify/memory/constitution.md` and the current spec/plan/tasks. Read `docs/architecture/0005-private-pilot.md` before changing permissions.
 2. Verified identity is not authorization. Use persisted enabled actors and
    membership inside `businessTransaction`; client tenant IDs are only requests.
 3. New tenant content needs ENABLE/FORCE RLS, composite tenant references and

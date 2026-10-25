@@ -9,12 +9,9 @@ Le curseur est recherché uniquement dans le tenant autorisé : un curseur étra
 ou absent ne renvoie aucune ligne. Toutes les demandes, y compris anciennes et déjà
 examinées, restent atteignables. Aucun effacement ni nouveau droit runtime.
 
-Source : migrations SQL `apps/api/migrations/0001_identity.sql` à
-`apps/api/migrations/0007_enabled_administrator.sql` (0007 préexistante non suivie
-au début du bootstrap). Présence du SQL ≠ application vérifiée à la DB.
-La migration 0007 reste un fichier local hors PR : le modèle versionné avec ce
-bootstrap contient uniquement les migrations 0001 à 0006. La protection du dernier
-administrateur actif décrite pour 0007 ne doit donc pas être supposée livrée ici.
+Source : migrations SQL 0001 à 0012 fusionnées dans PR7. Leur présence ne prouve pas
+leur application à la base courante. Les résultats historiques sont réconciliés dans
+[le registre](sdd/legacy-reconciliation.md).
 Aucun ORM : requêtes `pg` et fonctions SQL ; migration atomique avec verrou
 et checksums dans `apps/api/src/auth/migrate.ts`.
 

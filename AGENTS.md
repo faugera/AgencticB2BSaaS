@@ -1,88 +1,36 @@
-# Repository Contract
+# Contrat du dépôt
 
-- `apps/web`: React/Vite UI; `apps/api`: Fastify API.
-- `packages/shared`: type-only public contracts.
-- `apps/api/migrations`: reviewed SQL; provisioning is a separate operator command.
-- `docs/architecture`: decisions, security boundaries, open questions.
-- `docs/sdd`: scope and acceptance criteria.
-- `.agents/skills/*/SKILL.md`: discover task-specific instructions here.
-- Stack: TypeScript strict, React 19/Vite/Tailwind 4, React Router,
-  Fastify 5, Better Auth, PostgreSQL 17 via `pg`; no ORM.
+Lire la [constitution](.specify/memory/constitution.md) pour les principes et
+[le workflow Spec Kit](docs/setup/spec-kit.md) avant toute évolution, même documentaire.
+Inspecter avant édition ; modifications minimales, travail concurrent préservé.
 
-## Commands
+## Navigation
+- apps/web : React/Vite ; apps/api : Fastify ; packages/shared : types seuls.
+- apps/api/migrations : SQL revu, immuable après application ; provisioning séparé.
+- [Architecture](docs/architecture.md), [modèle](docs/data-model.md),
+  [capacités](docs/features-b2b.md), [carte produit](.specs/domains/product-map.md).
+- [Index des standards](.specs/standards/index.yml) : charger seulement les pertinents ;
+  B2B obligatoire pour backend, DB et IAM. [Routage docs](.specs/standards/doc-sync-map.yml).
+- [Brume](DESIGN_UI.md), [frontières pilote](docs/architecture/0005-private-pilot.md),
+  [exploitation](docs/setup/private-pilot.md), [tests](docs/testing.md).
+- specs : changements Spec Kit ; .specs/changes : historique figé,
+  [réconciliation](docs/sdd/legacy-reconciliation.md). docs/sdd : vision et ancien IAM.
 
-Node 24 LTS + pnpm 11.25.0. `pnpm install`, `pnpm dev`.
-Gates: `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build`,
-`pnpm smoke` (starts the built API), `pnpm test:e2e` (after build).
-Private-pilot gates: `pnpm verify:security`, `pnpm verify:tenant-isolation`
-(explicit disposable PostgreSQL credentials required), `pnpm test:auth:e2e`.
-Local PostgreSQL: `pnpm db:up` / `pnpm db:down`. See README for setup.
+## Commandes
+Node 24 LTS, pnpm 11.25.0. Installation : pnpm install --frozen-lockfile.
+Développement : pnpm dev ; PostgreSQL local : pnpm db:up / pnpm db:down.
+Gates : pnpm verify (types, lint, unitaires, build, smoke), pnpm test:e2e après build.
+Docs : pnpm docs:test et pnpm docs:check. SQL/IAM : pnpm verify:security,
+pnpm verify:tenant-isolation et pnpm test:auth:e2e avec PostgreSQL/Mailpit jetables
+explicitement configurés. L'absence d'infrastructure est NOT_RUN, jamais PASS.
 
-## Invariants and security
-
-Keep the modular monolith and minimal dependencies. Shared contracts contain no
-business logic. Add boundaries only for concrete needs. Never expose secrets to
-the browser, commit credentials, log sensitive payloads, or trust client tenant IDs.
-Business authorization requires server-established transaction-local context and
-database isolation tests. See `docs/architecture/0005-private-pilot.md` and
-`docs/setup/private-pilot.md` for roles, migrations, bootstrap and operations.
-
-## Definition of Done
-
-Implement only the agreed scope. Run relevant gates and report failures honestly.
-Update affected contracts/docs/tests. Review the diff for secrets and unnecessary
-dependencies. Use a dedicated branch and reviewable PR; never merge automatically.
-
-## Specification navigation
-- Foundation and delivery sequence: `docs/sdd/000-foundation-v1.3.md`.
-- IAM specification: `docs/sdd/002-iam-tenant-isolation.md`.
-- Proposed coding-agent contract: `docs/architecture/0002-codex-harness.md`.
-- Proposed shared design contract: `DESIGN.md`.
-- Current authentication decision: `docs/architecture/0004-better-auth.md`.
-- Auth setup, operator invitations and recovery: `docs/setup/better-auth.md`.
-- Task 002 delivery plan: `docs/sdd/002-implementation-plan.md`.
-ADR-005 and the approved private-pilot plan supersede older pending-scope notes.
-Read only the documents relevant to the current task; preserve pnpm and the existing stack.
-
-## UX delivery invariants
-All new UI must be responsive on mobile, tablet and desktop, with no page-level
-horizontal overflow. French (`fr`) is the default locale and English (`en`)
-must be supported. Use translation keys for user-facing text, accessible labels
-and errors; locale-aware `Intl` formatting. Use `DESIGN.md` as the proposed visual direction and verify
-critical paths in both locales and representative viewports.
-
-## Codex execution
-Inspect before editing; optimize for the requested outcome and minimal diff.
-Autonomously run safe local verification. Seek approval before destructive or
-structural out-of-scope changes. For long tasks, retain concise checkpoints.
-Use parallel work only when independent. Report actual tests, skipped checks
-and residual risks. Do not merge or deploy automatically.
-
-## Golden Rule #1 — Context Injection
-Before any edit, read `.specs/standards/index.yml`; load only applicable standards.
-Always load B2B for backend, DB/data, IAM or authorization work.
-Reuse existing code before creating components, services or helpers.
-
-## Golden Rule #2 — Zero Doc Drift
-Analyze `.specs/standards/doc-sync-map.yml` for every change, including direct work.
-Synchronize actually affected documents in the same task/PR; leave unrelated docs alone.
-No delivery may leave required documentation stale. Record justified no-change decisions.
-
-## Golden Rule #3 — Evidence-Based Verification
-Never claim a check passed without running or inspecting it. Explicitly report
-unavailable tests and distinguish static evidence from runtime proof.
-
-## Golden Rule #4 — B2B Security
-Preserve tenant/workspace boundaries and server authorization. Frontend filtering
-is never sufficient authorization. See `.specs/standards/b2b-tenancy-rbac.md`.
-
-## Workflow Router
-- `$sdd-shape`: scope a delta and verifiable tasks.
-- `$sdd-implement`: implement and synchronize affected documentation.
-- `$sdd-verify`: verify criteria and produce evidence.
-- `$sdd-archive`: consolidate and archive a verified delta.
-- `$sdd-discover`: maintain recurring standards on request.
-State transitions, async recovery, Git concurrency and the direct path for small
-changes are defined once in `.specs/standards/workflow.md`.
-Existing `tenant-boundary` and `verify-change` skills remain applicable to code work.
-Product status: `.specs/domains/product-map.md`; technical entry: `docs/architecture.md`.
+## Exécution
+Les intégrations officielles Codex et Claude lisent la même constitution.
+Utiliser speckit-specify, clarify si nécessaire, plan, checklist si utile, tasks,
+analyze, implement et converge ; spec/plan/tasks obligatoires pour chaque changement.
+Les skills projet tenant-boundary et verify-change complètent les gates.
+Ne pas réactiver les anciens sdd-* ; ne pas modifier les fichiers officiels gérés.
+Enchaîner dans le périmètre approuvé ; demander les seuls arbitrages bloquants.
+Conserver contexte tenant serveur, RLS, audit et suppression logique ; MFA facultative V0.
+Livraison par branche codex/ et PR vers main ; jamais de fusion ou déploiement automatique.
+Rapporter contrôles exécutés, limites et risques. Écrire les contenus projet en français.

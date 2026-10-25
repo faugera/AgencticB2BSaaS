@@ -9,22 +9,19 @@ Le passage mobile/desktop libère les contrôles ; les destinations invitations 
 audit conservent la portée organisationnelle, y compris après connexion/MFA.
 Preuves et limites : `.specs/changes/2026-10-24-pr7-review/tasks.md`.
 
-Audit statique au 2026-10-24. Statuts : IMPLEMENTED = code présent ; PARTIAL =
+État du code revu le 25 octobre 2026. Statuts : IMPLEMENTED = code présent ; PARTIAL =
 couverture incomplète ; PLANNED = intention documentée ; NOT_FOUND = aucun mécanisme
 identifié ; UNKNOWN = impossible à déterminer. Aucun statut n'est une preuve runtime.
 Carte produit : `../.specs/domains/product-map.md` ; décisions et limites :
 [ADR-005](architecture/0005-private-pilot.md).
 
-Les statuts ci-dessous portent sur le checkout audité. Les évolutions locales
-`/admin`, navigation de portée et protection du dernier administrateur actif
-(migration 0007) restent hors de cette PR documentaire. Leur présence locale
-ne prouve pas leur livraison dans la branche de base ; voir l'inventaire des
-références exclues dans `docs/architecture/sdd-bootstrap-verification.md`.
+Les statuts portent sur le code fusionné dans PR7, revu le 25 octobre.
+Les preuves datées et leurs limites figurent dans [le registre](sdd/legacy-reconciliation.md).
 
 | Capacité | Statut | Preuve et limite |
 | --- | --- | --- |
 | Auth invitation-only, sessions, vérification et récupération | IMPLEMENTED | `apps/api/src/auth/service.ts`, `apps/api/src/auth/operator.ts`, `apps/web/src/auth/AuthPage.tsx` |
-| TOTP et codes de récupération | IMPLEMENTED | Même service, `Security` dans `apps/web/src/application.tsx` ; activation facultative |
+| TOTP et codes de récupération | IMPLEMENTED | Même service, `apps/web/src/pages/Security.tsx` ; activation facultative |
 | Provisioning organisation par super-admin | IMPLEMENTED | `apps/api/src/business/routes.ts`, `/api/platform/tenants` |
 | Invitations tenant, retry, revoke et acceptation | IMPLEMENTED | Routes métier et `apps/api/migrations/0002_business.sql`, `apps/api/migrations/0005_invitation_delivery.sql` ; SMTP synchrone |
 | Workspaces privés ou visibles au tenant | IMPLEMENTED | Routes métier et politiques SQL dans `apps/api/migrations/0002_business.sql` |
@@ -35,7 +32,7 @@ références exclues dans `docs/architecture/sdd-bootstrap-verification.md`.
 | FR/EN, responsive et accessibilité | PARTIAL | Dictionnaires, labels, feedback et media queries présents ; conformité exhaustive non prouvée |
 | SSO/SCIM, passkeys, MFA imposée | PLANNED | ADR-005 et `docs/architecture/routes-verification.md` ; hors pilote |
 | Facturation, agents IA et workflows durables | PLANNED | `docs/sdd/000-foundation-v1.3.md` |
-| Signup public, docs UI, profil/sessions UI | PLANNED | `docs/architecture/routes-verification.md` ; routes non implémentées |
+| Demandes via lien /signup, docs restreintes, profil/sessions | IMPLEMENTED | access-routes.ts, Profile.tsx et migrations 0008/0012 ; aucune inscription libre |
 | Suppression logique utilisateur/organisation | IMPLEMENTED | Migration 0011, marqueurs persistés, sessions révoquées, RLS active seulement ; opération SQL opérateur, sans UI/API |
 | Support dédié / ABAC | NOT_FOUND | Pas de rôle ni moteur identifié |
 | État du déploiement et garanties opérationnelles | UNKNOWN | Aucun contrôle production réalisé |
@@ -69,25 +66,20 @@ préexistant. Le tenant-admin crée les workspaces et gère les accès ; retrait
 désactivation est revérifié à la prochaine opération métier. Les invitations
 expirées, réutilisées, révoquées ou inter-tenant sont refusées.
 
-## Frontend pages — 2026-10-24 implementation
+## Parcours et Brume livrés dans PR7
 
-Added organization-link access requests (`/signup`), own profile/session management
-(`/app/profile`, `/admin/profile`), dedicated member/invitation pages and a
-super-admin-only `/docs` guide. Tenant admins review access requests from their
-invitations page. Code and mocked-browser coverage are present; migration 0008 and
-real PostgreSQL authorization/session tests remain pending, so this is not a
-production-readiness claim.
+Les demandes via lien /signup ne créent ni identité ni membership. Les administrateurs
+traitent leurs demandes tenant-scopées ; approbation et livraison réutilisent les invitations.
+Le profil permet le nom et les autres sessions, sans modification d'email ou de rôle.
+/docs et son API sont réservés aux super-admins. Les tests réels de demandes, profil et
+sessions sont dans access.integration.test.ts ; preuves historiques dans le registre.
 
-## Brume design system — implementing
+App/admin/auth partagent les primitives Brume, le shell, les préférences compte et la
+couleur workspace (migration 0009). Tests réels : isolation des préférences par identité,
+apparence par rôle et tenant ; UI : navigation, états et FR/EN. La galerie ne crée aucune
+écriture métier fictive. Ni centre de notifications ni runtime IA n'est ajouté.
 
-App/admin/auth share a compact accessible component layer, role-aware collapsible
-sidebar, textual mobile navigation, organization invitation tables/forms and a
-super-admin component gallery. Own-account locale/theme and workspace-manager color
-customization have API/SQL implementations (0009); database validation is pending.
-This Brume lot adds no notification center, AI runtime or unused widget catalogue.
-The audit viewer is introduced separately by the V0 audit delta below.
-
-## Journal d’audit V0 — implementing
+## Journal d’audit V0 — implémenté dans PR7
 
 `/admin/audit` : consultation super-admin globale ou filtrée par organisation,
 pagination de 50, FR/EN et états vide/erreur. API `/api/platform/audit` et SQL

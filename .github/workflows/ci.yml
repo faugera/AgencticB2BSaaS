@@ -25,6 +25,8 @@ jobs:
         with:
           node-version: 24
       - run: pnpm install --frozen-lockfile
+      - name: Documentation checks
+        run: pnpm docs:test && pnpm docs:check
       - name: Type checking
         run: pnpm typecheck
       - name: Lint
