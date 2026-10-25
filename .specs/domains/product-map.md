@@ -1,5 +1,13 @@
 # Carte produit — Enterprise AI OS
 
+## Revue PR7 — 2026-10-25
+
+Implémentés : pagination des demandes au-delà de100 (migration0012), rafraîchissement
+des invitations après approbation, sortie du menu mobile au breakpoint desktop et
+destinations invitations/audit avec filtre conservé. Ces corrections ne créent ni
+permission ni fonctionnalité IA supplémentaire. Preuves distinctes SQL/UI et limites
+d'infrastructure : `.specs/changes/2026-10-24-pr7-review/tasks.md`.
+
 ## 1. Vision et périmètre
 
 Fondation SaaS B2B agentique, livrée actuellement comme pilote privé d'identité

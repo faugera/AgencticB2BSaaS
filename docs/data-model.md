@@ -1,5 +1,14 @@
 # Modèle de données observé
 
+## Pagination des demandes — migration0012
+
+`business.access_requests(before_id uuid DEFAULT NULL)` remplace la signature sans
+argument ; les appels sans argument restent valides. Index privé
+`(tenant_id,created_at DESC,id DESC)`, ordre date/UUID stable et100 lignes maximum.
+Le curseur est recherché uniquement dans le tenant autorisé : un curseur étranger
+ou absent ne renvoie aucune ligne. Toutes les demandes, y compris anciennes et déjà
+examinées, restent atteignables. Aucun effacement ni nouveau droit runtime.
+
 Source : migrations SQL `apps/api/migrations/0001_identity.sql` à
 `apps/api/migrations/0007_enabled_administrator.sql` (0007 préexistante non suivie
 au début du bootstrap). Présence du SQL ≠ application vérifiée à la DB.

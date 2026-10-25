@@ -1,5 +1,10 @@
 # Sécurité B2B : exigences et preuves
 
+Les curseurs de demandes d'accès (0012) sont relus dans le tenant établi côté serveur,
+jamais globalement. Conserver le refus des rôles ordinaires, l'ordre date/ID stable,
+le plafond100 et les tests de curseur étranger ; les boutons UI ne sont pas une preuve
+d'autorisation. GET `/api/access-requests` valide `before` comme UUID.
+
 Référence décisionnelle : `docs/architecture/0005-private-pilot.md`.
 Matrice : `docs/features-b2b.md`. Statuts décrivent le code inspecté, pas une
 certification de la DB déployée ni l'exécution des tests.

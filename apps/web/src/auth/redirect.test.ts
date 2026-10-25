@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { safeDestination } from './redirect';
 
 describe('post-login destinations', () => {
+  it('retains the audit destination and tenant filter', () => {
+    expect(safeDestination('/admin/audit?tenantId=123', '/admin')).toBe('/admin/audit?tenantId=123');
+  });
   it.each([
     'https://evil.test',
     '//evil.test',

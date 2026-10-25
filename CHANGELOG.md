@@ -1,5 +1,11 @@
 # Changelog
 
+## Correctifs PR7 — 2026-10-25
+
+Demandes d'accès accessibles au-delà de100, invitations rafraîchies après approbation,
+menu mobile utilisable après redimensionnement et destinations invitations/audit
+préservées avec leur filtre d'organisation.
+
 ## Lifecycle — 2026-10-24
 
 Migration 0011 : dates et suppression logique des utilisateurs/organisations,

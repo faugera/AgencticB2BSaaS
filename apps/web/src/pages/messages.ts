@@ -1,5 +1,6 @@
 export const pageMessages = {
   fr: {
+    requests_previous: 'Demandes précédentes', requests_next: 'Demandes suivantes',
     profile: 'Mon profil', docs: 'Documentation', members_page: 'Membres', invitations_page: 'Invitations',
     display_name: 'Nom affiché', account_email: 'Email du compte', account_roles: 'Rôles',
     active_sessions: 'Sessions actives', current_session: 'Session actuelle', session_device: 'Appareil',
@@ -20,6 +21,7 @@ export const pageMessages = {
     super_admin: 'Super-administrateur', workspace_admin: 'Administrateur de l’espace',
   },
   en: {
+    requests_previous: 'Previous requests', requests_next: 'Next requests',
     profile: 'My profile', docs: 'Documentation', members_page: 'Members', invitations_page: 'Invitations',
     display_name: 'Display name', account_email: 'Account email', account_roles: 'Roles',
     active_sessions: 'Active sessions', current_session: 'Current session', session_device: 'Device',

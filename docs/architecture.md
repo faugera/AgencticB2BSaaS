@@ -1,5 +1,16 @@
 # Architecture actuelle — index technique
 
+## Correctifs PR7 (2026-10-25)
+
+GET `/api/access-requests` accepte `before` (UUID facultatif), en plus de `tenantId`.
+Le tableau reste limité à100 ; la page suivante utilise l'ID du dernier élément.
+L'ordre SQL stable est `(created_at DESC,id DESC)` et le curseur est relu dans
+l'organisation autorisée. Le frontend conserve un historique précédent/suivant et
+recharge aussi les invitations après approbation, même si leur livraison échoue.
+Le menu mobile se ferme à partir de768px ; le contenu cesse d'être inert.
+Les super-admins ouvrant `/app/invitations` (avec ou sans slash final) rejoignent
+`/admin/members`, filtre conservé. Le retour de connexion/MFA accepte `/admin/audit`.
+
 Audit statique du checkout au 2026-10-24, incluant les modifications locales
 préexistantes. `IMPLEMENTED` signifie présent dans le code, sans preuve d'application
 des migrations à la DB courante. Décision principale :

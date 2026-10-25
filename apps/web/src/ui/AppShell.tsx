@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { SidebarSimpleIcon } from '@phosphor-icons/react';
@@ -17,6 +17,12 @@ export function AppShell({ me, admin, scope, tenants, workspaces, selected, onSc
  const prefs = useAccountPreferences(me.user.id);
  const [collapsed, setCollapsed] = useState(false);
  const [mobileOpen, setMobileOpen] = useState(false);
+ useEffect(() => {
+  const desktop = window.matchMedia('(min-width: 768px)');
+  const closeMobile = () => { if (desktop.matches) setMobileOpen(false); };
+  desktop.addEventListener('change', closeMobile);
+  return () => desktop.removeEventListener('change', closeMobile);
+ }, []);
  const navigate = useNavigate();
  const location = useLocation();
  const base = admin ? '/admin' : '/app';

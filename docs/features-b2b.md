@@ -1,5 +1,14 @@
 # Capacités et permissions B2B
 
+## Correctifs de revue PR7
+
+Les demandes d'accès sont paginées par100 avec précédent/suivant FR/EN ; elles ne
+disparaissent plus derrière les100 demandes récentes. L'approbation recharge les
+invitations pour rendre le renvoi disponible en cas d'échec SMTP.
+Le passage mobile/desktop libère les contrôles ; les destinations invitations et
+audit conservent la portée organisationnelle, y compris après connexion/MFA.
+Preuves et limites : `.specs/changes/2026-10-24-pr7-review/tasks.md`.
+
 Audit statique au 2026-10-24. Statuts : IMPLEMENTED = code présent ; PARTIAL =
 couverture incomplète ; PLANNED = intention documentée ; NOT_FOUND = aucun mécanisme
 identifié ; UNKNOWN = impossible à déterminer. Aucun statut n'est une preuve runtime.

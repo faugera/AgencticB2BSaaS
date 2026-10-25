@@ -34,8 +34,10 @@ export function registerAccessRoutes(app: FastifyInstance, dependencies: { pool:
       if (!token) throw new AccessError(403, 'ACCESS_DENIED');
       return { url: origin + '/signup?link=' + token };
     }, request.query.tenantId));
-  app.get<Scoped>('/api/access-requests', { schema: { querystring: tenantQuery } }, async (request) =>
-    transact(request, 'access_requests.read', async (client) => (await client.query('SELECT * FROM business.access_requests()')).rows, request.query.tenantId));
+  app.get<{ Querystring: { tenantId?: string; before?: string } }>('/api/access-requests', {
+    schema: { querystring: { type: 'object', additionalProperties: false, properties: { tenantId: uuid, before: uuid } } },
+  }, async (request) =>
+    transact(request, 'access_requests.read', async (client) => (await client.query('SELECT * FROM business.access_requests($1)', [request.query.before ?? null])).rows, request.query.tenantId));
   app.post<Scoped & { Params: { id: string }; Body: { operation: 'approve' | 'reject'; role: 'member' | 'tenant_admin' } }>('/api/access-requests/:id', {
     schema: {
       querystring: tenantQuery,

@@ -151,4 +151,28 @@ describe('access requests, protected documentation and own-account profile', () 
     expect((await app.inject({ url: '/api/auth/get-session', headers: { cookie: secondCookie } })).json()).toBeNull();
     expect((await app.inject({ url: '/api/auth/get-session', headers: { cookie: account(1).cookie } })).json()?.user.id).toBe(account(1).id);
   });
+  it('paginates past 100 requests with tied dates without losing pending requests or tenant isolation', async () => {
+    const prefix = randomBytes(8).toString('hex');
+    await operator.query(`INSERT INTO authorization_private.access_requests(tenant_id,first_name,last_name,email,status,created_at)
+      SELECT $1,'Page','Fixture',$2||n||'@example.test',CASE WHEN n>25 THEN 'rejected' ELSE 'pending' END,
+        '2030-01-01'::timestamptz FROM generate_series(1,105) n`, [tenants[0], prefix]);
+    const expected = await operator.query<{ id: string }>('SELECT id FROM authorization_private.access_requests WHERE tenant_id=$1', [tenants[0]]);
+    const ids: string[] = [];
+    let before: string | undefined;
+    for (let page = 0; page < 3; page++) {
+      const response = await app.inject({ url: '/api/access-requests' + (before ? '?before=' + before : ''), headers: { cookie: account(0).cookie } });
+      expect(response.statusCode).toBe(200);
+      const rows = response.json<{ id: string }[]>();
+      expect(rows.length).toBeLessThanOrEqual(100);
+      ids.push(...rows.map((row) => row.id));
+      before = rows.at(-1)?.id;
+      if (rows.length < 100) break;
+    }
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids.sort()).toEqual(expected.rows.map((row) => row.id).sort());
+    const cursor = ids[0];
+    expect((await app.inject({ url: '/api/access-requests?before=' + cursor, headers: { cookie: account(2).cookie } })).json()).toEqual([]);
+    expect((await app.inject({ url: '/api/access-requests?before=invalid', headers: { cookie: account(0).cookie } })).statusCode).toBe(400);
+    expect((await app.inject({ url: '/api/access-requests?before=' + cursor, headers: { cookie: account(1).cookie } })).statusCode).toBe(403);
+  });
 });

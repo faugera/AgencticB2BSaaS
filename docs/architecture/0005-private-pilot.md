@@ -1,5 +1,12 @@
 # ADR-005 — Private B2B pilot boundaries
 
+## Access-request pagination (0012)
+
+The optional UUID cursor is resolved only inside the server-authorized tenant.
+The existing tenant-admin requirement and transaction-local context remain mandatory.
+Ordering uses creation timestamp and ID;100 rows maximum per call. A cursor from
+another tenant returns no rows. UI pagination and invitation refresh add no permission.
+
 Status: accepted implementation of the owner's pilot plan. Supersedes pending
 IAM/tenant/MFA statements in ADR-004 and the earlier Task 002 plan.
 

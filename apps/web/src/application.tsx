@@ -68,7 +68,8 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
           return;
         }
         if (!adminOnly && data.access?.platformRole === 'super_admin') {
-          void navigate('/admin' + location.pathname.slice('/app'.length) + location.search, { replace: true });
+          const path = adminPage === '/app/invitations' ? '/admin/members' : '/admin' + location.pathname.slice('/app'.length);
+          void navigate(path + location.search, { replace: true });
           return;
         }
         setMe(data);
@@ -92,7 +93,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     return () => {
       active = false;
     };
-  }, [navigate, location.pathname, location.search, revision, adminOnly, loginPath]);
+  }, [navigate, location.pathname, location.search, revision, adminOnly, loginPath, adminPage]);
   useEffect(() => {
     if (!me || (adminOnly && !superAdmin)) return;
     if (profilePage || docsPage || auditPage) return;
@@ -242,7 +243,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
                 )}
                 {showInvitations && admin && (!superAdmin || scope) && <InvitationManagement invitations={invitations} query={query} busy={busy} action={action} />}
                 {showMembers && admin && (!superAdmin || scope) && <MemberManagement members={members} query={query} busy={busy} action={action} />}
-                {showInvitations && admin && (!superAdmin || scope) && <AccessRequests key={query} query={query} />}
+                {showInvitations && admin && (!superAdmin || scope) && <AccessRequests key={query} query={query} onApproved={() => setRevision((value) => value + 1)} />}
               </>
             )}
           </main>

@@ -6,7 +6,7 @@ export function safeDestination(value: string | null, fallback: '/app' | '/admin
     [...value].some((char) => char.charCodeAt(0) < 32)
   )
     return fallback;
-  if (/^\/admin(?:\/organizations|\/members|\/profile|\/security|\/workspaces(?:\/[^/?]+)?)?(?:\?|$)/u.test(value)) return value;
+  if (/^\/admin(?:\/organizations|\/members|\/profile|\/security|\/audit|\/workspaces(?:\/[^/?]+)?)?(?:\?|$)/u.test(value)) return value;
   if (fallback === '/admin' && /^\/docs(?:\?|$)/u.test(value)) return value;
   if (!/^\/(?:app|invite)(?:\/|\?|$)/u.test(value)) return fallback;
   return value;
