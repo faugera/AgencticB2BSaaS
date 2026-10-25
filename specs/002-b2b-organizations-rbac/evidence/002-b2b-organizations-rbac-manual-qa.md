@@ -1,83 +1,57 @@
-# Manual QA — passe visuelle indépendante finale
+# Manual QA — delta visuel/fonctionnel final
 
 Date : 25 octobre 2026  
-Périmètre : lecture seule des captures et journaux existants ; aucun serveur, navigateur, API ou SQL lancé ; aucune source produit modifiée.  
-Dossier de tentative : `specs/002-b2b-organizations-rbac/evidence` (le wrapper `omo ulw-loop status --json` est indisponible sous Windows dans cette tentative).
+Révision vérifiée : `163f198e32887eaa729874f42c64f842f07d649c`  
+Périmètre : rendu navigateur, navigation mobile fixe et reachability clavier du delta courant. Aucun produit n’a été modifié pendant cette revue.
 
 ## Verdict global
 
-**FAIL / NEEDS WORK.** La couverture visuelle courante est fraîche et complète : 282 PNG, 48 états, FR/EN × 375/768/1280, manifestes et dimensions vérifiés. Un défaut produit reste visible à 375px : la barre inférieure fixe recouvre partiellement des boutons ou contrôles dans plusieurs états error/success/formulaire ; les assertions ciblées ne suffisent donc pas à certifier l’absence d’occlusion. Les preuves UI simulées ne certifient ni RBAC, ni persistance, ni isolation tenant.
+**PASS.** Le défaut précédent d’occlusion mobile est corrigé et démontré par la matrice Chromium finale : 6/6 scénarios, 90 captures ciblées (scroll + focus), 6 vues du catalogue global et 288 vues d’ensemble. Aucun blocker visuel ou fonctionnel ne reste dans le périmètre de ce delta.
+
+La preuve UI utilise des réponses API simulées. Elle ne remplace pas les preuves SQL/HTTP/SMTP séparées ; celles-ci sont hors périmètre de ce verdict visuel.
 
 ## `manualQa.surfaceEvidence`
 
 | scenario id | criterion reference | surface | exact invocation | verdict | artifactRefs |
 |---|---|---|---|---|---|
-| VQ-001 | SC-004 — couverture visuelle courante | PNG navigateur, 48 états × FR/EN × 375/768/1280 | `PowerShell: manifest-integrity-check.txt` puis `PowerShell: coverage-check.txt` | PASS — 282/282 PNG intègres, bundle concordant, aucun état manquant/inattendu | A01, A02, A03, A04 |
-| VQ-002 | DESIGN_UI §6/§9 — reflow, barre fixe, accès aux formulaires | web screenshots FR/EN, 375/768/1280 | `view_image(path=<contact-01..10.png>, detail=high)` puis `view_image(path=<original ciblé>, detail=original)` | FAIL — reflow global correct, mais occlusion partielle de boutons/contrôles à 375px dans les états error/success/formulaire | A05–A14, A20, A21, A22, A23 |
-| VQ-003 | FR-009 / DESIGN_UI §9 — labels et textes longs | profil et organisations, FR/EN, 375/768/1280 | `view_image(path=ui/current/profile-top-fr-375.png, detail=original)` ; `view_image(path=ui/current/organizations-populated-fr-375.png, detail=original)` ; contact sheets complètes | PASS — libellés, emails, noms longs et aides restent lisibles ; aucune troncature horizontale constatée | A05–A14, A15, A16, A17, A18, A19 |
-| VQ-004 | DESIGN_UI §5/§7/§9 — modal, Escape, restitution du focus | dialogue d’impact et retrait de rôle | `view_image(path=ui/current/roles-impact-dialog-fr-375.png, detail=original)` ; lecture de `tests/e2e/b2b.spec.ts` et `ui-current-tests.log` | FAIL pour la certification complète — géométrie des modales PASS, mais aucune nouvelle action navigateur Escape/focus n’a été rejouée dans cette passe interdite de serveur | A20, A21, A25, A26 |
-| VQ-005 | FR-001..008 / SC-004 — organisations | `/admin/organizations`, liste/création/succès/erreur/vide/chargement | `view_image(path=ui/current/organizations-{populated,created,error,empty,loading}-fr-375.png, detail=original)` et variantes EN/768/1280 via contacts | PASS pour couverture de rendu — les cinq états existent dans les six combinaisons ; le défaut d’occlusion est reporté à VQ-002 | A05–A09, A15, A16, A17, A18, A19 |
-| VQ-006 | FR-015 / SC-004 — journal d’audit | `/admin/audit` et `/admin/audit?tenantId=...`, table/pagination/vide/erreur/chargement | `view_image(path=ui/current/audit-{global,table-end,pagination,older-page,empty,error,loading}-fr-375.png, detail=original)` et desktop ciblé | PASS pour couverture visuelle — table locale, dernière colonne et pagination sont visibles ; aucune preuve backend déduite | A05–A14, A23, A24 |
-| VQ-007 | FR-005..009 / scoped assignments — attribution UI | `/app/roles?tenantId=tenant`, remplie/succès/retrait/erreur | `view_image(path=ui/current/client-assignment-filled-fr-375.png, detail=original)` ; `view_image(path=ui/current/client-revoke-dialog-fr-375.png, detail=original)` ; lecture de `tests/e2e/b2b.spec.ts` | PASS UI simulée — roster, rôle et portée sont visibles, mais cette preuve n’est pas une preuve d’autorisation serveur | A20, A21, A25, A26, A27 |
-| VQ-008 | DESIGN_UI §6 — sidebar/menu et thème sombre | sidebar mobile ouverte, sidebar réduite desktop, quatre routes dark | `view_image(path=ui/current/sidebar-mobile-open-fr-375.png, detail=original)` ; `view_image(path=ui/current/sidebar-collapsed-fr-1280.png, detail=original)` ; originaux `*-dark-*` | FAIL — navigation et dark theme sont lisibles, mais `roles-dark-*-375` laisse le bouton d’attribution sous la barre fixe | A12, A13, A14, A28, A29, A30, A31 |
+| VFD-001 | SC-004 / DESIGN_UI §6, §9 | Chromium complet, surfaces B2B FR/EN aux viewports 375×900, 768×900 et 1280×900 | `pnpm exec playwright test tests/e2e/b2b-visual.spec.ts --config specs/002-b2b-organizations-rbac/evidence/playwright-ui.config.ts --workers=3` ; résultat consigné dans `ui-reachability-final.log` | PASS — 6/6 | A01, A02, A06 |
+| VFD-002 | DESIGN_UI §6, §9 — barre fixe et reachability | 90 PNG `ui/reachability/` : actions centrées et actions focalisées par Tab, profil/organisations/attribution/rôles sombres, FR/EN × 3 largeurs | Même invocation Playwright ciblée ; inspection `view_image` des douze planches par largeur et groupe, puis des originaux mobiles critiques | PASS — 90/90 présents, non vides, dimensions valides ; les boutons focalisés restent au-dessus de `.ui-bottom-nav` | A01, A02, A03, A04, A05, A07 |
+| VFD-003 | SC-004 — catalogue global sans erreur artificielle | Vue `/admin/roles` sans `tenantId`, FR/EN × 375/768/1280 | Même invocation Playwright ciblée ; états `roles-global-catalog-*` dans `ui-global-catalog-green.log` | PASS — 12/12 scénarios ciblés et six vues globales lisibles | A01, A04, A07 |
+| VFD-004 | FR-009 / DESIGN_UI §9 — textes, labels et reflow | Captures d’ensemble `ui/current/` et captures ciblées mobiles | `view_image(path=<planche reachability>, detail=high)` puis `view_image(path=<capture critique>, detail=original)` | PASS — pas de clipping horizontal, labels FR/EN lisibles, continuation du document non confondue avec une action focalisée | A01, A07, A08 |
+| VFD-005 | Régression 847,5 px / 839 px | Profil erreur mobile, organisation succès/erreur, attribution succès, rôles dark | Comparaison du scénario initial échoué puis du scénario final ; `ui-reachability-initial.log` et `ui-reachability-final.log` | PASS après correction — l’échec historique est reproduit avant le correctif et la matrice finale passe après `scroll-padding-bottom` | A02, A09, A10 |
+| VFD-006 | DESIGN_UI §5, §7, §9 — Escape et restitution du focus | Dialogue d’impact de rôle et parcours B2B complet | `pnpm exec playwright test --config specs/002-b2b-organizations-rbac/evidence/playwright-ui.config.ts --workers=3` ; `ui-keyboard-current-tests.log` | PASS — 47/47 ; Escape ferme le dialogue et le bouton déclencheur récupère le focus | A03, A06, A11 |
 
 ## `manualQa.adversarialCases`
 
 | scenario id | criterion reference | adversarial class | expected behavior | verdict | artifactRefs |
 |---|---|---|---|---|---|
-| ADV-001 | DESIGN_UI §9 / SC-004 | FR/EN clipping, label orphaning | Tous les labels, aides, erreurs et actions restent lisibles aux trois largeurs | FAIL — le texte est lisible, mais plusieurs actions 375px sont coupées par la barre fixe dans les états avec alerte/statut | A15, A16, A17, A18, A19, A20, A21, A22, A23 |
-| ADV-002 | DESIGN_UI §6 / SC-004 | responsive overflow / fixed-nav occlusion | Aucun contenu actionnable ne doit être masqué par la navigation inférieure fixe | FAIL — profil error, organisations error/success et attribution success montrent une partie du bouton sous la barre ; correction attendue : garantir un dégagement réel ou capturer/positionner l’action au-dessus de la barre | A15, A17, A18, A20, A22, A32 |
-| ADV-003 | DESIGN_UI §5/§9 | keyboard Escape and focus restoration | Escape ferme la modale et rend le focus au bouton déclencheur | FAIL — le scénario est présent et marqué passé dans le log mocké, mais aucune nouvelle invocation navigateur n’a été exécutée dans cette passe ; prérequis manquant : navigateur/serveur autorisé | A25, A26, A36 |
-| ADV-004 | DESIGN_UI §5/§7 | modal bounds and actions | Dialogue borné, titre visible, Annuler/Confirmer accessibles visuellement | PASS — impact et retrait sont correctement bornés à 375/768/1280, FR/EN | A20, A21, A33, A34 |
-| ADV-005 | FR-001..018 / SC-004 | state coverage completeness | Organisations, assignments et audit couvrent loading/empty/error/success/paged en FR/EN et trois largeurs | PASS — 48 états attendus, 282 captures présentes, sans manque/inattendu | A01, A02, A03, A04, A05–A14 |
-| ADV-006 | FR-003..008 / SC-001..002 | backend authorization/persistence | API/SQL réels rejettent les accès hors portée et persistent les décisions/audits | FAIL — impossible à exécuter dans ce mandat ; les réponses API de `b2b-visual.spec.ts` et `b2b.spec.ts` sont des mocks et ne peuvent pas fournir cette autorité | A25, A26, A35, A36 |
-| ADV-007 | FR-015 / DESIGN_UI §6 | local table scroll and last-column reach | Le tableau ne déborde pas globalement et la dernière colonne est atteignable | PASS — `audit-table-end` montre la fin de table dans la région locale ; desktop global reste borné | A23, A24, A28, A29 |
-| ADV-008 | DESIGN_UI §4/§9 | dark-mode contrast and responsive shell | Le thème sombre conserve contraste, hiérarchie et navigation aux trois largeurs | FAIL — contrastes globalement lisibles, mais le bouton `Attribuer` en 375px est partiellement couvert dans `roles-dark-*` | A12, A13, A14, A30, A31, A32 |
+| ADV-001 | DESIGN_UI §6, §9 | fixed-nav occlusion à 375 px | Le bas de chaque contrôle visible est ≤ au bord supérieur de la barre fixe | PASS — assertions de bounds après stabilisation et captures d’action mobiles | A02, A06, A07 |
+| ADV-002 | DESIGN_UI §9 | parcours Tab sans recentrage entre contrôles | Chaque contrôle activable reçoit le focus et reste entièrement visible après le Tab natif | PASS — `expect(control).toBeFocused()` et quatre limites contrôlées pour chaque contrôle | A03, A06, A07 |
+| ADV-003 | DESIGN_UI §6, §9 | contrôles désactivés | Un contrôle désactivé reste atteignable par scroll et n’est pas forcé dans le parcours Tab natif | PASS — les boutons désactivés sont contrôlés par scroll puis exclus de `controls` | A02, A05, A06 |
+| ADV-004 | FR-009 / SC-004 | FR/EN, labels longs, petites largeurs | Aucun libellé, aide, erreur ou action n’est tronqué ou orphelin | PASS — inspection des 90 ciblées et des vues d’ensemble 375/768/1280 | A01, A07, A08 |
+| ADV-005 | SC-004 | catalogue global sans tenant sélectionné | La page affiche le catalogue sans fausse erreur ni roster hors portée | PASS — 12/12 et six captures globales | A04, A07 |
+| ADV-006 | DESIGN_UI §4, §9 | thème sombre + navigation mobile | Contraste, hiérarchie, focus et barre mobile restent lisibles | PASS — rôles dark FR/EN aux trois largeurs, dont la capture mobile du contrôle désactivé | A01, A02, A07 |
+| ADV-007 | DESIGN_UI §5, §7 | Escape et restitution du focus | Escape ferme la modale et rend le focus au bouton déclencheur | PASS — assertions B2B 47/47 et test ciblé du dialogue | A03, A06, A11 |
+| ADV-008 | FR-003..008 / SC-001..002 | autorisation, persistance et isolation SQL | Les accès hors portée doivent être rejetés et les décisions persistées | NOT_APPLICABLE — ce verdict couvre uniquement le delta visuel/fonctionnel ; les preuves SQL/HTTP/SMTP sont séparées | — |
 
 ## `artifactRefs`
 
 | id | kind | description | path |
 |---|---|---|---|
-| A01 | integrity-log | Vérification manifeste/bundle/PNG, 282 fichiers, zéro erreur | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/manifest-integrity-check.txt` |
-| A02 | coverage-log | Inventaire des 48 états attendus et présents | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/coverage-check.txt` |
-| A03 | test-log | Suite visuelle ciblée 6/6 | `specs/002-b2b-organizations-rbac/evidence/ui-current-visual-tests.log` |
-| A04 | manifest | Bundle courant et 282 captures post-build | `specs/002-b2b-organizations-rbac/evidence/ui-current-manifest.json` |
-| A05 | contact-sheet | États audit/assignment, 5 lignes × 6 variantes | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-01.png` |
-| A06 | contact-sheet | États audit/assignment/organisations, 5 lignes × 6 variantes | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-02.png` |
-| A07 | contact-sheet | États assignment/organisations | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-03.png` |
-| A08 | contact-sheet | États organisations/profil | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-04.png` |
-| A09 | contact-sheet | États organisations/profil/roles | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-05.png` |
-| A10 | contact-sheet | Rôles contrôles 0–10 | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-06.png` |
-| A11 | contact-sheet | Rôles contrôles 11–12 | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-07.png` |
-| A12 | contact-sheet | Rôles contrôles 5–9 et dark/editor/dialog | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-08.png` |
-| A13 | contact-sheet | Rôles dark/editor/dialog/assignments | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-09.png` |
-| A14 | contact-sheet | Sidebar réduite/mobile ouverte et applicabilité des largeurs | `specs/002-b2b-organizations-rbac/evidence/ui-final-qa-artifacts/contact-sheets/contact-10.png` |
-| A15 | screenshot | Profil FR mobile avec alerte d’erreur et bouton recouvert | `specs/002-b2b-organizations-rbac/evidence/ui/current/profile-error-fr-375.png` |
-| A16 | screenshot | Profil FR mobile, formulaire et labels longs | `specs/002-b2b-organizations-rbac/evidence/ui/current/profile-top-fr-375.png` |
-| A17 | screenshot | Organisations FR mobile, état erreur | `specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-error-fr-375.png` |
-| A18 | screenshot | Organisations FR mobile, état succès et bouton bas | `specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-created-fr-375.png` |
-| A19 | screenshot | Organisations FR mobile, vide/chargement | `specs/002-b2b-organizations-rbac/evidence/ui/current/organizations-empty-fr-375.png` |
-| A20 | screenshot | Attribution FR mobile remplie/succès | `specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-filled-fr-375.png` |
-| A21 | screenshot | Dialogue de retrait FR mobile | `specs/002-b2b-organizations-rbac/evidence/ui/current/client-revoke-dialog-fr-375.png` |
-| A22 | screenshot | Attribution FR mobile état succès | `specs/002-b2b-organizations-rbac/evidence/ui/current/client-assignment-success-fr-375.png` |
-| A23 | screenshot | Audit FR mobile table, fin de table, pagination | `specs/002-b2b-organizations-rbac/evidence/ui/current/audit-table-end-fr-375.png` |
-| A24 | screenshot | Audit FR mobile global/ancienne page | `specs/002-b2b-organizations-rbac/evidence/ui/current/audit-global-fr-375.png` |
-| A25 | source-test | Assertions clavier, dialogue, focus et portée UI | `tests/e2e/b2b.spec.ts` |
-| A26 | source-test | Capture des états FR/EN, largeurs et états de formulaire | `tests/e2e/b2b-visual.spec.ts` |
-| A27 | source-component | Composition des attributions et scope UI | `apps/web/src/pages/RoleAssignments.tsx` |
-| A28 | screenshot | Audit desktop FR en clair | `specs/002-b2b-organizations-rbac/evidence/ui/current/audit-global-fr-1280.png` |
-| A29 | screenshot | Audit desktop FR fin de table | `specs/002-b2b-organizations-rbac/evidence/ui/current/audit-table-end-fr-1280.png` |
-| A30 | screenshot | Sidebar desktop réduite FR sombre | `specs/002-b2b-organizations-rbac/evidence/ui/current/sidebar-collapsed-fr-1280.png` |
-| A31 | screenshot | Sidebar mobile ouverte FR sombre | `specs/002-b2b-organizations-rbac/evidence/ui/current/sidebar-mobile-open-fr-375.png` |
-| A32 | source-style | CSS de barre fixe et dégagement mobile | `apps/web/src/ui/shell.css` |
-| A33 | screenshot | Dialogue impact FR mobile | `specs/002-b2b-organizations-rbac/evidence/ui/current/roles-impact-dialog-fr-375.png` |
-| A34 | screenshot | Dialogue impact FR desktop | `specs/002-b2b-organizations-rbac/evidence/ui/current/roles-impact-dialog-fr-1280.png` |
-| A35 | contract | Contrat responsive/accessibilité Brume | `DESIGN_UI.md` |
-| A36 | source-log | Résultats 46 tests UI mockés, dont b2b visual et b2b | `specs/002-b2b-organizations-rbac/evidence/ui-current-tests.log` |
+| A01 | manifest | Manifest courant : build frais, 378 PNG, hashes JS/CSS et dates | `specs/002-b2b-organizations-rbac/evidence/ui-current-manifest.json` |
+| A02 | browser-log | Matrice finale Chromium FR/EN × 375/768/1280, 6/6 | `specs/002-b2b-organizations-rbac/evidence/ui-reachability-final.log` |
+| A03 | browser-log | Suite Chromium complète, 47/47 | `specs/002-b2b-organizations-rbac/evidence/ui-keyboard-current-tests.log` |
+| A04 | browser-log | Catalogue global ciblé, 12/12 | `specs/002-b2b-organizations-rbac/evidence/ui-global-catalog-green.log` |
+| A05 | contract-note | Description du correctif et de la couverture clavier | `specs/002-b2b-organizations-rbac/evidence/ui-keyboard-reachability.md` |
+| A06 | source-test | Assertions `scrollIntoView`, focus Tab et quatre limites | `tests/e2e/support/reachability.ts` |
+| A07 | screenshot-set | 90 captures ciblées scroll/focus inspectées | `specs/002-b2b-organizations-rbac/evidence/ui/reachability/` |
+| A08 | screenshot-set | 288 vues d’ensemble et six vues catalogue global | `specs/002-b2b-organizations-rbac/evidence/ui/current/` |
+| A09 | browser-log | Reproduction historique de l’occlusion 847,5 px > 839 px | `specs/002-b2b-organizations-rbac/evidence/ui-reachability-initial.log` |
+| A10 | source-style | Correctif mobile `scroll-padding-bottom` limité au shell mobile | `apps/web/src/ui/shell.css` |
+| A11 | source-test | Test Escape et restitution du focus du dialogue | `tests/e2e/b2b-visual.spec.ts` |
 
-## Limites et suites requises
+## Limites connues
 
-- Aucun verdict d’autorisation, de persistance ou d’isolation ne peut être PASS depuis des réponses simulées ; il faut une exécution API/SQL réelle avec infrastructure jetable explicitement configurée.
-- Escape/focus est vérifié dans le code de test et le journal antérieur, pas rejoué ici ; il faut une passe navigateur autorisée pour un PASS indépendant de cette interaction.
-- Lighthouse/axe et conformité WCAG exhaustive ne sont pas exécutés.
-- Le blocage responsive à 375px doit être corrigé ou démontré comme non-recouvrant par une capture d’action ciblée, puis les états touchés doivent être recapturés et revus.
+- Cette revue ne requalifie pas les autorisations serveur, la persistance ou l’isolation tenant ; les contrôles SQL/HTTP/SMTP sont séparés.
+- Lighthouse, axe et la conformité WCAG exhaustive ne sont pas déclarés.
+- Les vues d’ensemble prises en haut de document peuvent montrer une continuation sous la barre fixe ; la preuve de non-occlusion repose sur les captures ciblées et les assertions de bounds après scroll/focus.

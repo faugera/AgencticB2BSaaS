@@ -63,6 +63,7 @@ describe('Organisation et RBAC persistés', () => {
     await expect(tx(at(ids, 2), at(tenants, 2), client => client.query('SELECT * FROM business.tenants'))).rejects.toThrow();
     await expect(operator.query("INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'member')", [at(actors, 2), at(tenants, 2)])).rejects.toThrow();
     await expect(runtime.query('SELECT * FROM authorization_private.role_catalog')).rejects.toThrow();
+    await expect(runtime.query('SELECT business.role_catalog()')).rejects.toThrow('ACCESS_DENIED');
     expect((await runtime.query('SELECT * FROM business.organizations')).rowCount).toBe(0);
     await expect(tx(at(ids, 2), at(tenants, 0), client => client.query('SELECT business.role_catalog()'))).rejects.toThrow();
     expect((await tx(at(ids, 1), at(tenants, 0), client => client.query<{ roles: unknown[] }>('SELECT business.role_catalog() roles'))).rows[0]?.roles.length).toBeGreaterThan(0);

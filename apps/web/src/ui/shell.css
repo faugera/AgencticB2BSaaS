@@ -48,7 +48,7 @@
  .ui-root .ui-collapse-control { display:none; }
  .ui-root .ui-close-mobile { display:inline-flex; align-self:flex-start; }
  .ui-main-content { padding:var(--ui-space-3) var(--ui-space-3) calc(var(--ui-mobile-clearance) + env(safe-area-inset-bottom,0px)); overflow:visible; }
- html:has(.ui-shell) { scroll-padding-bottom:calc(88px + env(safe-area-inset-bottom,0px)); }
+ html:has(.ui-shell) { scroll-padding-bottom:calc(var(--ui-mobile-clearance) + env(safe-area-inset-bottom,0px)); }
  .ui-bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0; z-index:21; background:var(--ui-surface); border-top:1px solid var(--ui-border); padding:var(--ui-space-2) var(--ui-space-3) calc(var(--ui-space-2) + env(safe-area-inset-bottom)); justify-content:space-around; gap:var(--ui-space-2); }
  .ui-bottom-nav a { display:flex; align-items:center; justify-content:center; min-height:var(--ui-control); font-size:var(--ui-text-sm); overflow-wrap:anywhere; max-width:45%; }
  .ui-root .ui-invitations { grid-template-columns:minmax(0,1fr); }

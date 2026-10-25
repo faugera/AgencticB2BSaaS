@@ -58,3 +58,8 @@ par core.autocrlf, qui changeait leurs checksums sans changer le SQL. Les seules
 migrations0013–0015 sont désormais fixées LF dans .gitattributes ; aucune ancienne
 migration ni règle de validation du migrateur n’est modifiée. Les checksums de la base
 jetable primaire restent canoniques et le checkout doit conserver les mêmes octets.
+
+Le contrôle frais confirme15/15SQL identiques octet par octet et un rejeu du migrateur
+depuis ce checkout avec15versions et historique strictementidentique (checkout-replay-proof.md).
+La lecture du catalogue sans contexte runtime est explicitement refusée42501 ; test
+adversarial direct ajouté dans organizations.integration.test.ts pour prévenir une régression.
