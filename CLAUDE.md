@@ -1,1 +1,2 @@
-Read @AGENTS.md for repository navigation, commands, invariants, and completion gates.
+Lire @AGENTS.md, puis la constitution commune .specify/memory/constitution.md.
+Les skills officiels speckit-* sont installés dans .claude/skills.

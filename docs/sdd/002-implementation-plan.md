@@ -47,16 +47,15 @@ Integrate Better Auth in React/Fastify. Validate trusted origins and database-ba
 sessions at the API boundary; keep business authorization separate. Keep /health
 independent of identity-provider and database availability.
 
-An operator-only bootstrap command binds the intended verified Better Auth user to the
-initial platform role. Proposed command: `pnpm iam:bootstrap-admin`; this is a
-future deliverable, not a currently available command. Never use a default
-password, first-user-wins promotion, or email from the request body.
+La commande opérateur `pnpm operator:bootstrap <verified-identity-id> <application-handle>`
+lie explicitement une identité vérifiée au premier super-admin. Elle est implémentée ;
+`pnpm operator:identity` permet de retrouver cet ID. Aucun mot de passe par défaut,
+aucune promotion du premier inscrit ni rôle dérivé de l’email de la requête.
 
 Use PostgreSQL plus Mailpit for development and CI. Production requires privately
 configured secrets and an authenticated TLS SMTP service. No external identity
 provider account or CLI OAuth flow is required. Operator identity invitations
-(`pnpm auth:invite`) grant no tenant/platform role; platform bootstrap is still
-future work. Use synthetic identities, with no production test-auth escape hatch.
+(`pnpm auth:invite`) grant no tenant/platform role; platform bootstrap uses the explicit operator command above. Use synthetic identities, with no production test-auth escape hatch.
 
 ## D. First complete browser journey
 
@@ -83,11 +82,12 @@ Prove both denials and legitimate access, bootstrap restrictions, invitation
 lifecycle, revocation and privileged audit. Report HTTP/email mocks separately from
 a real PostgreSQL/SMTP activation/sign-in/recovery check.
 
-Code is delivered in a separate implementation PR after the docs base is aligned.
+Le pilote et ses extensions sont fusionnés dans PR7 ; les nouvelles évolutions
+suivent le workflow Spec Kit.
 No automatic merge, paid provisioning, production migration or deployment.
 
 ## Setup and remaining work
 
 See `../setup/better-auth.md` for local secrets, database migration and SMTP.
-The identity slice does not complete the tenant/RBAC/platform bootstrap plan.
+Le pilote implémente tenant/RBAC/bootstrap ; ses limites courantes figurent dans ADR-005.
 Production email delivery and hosting remain operator configuration.

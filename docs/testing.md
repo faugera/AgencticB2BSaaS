@@ -53,3 +53,9 @@ README et rapport CSS historique : UPDATED. Docs d'architecture et carte produit
 REVIEWED_NO_CHANGE, aucune frontière ni capacité produit modifiée. Changelog produit :
 REVIEWED_NO_CHANGE, pas de changement utilisateur applicatif. Variables et IAM :
 NOT_APPLICABLE. Aucun changement de dépendance.
+
+## Contrôle documentaire
+
+pnpm docs:test teste le vérificateur avec fixtures valides/invalides ; pnpm docs:check
+vérifie structure, statuts, liens et chemins maintenus. Voir docs/setup/spec-kit.md.
+Ces contrôles ne remplacent aucun gate applicatif ou de sécurité existant.

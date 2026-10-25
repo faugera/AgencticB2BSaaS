@@ -116,22 +116,16 @@ CI additionally runs `pnpm verify:security`, `pnpm verify:tenant-isolation` and
 `pnpm test:auth:e2e` against disposable PostgreSQL/Mailpit. These gates fail rather
 than skip when required test infrastructure is missing. See the runbook for variables.
 
-## Documentation and declarative SDD
+## Documentation et Spec Kit
 
-- [Architecture and API flows](docs/architecture.md),
-  [data model](docs/data-model.md), [B2B capabilities and permissions](docs/features-b2b.md).
-- [Product map](.specs/domains/product-map.md) separates observed implementation,
-  partial features and plans; older task specs remain in `docs/sdd/`.
-- Before changes, read [the standards index](.specs/standards/index.yml) and load
-  only relevant standards. Analyze [documentation routing](.specs/standards/doc-sync-map.yml)
-  for every change, including small direct fixes.
-- For business features, contract or security changes: `$sdd-shape` creates a
-  dated delta from [the templates](.specs/changes/_template/spec.md),
-  `$sdd-implement` implements and updates docs, `$sdd-verify` records evidence,
-  `$sdd-archive` consolidates verified work. `$sdd-discover` maintains recurring standards.
-- [The workflow contract](.specs/standards/workflow.md) defines states, recovery,
-  evidence and the direct path. This is a Codex execution contract, with no added
-  SDD CLI, orchestration script or automated CI enforcement.
+- [Architecture](docs/architecture.md), [modèle](docs/data-model.md),
+  [capacités](docs/features-b2b.md) et [carte produit](.specs/domains/product-map.md).
+- [Constitution](.specify/memory/constitution.md) et [guide Spec Kit](docs/setup/spec-kit.md).
+  Codex et Claude utilisent les intégrations officielles 1.2.3. Spec/plan/tâches obligatoires
+  pour tout changement ; tests proportionnés. Contrôles : pnpm docs:test et pnpm docs:check.
+- Charger les [standards pertinents](.specs/standards/index.yml) et analyser le
+  [routage documentaire](.specs/standards/doc-sync-map.yml). Les anciens dossiers sont
+  conservés avec un [registre de réconciliation](docs/sdd/legacy-reconciliation.md).
 
 Environment ownership remains split: root `.env.example` is for Compose;
 `apps/api/.env.example` documents runtime auth/SMTP, and
@@ -145,8 +139,8 @@ aux candidats puis traite les demandes de son organisation sur cette même page.
 La demande ne crée aucun compte : une approbation envoie une invitation existante.
 Les pages `/app/members`, `/app/profile` et `/admin/profile` complètent la navigation.
 `/docs` est réservé aux super-admins, y compris son API de contenu.
-La migration additive 0008 accompagne ce parcours ; sa validation sur PostgreSQL
-jetable reste à réaliser (voir le checkpoint de la spec frontend-pages).
+Les migrations 0008 et 0012 accompagnent ce parcours ; voir le registre de réconciliation
+pour les preuves historiques. Aucune application à la DB courante n’est déduite.
 
 ### Design system Brume
 
@@ -154,6 +148,6 @@ La charte active est [DESIGN_UI.md](DESIGN_UI.md). La galerie interactive se tro
 dans `/docs`, onglet « Design system », accessible aux super-admins. Les préférences
 langue/thème sont liées au compte ; l'apparence d'un workspace est personnalisable
 par ses gestionnaires via une palette ou une couleur hexadécimale. La migration
-0009 est requise ; ses tests PostgreSQL restent à exécuter dans une base jetable.
+0009 est requise ; voir le registre de réconciliation pour les preuves et limites.
 La page marketing conserve son identité. Aucune notification ou capacité IA fictive
 n'est ajoutée à l'application.

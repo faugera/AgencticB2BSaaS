@@ -33,5 +33,6 @@ Références factuelles : `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml
 `vitest.config.ts`, `vitest.auth.config.ts` et `playwright.config.ts` définissent
 les périmètres. Les variables et commandes opérateur sont dans
 `docs/setup/private-pilot.md` et `docs/setup/better-auth.md` ; ne jamais migrer une DB
-pour une simple validation documentaire. Aucune commande de validation SDD ni de
-déploiement global n'existe. Ne pas en inventer. La CI existante ne contrôle pas ce contrat déclaratif.
+pour une simple validation documentaire. Le contrôle documentaire est pnpm docs:check (structure et chemins, pas sémantique).
+Les intégrations officielles Spec Kit 1.2.3 servent Codex et Claude ; voir docs/setup/spec-kit.md.
+Aucune commande de déploiement global.

@@ -17,5 +17,5 @@ standards:
     when_to_load: Interface utilisateur ou parcours navigateur.
   - id: workflow
     path: .specs/standards/workflow.md
-    summary: États SDD, preuves, reprise asynchrone et parcours direct.
-    when_to_load: Shaping, implémentation, vérification, archivage ou changement direct.
+    summary: Spec Kit systématique, preuves et reprise asynchrone.
+    when_to_load: Toute évolution et reprise de travail.

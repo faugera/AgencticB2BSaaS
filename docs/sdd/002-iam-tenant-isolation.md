@@ -3,7 +3,7 @@
 Status: scope approved and implemented for the private pilot. ADR-005 specifies
 the exact SQL boundary and optional MFA decision; the private-pilot runbook
 documents gates and operator prerequisites before opening access.
-This remains a documentation-only PR. See `002-implementation-plan.md` for
+Le périmètre pilote est fusionné ; ce document ne certifie pas son déploiement. See `002-implementation-plan.md` for
 sequencing and `../architecture/0004-better-auth.md` for authentication.
 
 ## Accepted scope

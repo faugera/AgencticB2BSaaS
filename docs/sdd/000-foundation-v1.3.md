@@ -1,6 +1,7 @@
 # SDD-00 v1.3 — Enterprise AI OS foundation
 
-Status: proposed; architecture contract, not implementation authorization.
+Statut : vision évolutive. Le socle et le pilote IAM sont implémentés ; les capacités
+IA et les vagues futures restent des intentions, sans autorisation implicite.
 Baseline: Task 001 merged; Node 24, pnpm 11.25.0, React 19/Vite/Tailwind v4, Fastify, PostgreSQL 17 (local), strict TypeScript. Preserve existing modules and scripts; no Bun migration.
 
 ## Objective and constraints
@@ -55,10 +56,11 @@ No Convex adoption or dual database. No premature Kafka/Kubernetes/microservices
 
 ## Implementation sequencing
 Wave 0 completed: Task 001 bootstrap.
-Wave 1 proposed: Task 002 IAM, tenant/workspace model, authorization, database isolation and adversarial tests.
-Wave 2: design system and tenant-aware product foundations.
+Vague 1 implémentée : IAM, modèle tenant/workspace, autorisation, RLS et tests adversariaux.
+Vague 2 implémentée dans PR7 : Brume, portails, audit et fondations produit tenant.
 Wave 3: first real business workflow and agent/tool/HITL slice.
 Wave 4: hardening, observability, metering, deployment and resilience.
 
 ## Acceptance for this document PR
-Documentation only; no runtime/dependency/schema changes. Review SDD-002 before authorizing implementation. Existing ADR-001 remains the historical Task 001 decision; this document governs intended evolution.
+Ce document conserve la vision ; les évolutions suivent désormais Spec Kit. ADR-001 reste
+historique. Voir la carte produit pour l’état courant et les registres pour les preuves.

@@ -11,17 +11,11 @@ Le menu mobile se ferme à partir de768px ; le contenu cesse d'être inert.
 Les super-admins ouvrant `/app/invitations` (avec ou sans slash final) rejoignent
 `/admin/members`, filtre conservé. Le retour de connexion/MFA accepte `/admin/audit`.
 
-Audit statique du checkout au 2026-10-24, incluant les modifications locales
-préexistantes. `IMPLEMENTED` signifie présent dans le code, sans preuve d'application
-des migrations à la DB courante. Décision principale :
-[ADR-005](architecture/0005-private-pilot.md) ; opérations :
-[runbook pilote](setup/private-pilot.md). Cet index ne remplace pas ces documents.
-
-Portée de publication : cette PR ne contient que le bootstrap documentaire.
-Les observations `/admin` et navigation avancée décrivent des modifications locales
-préexistantes exclues de la PR, pas des capacités ajoutées à sa branche de base.
-Les références locales exclues sont inventoriées dans
-[le rapport d'audit](architecture/sdd-bootstrap-verification.md).
+État du code fusionné dans main par PR7 (10b4e7c), revu le 25 octobre 2026.
+IMPLEMENTED signifie présent dans le code ; l'application des migrations à une DB n'est
+pas déduite. [ADR-005](architecture/0005-private-pilot.md) gouverne les frontières,
+[le runbook](setup/private-pilot.md) les opérations, [le registre](sdd/legacy-reconciliation.md)
+les anciennes preuves. Aucun résultat produit n'est relancé pour cette migration.
 
 ## Modules et flux
 
@@ -65,9 +59,7 @@ types publics partagés : `packages/shared/src/index.ts`.
 `tenantId` est une demande de portée validée côté serveur. L'absence d'accès ne se
 résout jamais par une permission frontend. Les erreurs métier sont centralisées
 dans `apps/api/src/app.ts` ; Better Auth conserve son contrat propre.
-Les détails de navigation et anciennes preuves restent dans la note locale
-`docs/architecture/routes-verification.md` (hors PR), qui est un instantané,
-pas un résultat de tests réexécutés pour ce bootstrap.
+Les notes de routes datées sont historiques ; voir le registre pour leur réconciliation.
 
 ## Sécurité et limites
 
@@ -86,32 +78,25 @@ ADR-001 est historique ; ADR-003 est supersédé par ADR-004, dont les anciennes
 mentions IAM pending sont supersédées par ADR-005. Les specs `docs/sdd` décrivent
 aussi des objectifs futurs ; elles ne prouvent pas leur implémentation.
 
-## Frontend completion — 2026-10-24
+## Demandes, profils et Brume
 
-`/signup?link=<uuid>` collects an access request without creating an identity or
-membership. `/app/invitations` lets tenant administrators generate their link and
-review their own requests; approval reuses invitation delivery. HTTP contracts:
-POST `/api/access-link`, GET/POST `/api/access-requests`, POST
-`/api/access-requests/:id` (approve/reject). Tenant scope is established by the
-existing authenticated transaction; public collection accepts only the opaque link.
-`/app/profile` and `/admin/profile` use Better Auth for name and own-session changes.
-`/app/members` and `/app/invitations` preserve existing permissions.
-`/docs` and GET `/api/platform/docs` require a super-admin; guide content resides
-in the backend and is not included in the public JavaScript bundle.
-Database authorization tests remain pending in the implementation checkpoint.
+/signup?link=<uuid> collecte une demande sans identité ou membership. /app/invitations
+permet aux tenant-admins de créer un lien et traiter leurs demandes ; un super-admin
+utilise /admin/members. Contrats : POST /api/access-link, GET/POST /api/access-requests,
+POST /api/access-requests/:id pour approuver/rejeter. La portée authentifiée vient du
+serveur ; la collecte publique n'accepte que le lien opaque comme destination tenant.
+/app/profile et /admin/profile utilisent Better Auth pour le nom et les autres sessions.
+/docs et GET /api/platform/docs exigent super-admin ; le guide est servi par l'API,
+pas embarqué dans le bundle public. Les tests réels sont dans access.integration.test.ts.
 
-## Brume UI system (2026-10-24)
-
-DESIGN_UI.md is the active app/admin/auth design contract. Shared controls and
-shell live in apps/web/src/ui; domain compositions remain in pages. The marketing
-surface retains its design. Source Sans 3 is self-hosted and Phosphor icons are
-limited to sidebar navigation. /docs includes an interactive super-admin gallery.
-GET/PUT /api/preferences reads/saves the current actor's locale and theme; the
-browser caches preferences for pre-auth rendering. PUT
-/api/workspaces/:id/appearance?tenantId=... accepts only a nullable #RRGGBB color.
-Existing transaction, session, Origin and role checks apply. Workspaces now expose
-nullable color. Arbitrary request properties are rejected rather than stripped.
-These contracts require migration 0009; SQL runtime verification remains pending.
+DESIGN_UI.md gouverne app/admin/auth ; les primitives et le shell vivent dans
+apps/web/src/ui et les compositions dans pages. Lato est auto-hébergée et les icônes
+Phosphor sont limitées au menu latéral. Le marketing conserve son identité visuelle.
+GET/PUT /api/preferences lit/enregistre langue et thème de l'acteur courant ; cache local
+avant connexion. PUT /api/workspaces/:id/appearance accepte seulement color nullable
+#RRGGBB dans la portée autorisée. Session, Origin, rôle et transaction restent contrôlés.
+Les propriétés supplémentaires sont refusées. La migration0009 et les tests réels
+préférences/apparence sont inclus dans les preuves CI historiques du registre.
 
 ## Journal d’audit V0 — 2026-10-24
 
@@ -128,4 +113,5 @@ MFA reste facultative en V0. Aucun endpoint de suppression supplémentaire ni ex
 Vérification réelle : 4 tests audit et 14 tests d’isolation passent sur PostgreSQL
 17.11 jetable. La consultation navigateur réelle FR/EN aux trois viewports et
 les refus 401/403 sont démontrés dans .omo/evidence/audit-log-v0/live-browser/proof.json.
-Les gates globaux restent rouges sur le chantier lifecycle et un test profil 429.
+Les anciens échecs lifecycle et profil429 ont été corrigés avant la CI réussie de PR7 ;
+voir le registre. Cela ne constitue pas une nouvelle exécution locale.

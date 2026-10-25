@@ -6,16 +6,14 @@ Références : `apps/web/src/main.tsx` (React Router),
 `apps/web/src/admin/AdminSidebar.tsx`. Réutiliser ces surfaces avant extraction ;
 aucune bibliothèque de composants ou de formulaires dédiée identifiée.
 
-`AdminSidebar.tsx`, les gardes `/admin` et les tests admin/tenant-scope cités ici
-sont des observations du travail local préexistant, exclu de cette PR documentaire.
-Sur un checkout propre, vérifier leur présence avant réutilisation ; conserver les
-patterns disponibles dans `Application`/`AuthPage` si cette évolution n'est pas livrée.
+Les références suivantes appartiennent au code fusionné dans PR7.
+Les conventions Brume actuelles ci-dessous supplantent les observations historiques.
 
 - État local `useState`/`useEffect` ; portée d'organisation issue de l'URL,
   conservée dans les liens et l'historique. Pas de store global à introduire.
 - Formulaires HTML avec labels, `required`, limites et `FormData` ; serveur
   toujours responsable de la validation et des permissions.
-- `api` et `HttpError` dans `application.tsx`, `authClient` dans
+- `api` et `HttpError` dans `apps/web/src/http.ts`, `authClient` dans
   `apps/web/src/auth/client.ts` : réutiliser les appels same-origin et états busy.
 - Feedback intégré par `role="alert"`, `role="status"`, `aria-busy` ; préserver
   navigation clavier, labels et retours d'erreur. Pas de système toast à ajouter.
