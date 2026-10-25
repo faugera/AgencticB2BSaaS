@@ -2,7 +2,7 @@
 
 **Feature Branch**: codex/spec-kit-adoption
 **Created**: 2026-10-25
-**Status**: In Progress
+**Status**: Complete
 **Input**: Plan utilisateur approuvé : migration officielle, historique préservé et CI légère.
 
 ## User Scenarios & Testing

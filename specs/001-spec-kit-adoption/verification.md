@@ -26,7 +26,8 @@ restante identifiée sur les critères inspectés, aucune spec rétroactive inve
 FR-004 : anciens skills déplacés à contenu identique hors découverte ; docs IAM, Brume,
 audit/lifecycle et pagination cohérentes avec PR7. MFA V0 facultative conservée.
 FR-005 : script testé, commandes locales et étape CI ; limites du parseur explicites.
-FR-006 : analyse enregistrée ; convergence et publication à confirmer dans le checkpoint.
+FR-006 : analyse enregistrée, critères examinés ; PR8 ouverte vers main sans fusion.
+Convergence finale exécutée en lecture seule après mise à jour des tâches.
 
 ## Synchronisation documentaire
 UPDATED : AGENTS/CLAUDE, guide Spec Kit, deux skills projet, workflow/index/standards
@@ -42,3 +43,10 @@ et références des skills sont vérifiées sur disque, sans prétendre à une e
 dans ces deux clients. Les skills ont été suivis par cet assistant en session ; Spec Kit
 n'est pas un moteur de test métier. Pas de conformité WCAG exhaustive ni de déploiement.
 Le script ne vérifie pas les ancres, la disponibilité externe, ni la cohérence sémantique.
+
+## Livraison
+
+Implémentation : commit37a5d0c. [PR8](https://github.com/faugera/AgencticB2BSaaS/pull/8)
+ouverte vers main ; aucun merge. Les preuves couvrent le contenu de la migration ;
+la CI de PR8 reste à consulter. Statut Complete = périmètre démontré localement,
+sans présumer d’une fusion, d’une CI terminée ou d’un déploiement.

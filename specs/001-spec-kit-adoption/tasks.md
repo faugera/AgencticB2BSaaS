@@ -17,7 +17,7 @@
 
 ## Phase 5: Vérification et livraison
 - [x] T008 Vérifier manifestes, liens, structure, tests, lint et absence de modification produit/historique ; enregistrer preuves et analyse (FR-006).
-- [ ] T009 Exécuter la convergence, mettre à jour les tâches et créer une PR vers main sans fusion (FR-006).
+- [x] T009 Exécuter la convergence, mettre à jour les tâches et créer une PR vers main sans fusion (FR-006).
 
 ## Dependencies & Execution Order
 T001/T002 avant T003 ; T004 et T005 avant validation finale ; T006 avant T007 ; T008 avant T009.
