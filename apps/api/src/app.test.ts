@@ -30,4 +30,21 @@ describe('HTTP boundary', () => {
     const response = await app.inject({ method: 'GET', url: '/tenants' });
     expect(response.statusCode).toBe(404);
   });
+
+  it.each([
+    { contentType: 'application/json', payload: '{', status: 400 },
+    { contentType: 'application/json', payload: 'x'.repeat(1_048_577), status: 413 },
+    { contentType: 'application/octet-stream', payload: 'unsupported', status: 415 },
+  ])('returns a safe client error ($status)', async ({ contentType, payload, status }) => {
+    const app = buildApp();
+    apps.push(app);
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/auth/sign-in/email',
+      headers: { 'content-type': contentType },
+      payload,
+    });
+    expect(response.statusCode).toBe(status);
+    expect(response.json()).toEqual({ code: 'INVALID_REQUEST' });
+  });
 });

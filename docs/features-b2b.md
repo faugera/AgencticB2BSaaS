@@ -1,5 +1,14 @@
 # Capacités et permissions B2B
 
+## Correctifs de revue PR7
+
+Les demandes d'accès sont paginées par100 avec précédent/suivant FR/EN ; elles ne
+disparaissent plus derrière les100 demandes récentes. L'approbation recharge les
+invitations pour rendre le renvoi disponible en cas d'échec SMTP.
+Le passage mobile/desktop libère les contrôles ; les destinations invitations et
+audit conservent la portée organisationnelle, y compris après connexion/MFA.
+Preuves et limites : `.specs/changes/2026-10-24-pr7-review/tasks.md`.
+
 Audit statique au 2026-10-24. Statuts : IMPLEMENTED = code présent ; PARTIAL =
 couverture incomplète ; PLANNED = intention documentée ; NOT_FOUND = aucun mécanisme
 identifié ; UNKNOWN = impossible à déterminer. Aucun statut n'est une preuve runtime.
@@ -27,7 +36,7 @@ références exclues dans `docs/architecture/sdd-bootstrap-verification.md`.
 | SSO/SCIM, passkeys, MFA imposée | PLANNED | ADR-005 et `docs/architecture/routes-verification.md` ; hors pilote |
 | Facturation, agents IA et workflows durables | PLANNED | `docs/sdd/000-foundation-v1.3.md` |
 | Signup public, docs UI, profil/sessions UI | PLANNED | `docs/architecture/routes-verification.md` ; routes non implémentées |
-| Suppression logique utilisateur/organisation | NOT_FOUND | Tests lifecycle locaux sans migration correspondante |
+| Suppression logique utilisateur/organisation | IMPLEMENTED | Migration 0011, marqueurs persistés, sessions révoquées, RLS active seulement ; opération SQL opérateur, sans UI/API |
 | Support dédié / ABAC | NOT_FOUND | Pas de rôle ni moteur identifié |
 | État du déploiement et garanties opérationnelles | UNKNOWN | Aucun contrôle production réalisé |
 
@@ -59,3 +68,35 @@ L'acceptation exige l'email vérifié correspondant ; elle ne promeut pas un rô
 préexistant. Le tenant-admin crée les workspaces et gère les accès ; retrait ou
 désactivation est revérifié à la prochaine opération métier. Les invitations
 expirées, réutilisées, révoquées ou inter-tenant sont refusées.
+
+## Frontend pages — 2026-10-24 implementation
+
+Added organization-link access requests (`/signup`), own profile/session management
+(`/app/profile`, `/admin/profile`), dedicated member/invitation pages and a
+super-admin-only `/docs` guide. Tenant admins review access requests from their
+invitations page. Code and mocked-browser coverage are present; migration 0008 and
+real PostgreSQL authorization/session tests remain pending, so this is not a
+production-readiness claim.
+
+## Brume design system — implementing
+
+App/admin/auth share a compact accessible component layer, role-aware collapsible
+sidebar, textual mobile navigation, organization invitation tables/forms and a
+super-admin component gallery. Own-account locale/theme and workspace-manager color
+customization have API/SQL implementations (0009); database validation is pending.
+This Brume lot adds no notification center, AI runtime or unused widget catalogue.
+The audit viewer is introduced separately by the V0 audit delta below.
+
+## Journal d’audit V0 — implementing
+
+`/admin/audit` : consultation super-admin globale ou filtrée par organisation,
+pagination de 50, FR/EN et états vide/erreur. API `/api/platform/audit` et SQL
+`business.audit_events` refusent les rôles ordinaires. Migration 0010 complète
+le journal privé : tenants/workspaces, identités/acteurs, appartenances, invitations,
+demandes et apparence ; mutations effectives avec cible et champs, sans valeurs.
+Auteur absent si aucun contexte métier authentifié ; aucune attribution inventée.
+MFA non obligatoire en V0. Les 9 scénarios UI interceptés sont complétés par 4 tests PostgreSQL audit,
+14 tests d’isolation et 6 vues navigateur avec le vrai backend et refus 401/403.
+La migration est validée uniquement en base jetable, pas appliquée au développement.
+Les blocages lifecycle et fixture profil 429 ont été corrigés par la migration 0011
+et l'isolation des IP de test ; voir le delta 2026-10-24-lifecycle pour les preuves courantes.

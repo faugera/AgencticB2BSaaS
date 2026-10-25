@@ -1,5 +1,12 @@
 # ADR-005 — Private B2B pilot boundaries
 
+## Access-request pagination (0012)
+
+The optional UUID cursor is resolved only inside the server-authorized tenant.
+The existing tenant-admin requirement and transaction-local context remain mandatory.
+Ordering uses creation timestamp and ID;100 rows maximum per call. A cursor from
+another tenant returns no rows. UI pagination and invitation refresh add no permission.
+
 Status: accepted implementation of the owner's pilot plan. Supersedes pending
 IAM/tenant/MFA statements in ADR-004 and the earlier Task 002 plan.
 
@@ -33,6 +40,9 @@ actor/membership, then assigned with transaction-local `set_config` on the same
 pooled connection. Composite foreign keys prevent workspace assignments crossing
 tenant boundaries. Authorization is reread on each business operation; disabled
 actors and removed memberships lose access on the next request, not session expiry.
+Membership removal preserves the last enabled tenant administrator; disabled
+administrators do not count toward that guard. Explicit super-admin disablement
+remains a separate operator action.
 
 Actors, memberships, invitations and audit live in `authorization_private` with
 **no runtime schema/table grants**. Narrow SECURITY DEFINER functions with fixed
@@ -61,6 +71,13 @@ Browser invitation secrets use URL fragments and memory only. Reloading during
 login/MFA requires reopening the invitation email. Reset tokens are removed from
 the address bar. `/auth` and `/auth/reset` remain compatible. Locale persists;
 credentials and tokens never enter localStorage. Same-origin reverse proxy required.
+The active organization is derived from the browser URL, including back/forward
+navigation, so reads and writes use the displayed organization scope.
+User routes live under `/app`; super-admin routes live under `/admin` with a
+dedicated `/admin/login`, MFA and password recovery. The server-established
+`/api/me` role gates the admin UI; platform API operations retain their own
+server-side super-admin checks. Super-admins visiting `/app` are redirected to
+the equivalent admin route, preserving the requested tenant scope.
 
 ## Migrations and dependencies
 
@@ -84,3 +101,48 @@ Before horizontal scaling add a shared business limiter and reliable mail outbox
 SSO/SCIM, enforced tenant MFA, multi-organization membership, billing, agents,
 workflows and high availability remain outside this pilot. No deployment or
 external-provider deletion is authorized by this implementation.
+
+### Access requests and restricted guide (2026-10-24)
+
+The pilot remains invitation-only. A public organization-specific opaque link
+collects a request, not an account or membership. Only an administrator of the
+selected tenant (or an explicitly scoped super-admin) can review it. Approval uses
+the existing invitation/audit path; no platform role can be assigned. Public
+collection checks Origin, validates input and limits submissions to three/minute.
+The operational `/docs` guide requires a super-admin on both page and API.
+Migration 0008 is additive; its disposable database/isolation verification is pending.
+
+### Brume preferences boundary
+
+Own-account UI preferences accept no identity selector. Workspace colors are private
+metadata accessible only through RLS-checked workspace reads and narrow management
+functions. These functions retain transaction-local identity and tenant context;
+workspace membership alone cannot mutate appearance. Hex input is validated before
+SQL, and raw colors never determine text, status or action colors. The gallery has
+no public route and performs no synthetic business writes. New migration 0009 and
+adversarial tests are present; DB execution remains unverified in this environment.
+
+### Journal V0 et décision MFA (2026-10-24)
+
+Décision utilisateur : aucune MFA obligatoire en V0 ; le TOTP facultatif existant
+est conservé. Le journal est consultable seulement par super-admin actif, avec
+contrôle HTTP et fonction SQL audit_events. Aucune lecture/table privée accordée
+aux runtimes. La migration 0010 ajoute des triggers de mutations atomiques avec
+la transaction, des types de cible et noms de champs sans valeurs. Les anciens
+événements restent lisibles ; aucun historique antérieur n’est reconstitué.
+Les écritures sans contexte métier (identité, opérateur, demande publique) ne
+permettent pas d’établir un auteur authentifié : celui-ci reste null. Les IDs
+historiques survivent aux suppressions futures sans FK de l’audit vers la cible.
+La migration 0011 ajoute la suppression logique opérateur utilisateur/tenant ;
+pas de rétention/export/alerting. Dates de création conservées, modification imposée
+par trigger, marqueur de suppression irréversible via UPDATE ordinaire.
+Les identités supprimées perdent leurs sessions et leur acteur actif ; les sessions
+concurrentes sont sérialisées avec la suppression. Le runtime ne peut supprimer
+physiquement identity.user. Les tenants supprimés sont exclus par RLS, même pour
+le super-admin ; leurs invitations en attente et liens de collecte sont révoqués.
+Les helpers d'autorisation restent privés/étroits, sans propriété ni BYPASSRLS runtime.
+Tests SQL/HTTP audit : 4/4 réussis sur PostgreSQL 17.11 jetable ; isolation : 14/14.
+La page a également été vérifiée avec le vrai backend, sans mocks, en FR/EN aux
+trois tailles et avec refus 401/403. Les échecs lifecycle et la collision 429 des
+fixtures sont corrigés dans le delta 2026-10-24-lifecycle ; ses tâches consignent
+les résultats de vérification courants, sans certification de la DB de développement.

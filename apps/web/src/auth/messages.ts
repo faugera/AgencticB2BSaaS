@@ -2,6 +2,10 @@ export const messages = {
   fr: {
     home: 'Retour à l’accueil',
     title: 'Votre espace commence ici.',
+    adminTitle: 'Connexion administrateur',
+    adminSubtitle: 'Accès réservé aux super-administrateurs de la plateforme.',
+    localTestAccount: 'Compte de test local',
+    localTestHandle: 'Identifiant',
     showPassword: 'Afficher le mot de passe',
     hidePassword: 'Masquer le mot de passe',
     limited: 'Trop de tentatives. Patientez une minute avant de réessayer.',
@@ -48,6 +52,10 @@ export const messages = {
   en: {
     home: 'Back to home',
     title: 'Your workspace starts here.',
+    adminTitle: 'Administrator sign-in',
+    adminSubtitle: 'Access is restricted to platform super-administrators.',
+    localTestAccount: 'Local test account',
+    localTestHandle: 'Handle',
     showPassword: 'Show password',
     hidePassword: 'Hide password',
     limited: 'Too many attempts. Wait a minute before trying again.',

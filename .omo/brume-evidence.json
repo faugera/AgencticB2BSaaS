@@ -1,0 +1,1829 @@
+{
+  "count": 304,
+  "captures": [
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-1280--desktop/collapsed.png",
+      "width": 1274,
+      "height": 1467,
+      "mtime": 1792845947.575128
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-1280--desktop/gallery-bottom.png",
+      "width": 1280,
+      "height": 1467,
+      "mtime": 1792845947.3547044
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-1280--desktop/gallery-top.png",
+      "width": 1274,
+      "height": 1467,
+      "mtime": 1792845947.1947052
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-1280--mobile/collapsed.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845978.270146
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-1280--mobile/gallery-bottom.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845977.660036
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-1280--mobile/gallery-top.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845977.0602074
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-375--desktop/gallery-bottom.png",
+      "width": 376,
+      "height": 1758,
+      "mtime": 1792845946.329818
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-375--desktop/gallery-top.png",
+      "width": 370,
+      "height": 1758,
+      "mtime": 1792845946.2098196
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-375--desktop/mobile-menu.png",
+      "width": 370,
+      "height": 1758,
+      "mtime": 1792845946.4608176
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-375--mobile/gallery-bottom.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845975.5620594
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-375--mobile/gallery-top.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845975.2770615
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-375--mobile/mobile-menu.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845975.8613632
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-768--desktop/collapsed.png",
+      "width": 763,
+      "height": 1467,
+      "mtime": 1792845946.7547054
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-768--desktop/gallery-bottom.png",
+      "width": 768,
+      "height": 1518,
+      "mtime": 1792845946.5648253
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-768--desktop/gallery-top.png",
+      "width": 763,
+      "height": 1518,
+      "mtime": 1792845946.4418185
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-768--mobile/collapsed.png",
+      "width": 2304,
+      "height": 4401,
+      "mtime": 1792845976.5523643
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-768--mobile/gallery-bottom.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845976.069363
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-dark-768--mobile/gallery-top.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845975.6706817
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-1280--desktop/collapsed.png",
+      "width": 1274,
+      "height": 1467,
+      "mtime": 1792845946.5338192
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-1280--desktop/gallery-bottom.png",
+      "width": 1280,
+      "height": 1467,
+      "mtime": 1792845946.3458197
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-1280--desktop/gallery-top.png",
+      "width": 1274,
+      "height": 1467,
+      "mtime": 1792845946.19482
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-1280--mobile/collapsed.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845976.3033648
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-1280--mobile/gallery-bottom.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845975.623683
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-1280--mobile/gallery-top.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845974.963062
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-375--desktop/gallery-bottom.png",
+      "width": 376,
+      "height": 1758,
+      "mtime": 1792845945.3039572
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-375--desktop/gallery-top.png",
+      "width": 370,
+      "height": 1758,
+      "mtime": 1792845945.191956
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-375--desktop/mobile-menu.png",
+      "width": 370,
+      "height": 1758,
+      "mtime": 1792845945.4439557
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-375--mobile/gallery-bottom.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845973.3565779
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-375--mobile/gallery-top.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845973.0895805
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-375--mobile/mobile-menu.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845973.6220822
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-768--desktop/collapsed.png",
+      "width": 763,
+      "height": 1467,
+      "mtime": 1792845945.7618177
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-768--desktop/gallery-bottom.png",
+      "width": 768,
+      "height": 1518,
+      "mtime": 1792845945.5489557
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-768--desktop/gallery-top.png",
+      "width": 763,
+      "height": 1518,
+      "mtime": 1792845945.4239564
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-768--mobile/collapsed.png",
+      "width": 2304,
+      "height": 4401,
+      "mtime": 1792845974.5636172
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-768--mobile/gallery-bottom.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845974.072618
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-en-light-768--mobile/gallery-top.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845973.6610813
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-1280--desktop/collapsed.png",
+      "width": 1274,
+      "height": 1467,
+      "mtime": 1792845945.5369563
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-1280--desktop/gallery-bottom.png",
+      "width": 1280,
+      "height": 1467,
+      "mtime": 1792845945.325958
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-1280--desktop/gallery-top.png",
+      "width": 1274,
+      "height": 1467,
+      "mtime": 1792845945.152958
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-1280--mobile/collapsed.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845974.2266166
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-1280--mobile/gallery-bottom.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845973.5615788
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-1280--mobile/gallery-top.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845972.954579
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-375--desktop/gallery-bottom.png",
+      "width": 376,
+      "height": 1758,
+      "mtime": 1792845944.1790059
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-375--desktop/gallery-top.png",
+      "width": 370,
+      "height": 1810,
+      "mtime": 1792845944.0670056
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-375--desktop/mobile-menu.png",
+      "width": 370,
+      "height": 1810,
+      "mtime": 1792845944.328005
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-375--mobile/gallery-bottom.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845971.3903658
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-375--mobile/gallery-top.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845971.1093645
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-375--mobile/mobile-menu.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845971.716405
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-768--desktop/collapsed.png",
+      "width": 763,
+      "height": 1518,
+      "mtime": 1792845944.6302042
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-768--desktop/gallery-bottom.png",
+      "width": 768,
+      "height": 1518,
+      "mtime": 1792845944.391007
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-768--desktop/gallery-top.png",
+      "width": 763,
+      "height": 1518,
+      "mtime": 1792845944.2660048
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-768--mobile/collapsed.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845972.7485778
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-768--mobile/gallery-bottom.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845972.2370205
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-dark-768--mobile/gallery-top.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845971.8410225
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-1280--desktop/collapsed.png",
+      "width": 1274,
+      "height": 1467,
+      "mtime": 1792845944.4150085
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-1280--desktop/gallery-bottom.png",
+      "width": 1280,
+      "height": 1467,
+      "mtime": 1792845944.1990056
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-1280--desktop/gallery-top.png",
+      "width": 1274,
+      "height": 1467,
+      "mtime": 1792845944.040006
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-1280--mobile/collapsed.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845972.2220204
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-1280--mobile/gallery-bottom.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845971.547367
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-1280--mobile/gallery-top.png",
+      "width": 3840,
+      "height": 4401,
+      "mtime": 1792845970.9153662
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-375--desktop/gallery-bottom.png",
+      "width": 376,
+      "height": 1758,
+      "mtime": 1792845943.1498067
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-375--desktop/gallery-top.png",
+      "width": 370,
+      "height": 1810,
+      "mtime": 1792845943.0008101
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-375--desktop/mobile-menu.png",
+      "width": 370,
+      "height": 1810,
+      "mtime": 1792845943.2858088
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-375--mobile/gallery-bottom.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845970.0552094
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-375--mobile/gallery-top.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845969.7822063
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-375--mobile/mobile-menu.png",
+      "width": 1128,
+      "height": 5274,
+      "mtime": 1792845970.3632064
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-768--desktop/collapsed.png",
+      "width": 763,
+      "height": 1518,
+      "mtime": 1792845943.496811
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-768--desktop/gallery-bottom.png",
+      "width": 768,
+      "height": 1518,
+      "mtime": 1792845943.288809
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-768--desktop/gallery-top.png",
+      "width": 763,
+      "height": 1518,
+      "mtime": 1792845943.1638093
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-768--mobile/collapsed.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845970.8863642
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-768--mobile/gallery-bottom.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845970.4512098
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-gallery-and-measured-tokens-fr-light-768--mobile/gallery-top.png",
+      "width": 2304,
+      "height": 4554,
+      "mtime": 1792845970.0712097
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-1280--desktop/confirmation.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845941.6183066
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-1280--desktop/invitations.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845941.3917646
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-1280--desktop/workspace.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845942.3013508
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-1280--mobile/confirmation.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845968.5436616
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-1280--mobile/invitations.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845968.0106251
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-1280--mobile/workspace.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845969.638484
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-375--desktop/confirmation.png",
+      "width": 370,
+      "height": 1303,
+      "mtime": 1792845941.305764
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-375--desktop/invitations.png",
+      "width": 370,
+      "height": 1303,
+      "mtime": 1792845941.0627644
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-375--desktop/workspace.png",
+      "width": 370,
+      "height": 1474,
+      "mtime": 1792845942.9078095
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-375--mobile/confirmation.png",
+      "width": 1128,
+      "height": 3909,
+      "mtime": 1792845967.1638668
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-375--mobile/invitations.png",
+      "width": 1128,
+      "height": 3909,
+      "mtime": 1792845966.825865
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-375--mobile/workspace.png",
+      "width": 1128,
+      "height": 4422,
+      "mtime": 1792845968.8274448
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-768--desktop/confirmation.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845941.4967632
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-768--desktop/invitations.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845941.2677677
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-768--desktop/workspace.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845942.1803474
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-768--mobile/confirmation.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845967.9146247
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-768--mobile/invitations.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845967.521867
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-dark-768--mobile/workspace.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845968.7394433
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-1280--desktop/confirmation.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845939.8094442
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-1280--desktop/invitations.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845939.6078463
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-1280--desktop/workspace.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845940.513444
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-1280--mobile/confirmation.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845966.0217786
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-1280--mobile/invitations.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845965.5087237
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-1280--mobile/workspace.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845967.0558653
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-375--desktop/confirmation.png",
+      "width": 370,
+      "height": 1303,
+      "mtime": 1792845938.9127755
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-375--desktop/invitations.png",
+      "width": 370,
+      "height": 1303,
+      "mtime": 1792845938.6920557
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-375--desktop/workspace.png",
+      "width": 370,
+      "height": 1474,
+      "mtime": 1792845940.488445
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-375--mobile/confirmation.png",
+      "width": 1128,
+      "height": 3909,
+      "mtime": 1792845964.876727
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-375--mobile/invitations.png",
+      "width": 1128,
+      "height": 3909,
+      "mtime": 1792845964.5294223
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-375--mobile/workspace.png",
+      "width": 1128,
+      "height": 4422,
+      "mtime": 1792845966.5824878
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-768--desktop/confirmation.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845939.6988463
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-768--desktop/invitations.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845939.4907746
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-768--desktop/workspace.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845940.3254454
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-768--mobile/confirmation.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845965.2737238
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-768--mobile/invitations.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845964.8467252
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-en-light-768--mobile/workspace.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845966.1067805
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-1280--desktop/confirmation.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845938.056213
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-1280--desktop/invitations.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845937.849212
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-1280--desktop/workspace.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845938.792773
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-1280--mobile/confirmation.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845963.4347458
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-1280--mobile/invitations.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845962.8837476
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-1280--mobile/workspace.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845964.445423
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-375--desktop/confirmation.png",
+      "width": 370,
+      "height": 1345,
+      "mtime": 1792845937.2289245
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-375--desktop/invitations.png",
+      "width": 370,
+      "height": 1345,
+      "mtime": 1792845937.0239272
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-375--desktop/workspace.png",
+      "width": 370,
+      "height": 1474,
+      "mtime": 1792845938.7747748
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-375--mobile/confirmation.png",
+      "width": 1128,
+      "height": 4035,
+      "mtime": 1792845962.1864815
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-375--mobile/invitations.png",
+      "width": 1128,
+      "height": 4035,
+      "mtime": 1792845961.7974842
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-375--mobile/workspace.png",
+      "width": 1128,
+      "height": 4422,
+      "mtime": 1792845963.8714218
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-768--desktop/confirmation.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845937.3749242
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-768--desktop/invitations.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845937.1649249
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-768--desktop/workspace.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845938.03821
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-768--mobile/confirmation.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845962.8787453
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-768--mobile/invitations.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845962.490481
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-dark-768--mobile/workspace.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845963.7464201
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-1280--desktop/confirmation.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845935.6144714
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-1280--desktop/invitations.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845935.3137982
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-1280--desktop/workspace.png",
+      "width": 1280,
+      "height": 1024,
+      "mtime": 1792845936.4148254
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-1280--mobile/confirmation.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845960.5296822
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-1280--mobile/invitations.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845959.9616854
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-1280--mobile/workspace.png",
+      "width": 3840,
+      "height": 3072,
+      "mtime": 1792845961.5620782
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-375--desktop/confirmation.png",
+      "width": 370,
+      "height": 1345,
+      "mtime": 1792845935.4657972
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-375--desktop/invitations.png",
+      "width": 370,
+      "height": 1345,
+      "mtime": 1792845935.2398
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-375--desktop/workspace.png",
+      "width": 370,
+      "height": 1474,
+      "mtime": 1792845937.070928
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-375--mobile/confirmation.png",
+      "width": 1128,
+      "height": 4035,
+      "mtime": 1792845959.7976813
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-375--mobile/invitations.png",
+      "width": 1128,
+      "height": 4035,
+      "mtime": 1792845959.4082992
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-375--mobile/workspace.png",
+      "width": 1128,
+      "height": 4422,
+      "mtime": 1792845961.5690825
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-768--desktop/confirmation.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845935.5127978
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-768--desktop/invitations.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845935.2507987
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-768--desktop/workspace.png",
+      "width": 768,
+      "height": 1024,
+      "mtime": 1792845936.2508285
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-768--mobile/confirmation.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845960.0456843
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-768--mobile/invitations.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845959.6209383
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-Brume-workflows-fr-light-768--mobile/workspace.png",
+      "width": 2304,
+      "height": 3072,
+      "mtime": 1792845960.940078
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-reference-viewport-invitation-composition-desktop/reference-actual.png",
+      "width": 1488,
+      "height": 1058,
+      "mtime": 1792845947.1107092
+    },
+    {
+      "path": ".omo/brume-captures-stable/brume-reference-viewport-invitation-composition-mobile/reference-actual.png",
+      "width": 4464,
+      "height": 3174,
+      "mtime": 1792845977.2672102
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/invitations-dark.png",
+      "width": 370,
+      "height": 1038,
+      "mtime": 1792845948.615632
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/invitations.png",
+      "width": 370,
+      "height": 1038,
+      "mtime": 1792845948.5525253
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/members-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845948.3169568
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/members.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845948.2539554
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/profile-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845948.0799563
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/profile.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845948.013958
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/signup-form-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845947.4427116
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/signup-form.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845947.3667042
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--desktop/signup.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845947.5807996
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/invitations-dark.png",
+      "width": 1128,
+      "height": 3114,
+      "mtime": 1792845979.3097234
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/invitations.png",
+      "width": 1128,
+      "height": 3114,
+      "mtime": 1792845979.1397183
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/members-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845978.7306628
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/members.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845978.591956
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/profile-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845978.3351474
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/profile.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845978.1491442
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/signup-form-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845977.3412073
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/signup-form.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845977.1702065
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-20641-ls-and-navigation-fr-375px--mobile/signup.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845977.5632074
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/invitations-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845953.5991154
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/invitations.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845953.482397
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/members-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845953.1823905
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/members.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845953.0953894
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/profile-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845952.875391
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/profile.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845952.7733905
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/signup-form-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845952.088644
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/signup-form.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845951.997643
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--desktop/signup.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845952.2446442
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/invitations-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845988.8254056
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/invitations.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845988.3482642
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/members-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845987.7282138
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/members.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845987.3241837
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/profile-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845986.818186
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/profile.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845986.408382
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/signup-form-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845985.1535923
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/signup-form.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845984.7895925
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-68556-s-and-navigation-en-1280px--mobile/signup.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845985.6082566
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/invitations-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845950.771305
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/invitations.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845950.6726496
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/members-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845950.371922
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/members.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845950.2739224
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/profile-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845950.076922
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/profile.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845949.9759233
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/signup-form-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845949.3487475
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/signup-form.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845949.2427483
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--desktop/signup.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845949.523746
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/invitations-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845983.780934
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/invitations.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845983.4392333
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/members-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845982.9042354
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/members.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845982.5585597
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/profile-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845982.1175628
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/profile.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845981.7423627
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/signup-form-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845980.4318461
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/signup-form.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845980.077848
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-71740-s-and-navigation-fr-1280px--mobile/signup.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845980.8392346
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/invitations-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845949.660227
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/invitations.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845949.5804236
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/members-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845949.3117483
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/members.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845949.2277462
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/profile-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845949.003749
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/profile.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845948.8947487
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/signup-form-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845948.2499547
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/signup-form.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845948.1799576
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--desktop/signup.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845948.3759632
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/invitations-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845981.3292353
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/invitations.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845981.1072345
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/members-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845980.7079663
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/members.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845980.471846
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/profile-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845980.1708472
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/profile.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845979.9408479
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/signup-form-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845979.1017182
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/signup-form.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845978.9057186
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-820e6-ls-and-navigation-fr-768px--mobile/signup.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845979.3727179
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/invitations-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845952.5026464
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/invitations.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845952.4266427
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/members-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845952.090645
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/members.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845952.013643
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/profile-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845951.7736435
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/profile.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845951.6639698
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/signup-form-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845951.0123043
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/signup-form.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845950.912304
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--desktop/signup.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845951.153305
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/invitations-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845985.8873816
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/invitations.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845985.6492574
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/members-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845985.1085918
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/members.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845984.8945935
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/profile-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845984.5929406
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/profile.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845984.3549352
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/signup-form-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845983.536233
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/signup-form.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845983.336233
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-896f8-ls-and-navigation-en-768px--mobile/signup.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845983.778934
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/invitations-dark.png",
+      "width": 370,
+      "height": 996,
+      "mtime": 1792845951.4373026
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/invitations.png",
+      "width": 370,
+      "height": 996,
+      "mtime": 1792845951.3653052
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/members-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845951.1253033
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/members.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845951.0533035
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/profile-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.859305
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/profile.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.7853045
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/signup-form-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.2409236
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/signup-form.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.1759224
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--desktop/signup.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.360921
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/invitations-dark.png",
+      "width": 1128,
+      "height": 2988,
+      "mtime": 1792845984.014934
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/invitations.png",
+      "width": 1128,
+      "height": 2988,
+      "mtime": 1792845983.8399372
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/members-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845983.3562326
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/members.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845983.2312326
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/profile-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845982.9902363
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/profile.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845982.823236
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/signup-form-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845982.02656
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/signup-form.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845981.8635597
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-new-pages-p-d46a1-ls-and-navigation-en-375px--mobile/signup.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845982.2255611
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-00ed7-ted-documentation-en-768px--desktop/admin-profile-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845951.3893027
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-00ed7-ted-documentation-en-768px--desktop/admin-profile.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845951.3023038
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-00ed7-ted-documentation-en-768px--desktop/docs-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845951.659968
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-00ed7-ted-documentation-en-768px--desktop/docs.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845951.5693128
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-00ed7-ted-documentation-en-768px--mobile/admin-profile-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845984.694552
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-00ed7-ted-documentation-en-768px--mobile/admin-profile.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845984.4159327
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-00ed7-ted-documentation-en-768px--mobile/docs-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845985.2645965
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-00ed7-ted-documentation-en-768px--mobile/docs.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845985.0295925
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-0547d-ted-documentation-en-375px--desktop/admin-profile-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.1759224
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-0547d-ted-documentation-en-375px--desktop/admin-profile.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.113922
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-0547d-ted-documentation-en-375px--desktop/docs-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.3949215
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-0547d-ted-documentation-en-375px--desktop/docs.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845950.3289196
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-0547d-ted-documentation-en-375px--mobile/admin-profile-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845982.3865602
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-0547d-ted-documentation-en-375px--mobile/admin-profile.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845982.2385616
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-0547d-ted-documentation-en-375px--mobile/docs-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845982.7295952
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-0547d-ted-documentation-en-375px--mobile/docs.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845982.5945885
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-1dd09-ted-documentation-fr-375px--desktop/admin-profile-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845947.6097999
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-1dd09-ted-documentation-fr-375px--desktop/admin-profile.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845947.553713
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-1dd09-ted-documentation-fr-375px--desktop/docs-dark.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845947.8639574
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-1dd09-ted-documentation-fr-375px--desktop/docs.png",
+      "width": 376,
+      "height": 900,
+      "mtime": 1792845947.7949579
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-1dd09-ted-documentation-fr-375px--mobile/admin-profile-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845977.884146
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-1dd09-ted-documentation-fr-375px--mobile/admin-profile.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845977.728037
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-1dd09-ted-documentation-fr-375px--mobile/docs-dark.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845978.223144
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-1dd09-ted-documentation-fr-375px--mobile/docs.png",
+      "width": 1128,
+      "height": 2700,
+      "mtime": 1792845978.0961447
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6d1eb-ed-documentation-en-1280px--desktop/admin-profile-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845952.2506435
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6d1eb-ed-documentation-en-1280px--desktop/admin-profile.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845952.1526468
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6d1eb-ed-documentation-en-1280px--desktop/docs-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845952.5606458
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6d1eb-ed-documentation-en-1280px--desktop/docs.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845952.4666426
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6d1eb-ed-documentation-en-1280px--mobile/admin-profile-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845986.4013817
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6d1eb-ed-documentation-en-1280px--mobile/admin-profile.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845985.9913826
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6d1eb-ed-documentation-en-1280px--mobile/docs-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845987.3631835
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6d1eb-ed-documentation-en-1280px--mobile/docs.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845986.952185
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6f5a3-ted-documentation-fr-768px--desktop/admin-profile-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845948.3990102
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6f5a3-ted-documentation-fr-768px--desktop/admin-profile.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845948.3149576
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6f5a3-ted-documentation-fr-768px--desktop/docs-dark.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845948.6756327
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6f5a3-ted-documentation-fr-768px--desktop/docs.png",
+      "width": 768,
+      "height": 900,
+      "mtime": 1792845948.5936315
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6f5a3-ted-documentation-fr-768px--mobile/admin-profile-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845979.2037196
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6f5a3-ted-documentation-fr-768px--mobile/admin-profile.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845978.9657183
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6f5a3-ted-documentation-fr-768px--mobile/docs-dark.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845979.7978477
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-6f5a3-ted-documentation-fr-768px--mobile/docs.png",
+      "width": 2304,
+      "height": 2700,
+      "mtime": 1792845979.5467184
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-90662-ed-documentation-fr-1280px--desktop/admin-profile-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845949.3127477
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-90662-ed-documentation-fr-1280px--desktop/admin-profile.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845949.204747
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-90662-ed-documentation-fr-1280px--desktop/docs-dark.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845949.6372278
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-90662-ed-documentation-fr-1280px--desktop/docs.png",
+      "width": 1280,
+      "height": 900,
+      "mtime": 1792845949.541748
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-90662-ed-documentation-fr-1280px--mobile/admin-profile-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845980.8882353
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-90662-ed-documentation-fr-1280px--mobile/admin-profile.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845980.480847
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-90662-ed-documentation-fr-1280px--mobile/docs-dark.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845981.771554
+    },
+    {
+      "path": ".omo/brume-captures-stable/frontend-pages-super-admin-90662-ed-documentation-fr-1280px--mobile/docs.png",
+      "width": 3840,
+      "height": 2700,
+      "mtime": 1792845981.3692398
+    },
+    {
+      "path": ".omo/brume-captures-stable/login-login-remains-usable-4ee35-with-visible-keyboard-focus-desktop/login-dark.png",
+      "width": 1274,
+      "height": 840,
+      "mtime": 1792845954.589799
+    },
+    {
+      "path": ".omo/brume-captures-stable/login-login-remains-usable-4ee35-with-visible-keyboard-focus-mobile/login-dark.png",
+      "width": 1173,
+      "height": 2292,
+      "mtime": 1792845988.6429558
+    }
+  ]
+}

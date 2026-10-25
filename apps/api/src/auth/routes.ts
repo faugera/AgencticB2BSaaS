@@ -24,6 +24,13 @@ export function registerAuthRoutes(
       ) {
         return reply.code(403).send({ code: 'UNTRUSTED_ORIGIN' });
       }
+      if (request.method === 'POST' && request.url.split('?')[0] === '/api/auth/update-user') {
+        const body = request.body;
+        if (typeof body !== 'object' || body === null || !('name' in body) ||
+          typeof body.name !== 'string' || !body.name.trim() || body.name.length > 100 ||
+          Object.keys(body).some((key) => key !== 'name'))
+          return reply.code(400).send({ code: 'INVALID_REQUEST' });
+      }
       // Use the configured origin, never a client-provided Host header.
       const url = new URL(request.url, auth.options.baseURL as string);
       const headers = fromNodeHeaders(request.headers);

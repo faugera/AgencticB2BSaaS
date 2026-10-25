@@ -484,6 +484,32 @@ describe('PostgreSQL B2B adversarial isolation', () => {
     expect((await app.inject({ url: '/ready' })).statusCode).toBe(200);
   });
 
+  it('preserves the last enabled administrator but permits removing a disabled administrator', async () => {
+    await operator.query(
+      "UPDATE authorization_private.memberships SET role='tenant_admin' WHERE actor_id=$1",
+      [actors[1]],
+    );
+    await businessTransaction(business, superId, undefined, 'actor.disabled', async (client) =>
+      client.query('SELECT business.disable_actor($1)', [actors[1]]),
+    );
+    try {
+      await expect(tx(0, tenants[0], async (client) => {
+        await client.query('SELECT business.remove_member($1)', [actors[0]]);
+        // Roll back even if the guard regresses, preserving the shared fixture.
+        throw new Error('Removal unexpectedly succeeded');
+      })).rejects.toThrow('LAST_ADMIN');
+      await tx(0, tenants[0], async (client) =>
+        client.query('SELECT business.remove_member($1)', [actors[1]]),
+      );
+    } finally {
+      await operator.query('UPDATE authorization_private.actors SET enabled=true WHERE id=$1', [actors[1]]);
+      await operator.query(
+        "INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'member') ON CONFLICT(actor_id) DO UPDATE SET role='member'",
+        [actors[1], tenants[0]],
+      );
+    }
+  });
+
   it('serializes competing removals and cannot remove both tenant administrators', async () => {
     await operator.query(
       "UPDATE authorization_private.memberships SET role='tenant_admin' WHERE actor_id=$1",

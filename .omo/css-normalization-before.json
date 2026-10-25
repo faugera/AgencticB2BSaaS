@@ -1,0 +1,57 @@
+{
+  ".ui-account summary": {
+    "display": "list-item",
+    "listStyleType": "none",
+    "color": "rgb(37, 38, 43)",
+    "font": "\"Source Sans 3 Variable\", system-ui, sans-serif",
+    "size": "14px",
+    "lineHeight": "21px",
+    "minWidth": "0px",
+    "flex": "0 1 auto",
+    "resize": "none"
+  },
+  ".ui-field-error": {
+    "display": "block",
+    "listStyleType": "disc",
+    "color": "rgb(102, 103, 117)",
+    "font": "\"Source Sans 3 Variable\", system-ui, sans-serif",
+    "size": "12px",
+    "lineHeight": "18px",
+    "minWidth": "auto",
+    "flex": "0 1 auto",
+    "resize": "none"
+  },
+  ".ui-filter > .ui-field": {
+    "display": "grid",
+    "listStyleType": "disc",
+    "color": "rgb(37, 38, 43)",
+    "font": "\"Source Sans 3 Variable\", system-ui, sans-serif",
+    "size": "12px",
+    "lineHeight": "18px",
+    "minWidth": "auto",
+    "flex": "0 1 auto",
+    "resize": "none"
+  },
+  ".ui-main-content": {
+    "display": "block",
+    "listStyleType": "disc",
+    "color": "rgb(37, 38, 43)",
+    "font": "\"Source Sans 3 Variable\", system-ui, sans-serif",
+    "size": "12px",
+    "lineHeight": "18px",
+    "minWidth": "0px",
+    "flex": "0 1 auto",
+    "resize": "none"
+  },
+  ".ui-dialog": {
+    "display": "none",
+    "listStyleType": "disc",
+    "color": "rgb(37, 38, 43)",
+    "font": "\"Source Sans 3 Variable\", system-ui, sans-serif",
+    "size": "12px",
+    "lineHeight": "18px",
+    "minWidth": "0px",
+    "flex": "0 1 auto",
+    "resize": "none"
+  }
+}

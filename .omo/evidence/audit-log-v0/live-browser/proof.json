@@ -1,0 +1,71 @@
+{
+  "database": "PostgreSQL17.11 disposable localhost55443",
+  "mockedRequests": false,
+  "loginStatus": 200,
+  "mutationStatus": 200,
+  "auditStatus": 200,
+  "mutationEvent": {
+    "id": "96",
+    "occurred_at": "2026-10-24T15:54:55.013Z",
+    "actor_id": "3d498016-dfb8-4a70-b98e-108f1ee2d03d",
+    "tenant_id": "bf4e69e9-e76d-4407-86e7-93e5ae2574b9",
+    "action": "change.updated",
+    "resource_id": "85354713-2e80-474e-8369-8fbdc753c22a",
+    "resource_type": "workspace",
+    "changed_fields": [
+      "name"
+    ]
+  },
+  "anonymousStatus": 401,
+  "revokedSuperAdminStatus": 403,
+  "surfaces": [
+    {
+      "locale": "fr",
+      "width": 375,
+      "overflow": false,
+      "scrollLeft": 284,
+      "scrollWidth": 635,
+      "clientWidth": 351
+    },
+    {
+      "locale": "fr",
+      "width": 768,
+      "overflow": false,
+      "scrollLeft": 179,
+      "scrollWidth": 635,
+      "clientWidth": 456
+    },
+    {
+      "locale": "fr",
+      "width": 1280,
+      "overflow": false,
+      "scrollLeft": 0,
+      "scrollWidth": 952,
+      "clientWidth": 952
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "overflow": false,
+      "scrollLeft": 284,
+      "scrollWidth": 635,
+      "clientWidth": 351
+    },
+    {
+      "locale": "en",
+      "width": 768,
+      "overflow": false,
+      "scrollLeft": 179,
+      "scrollWidth": 635,
+      "clientWidth": 456
+    },
+    {
+      "locale": "en",
+      "width": 1280,
+      "overflow": false,
+      "scrollLeft": 0,
+      "scrollWidth": 952,
+      "clientWidth": 952
+    }
+  ]
+}

@@ -11,14 +11,16 @@ async function start() {
     ...(authConfig ? { authConfig } : {}),
     trustedProxies: trustedProxies(process.env.TRUSTED_PROXIES),
   });
-  for (const signal of ['SIGINT', 'SIGTERM'] as const) {
-    process.once(signal, () => {
-      void app.close().catch(() => {
-        app.log.error('Shutdown failed');
-        process.exitCode = 1;
-      });
+  const shutdown = () => {
+    void app.close().catch(() => {
+      app.log.error('Shutdown failed');
+      process.exitCode = 1;
     });
+  };
+  for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+    process.once(signal, shutdown);
   }
+  if (process.connected) process.once('disconnect', shutdown);
   try {
     await app.listen(config);
   } catch {

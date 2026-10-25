@@ -1,5 +1,14 @@
 # Modèle de données observé
 
+## Pagination des demandes — migration0012
+
+`business.access_requests(before_id uuid DEFAULT NULL)` remplace la signature sans
+argument ; les appels sans argument restent valides. Index privé
+`(tenant_id,created_at DESC,id DESC)`, ordre date/UUID stable et100 lignes maximum.
+Le curseur est recherché uniquement dans le tenant autorisé : un curseur étranger
+ou absent ne renvoie aucune ligne. Toutes les demandes, y compris anciennes et déjà
+examinées, restent atteignables. Aucun effacement ni nouveau droit runtime.
+
 Source : migrations SQL `apps/api/migrations/0001_identity.sql` à
 `apps/api/migrations/0007_enabled_administrator.sql` (0007 préexistante non suivie
 au début du bootstrap). Présence du SQL ≠ application vérifiée à la DB.
@@ -47,10 +56,50 @@ pas d'une autorisation métier par sa seule session.
 
 ## Écarts constatés
 
-Les tests locaux `apps/api/src/business/lifecycle.integration.test.ts` décrivent
-suppression logique et dates métier. Aucune migration correspondante n'est présente
-dans l'audit : capacités non démontrées, à ne pas déclarer implémentées.
+La migration 0011 conserve les PK existantes et ajoute `identity.user.deletedAt`
+et `business.tenants.created_at/updated_at/deleted_at` (timestamptz).
+Les dates de création restent immuables ; les triggers imposent la modification.
+Les anciens tenants reçoivent la date de migration, pas une création historique exacte.
+L'opérateur supprime logiquement par UPDATE du marqueur ; les lignes sont conservées,
+le marqueur ne peut être effacé, et aucune UI/API de suppression n'est ajoutée.
+La suppression d'identité révoque les sessions et désactive l'acteur ; toute nouvelle
+session est refusée, y compris lors d'une suppression concurrente. Le runtime perd DELETE.
+Un tenant supprimé est exclu des lectures/autorisations, ses invitations en attente
+sont révoquées et ses liens de collecte retirés. L'audit conserve les IDs et marqueurs,
+sans les valeurs sensibles. Migration testée uniquement sur base jetable.
 Les suppressions de memberships sont des retraits physiques d'association avec
 cascade des affectations workspace, pas une suppression logique d'utilisateur/tenant.
 Pas de tables identifiées pour facturation, exécutions IA ou jobs durables.
 L'état réel des rôles, schémas et migrations déployés reste UNKNOWN sans inspection DB.
+
+## Access requests (migration 0008, 2026-10-24)
+
+`authorization_private.access_links` stores one opaque UUID link per tenant.
+`authorization_private.access_requests` stores first/last name, normalized email,
+status, creation/review dates and the resulting invitation ID. `(tenant_id,email)`
+is unique; duplicate public submissions receive the same generic response.
+Runtime access uses narrow SECURITY DEFINER functions, without private-table grants.
+Approval locks the request, checks tenant administration and calls `business.invite`.
+Migration 0008 has not been applied or verified against disposable PostgreSQL here.
+
+## UI preferences and workspace appearance (0009)
+
+`authorization_private.ui_preferences` stores locale fr/en and theme system/light/dark
+for the current enabled actor. Clients cannot select an actor. `workspace_appearance`
+stores nullable #RRGGBB colors with a composite tenant/workspace reference. Both
+private tables have no runtime grants; narrow functions own access. Reads of colors
+join the RLS-protected workspace; writes require workspace_admin and are audited.
+Migration 0009 is additive and has not yet been applied to a disposable database
+in this session; see the Brume verification checkpoint before release.
+
+## Journal V0 (migration 0010)
+
+La table privée audit ajoute resource_type et changed_fields (noms des champs,
+jamais leurs valeurs). Les identifiants auteur/tenant restent conservés sans FK
+vers les lignes sources afin de préserver l’historique après suppression. Index
+(tenant_id,id DESC), pagination bigint sans conversion en Number. Des triggers
+AFTER tracent les mutations effectives de tenants, workspaces, acteurs, identités,
+appartenances, invitations, demandes et apparence. Un UPDATE sans changement des
+champs autorisés ne génère pas de mutation ; rollback annule également l’audit.
+Les anciennes traces métier restent présentes et distinctes. Migration validée sur PostgreSQL 17.11 jetable (4 tests audit). Non appliquée
+à la base de développement ; historique existant conservé.

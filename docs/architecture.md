@@ -1,5 +1,16 @@
 # Architecture actuelle — index technique
 
+## Correctifs PR7 (2026-10-25)
+
+GET `/api/access-requests` accepte `before` (UUID facultatif), en plus de `tenantId`.
+Le tableau reste limité à100 ; la page suivante utilise l'ID du dernier élément.
+L'ordre SQL stable est `(created_at DESC,id DESC)` et le curseur est relu dans
+l'organisation autorisée. Le frontend conserve un historique précédent/suivant et
+recharge aussi les invitations après approbation, même si leur livraison échoue.
+Le menu mobile se ferme à partir de768px ; le contenu cesse d'être inert.
+Les super-admins ouvrant `/app/invitations` (avec ou sans slash final) rejoignent
+`/admin/members`, filtre conservé. Le retour de connexion/MFA accepte `/admin/audit`.
+
 Audit statique du checkout au 2026-10-24, incluant les modifications locales
 préexistantes. `IMPLEMENTED` signifie présent dans le code, sans preuve d'application
 des migrations à la DB courante. Décision principale :
@@ -74,3 +85,47 @@ pas déduits de la seule présence du code ou des tests.
 ADR-001 est historique ; ADR-003 est supersédé par ADR-004, dont les anciennes
 mentions IAM pending sont supersédées par ADR-005. Les specs `docs/sdd` décrivent
 aussi des objectifs futurs ; elles ne prouvent pas leur implémentation.
+
+## Frontend completion — 2026-10-24
+
+`/signup?link=<uuid>` collects an access request without creating an identity or
+membership. `/app/invitations` lets tenant administrators generate their link and
+review their own requests; approval reuses invitation delivery. HTTP contracts:
+POST `/api/access-link`, GET/POST `/api/access-requests`, POST
+`/api/access-requests/:id` (approve/reject). Tenant scope is established by the
+existing authenticated transaction; public collection accepts only the opaque link.
+`/app/profile` and `/admin/profile` use Better Auth for name and own-session changes.
+`/app/members` and `/app/invitations` preserve existing permissions.
+`/docs` and GET `/api/platform/docs` require a super-admin; guide content resides
+in the backend and is not included in the public JavaScript bundle.
+Database authorization tests remain pending in the implementation checkpoint.
+
+## Brume UI system (2026-10-24)
+
+DESIGN_UI.md is the active app/admin/auth design contract. Shared controls and
+shell live in apps/web/src/ui; domain compositions remain in pages. The marketing
+surface retains its design. Source Sans 3 is self-hosted and Phosphor icons are
+limited to sidebar navigation. /docs includes an interactive super-admin gallery.
+GET/PUT /api/preferences reads/saves the current actor's locale and theme; the
+browser caches preferences for pre-auth rendering. PUT
+/api/workspaces/:id/appearance?tenantId=... accepts only a nullable #RRGGBB color.
+Existing transaction, session, Origin and role checks apply. Workspaces now expose
+nullable color. Arbitrary request properties are rejected rather than stripped.
+These contracts require migration 0009; SQL runtime verification remains pending.
+
+## Journal d’audit V0 — 2026-10-24
+
+GET `/api/platform/audit?tenantId=<uuid>&before=<bigint>` retourne au plus 50 événements
+et nextCursor (texte ou null), ordre id décroissant, cache no-store. Les contrôles
+HTTP et SQL exigent un super-admin actif ; tenantId filtre une consultation déjà
+autorisée. `/admin/audit` réutilise le shell Brume, FR/EN, états et pagination.
+La migration 0010 complète l’audit existant par des événements change.created,
+change.updated, change.deleted atomiques et limités aux champs autorisés. Les
+traces métier existantes sont conservées. Les écritures identité/opérateur/publiques
+sans contexte authentifié ont un auteur non renseigné ; la cible ne devient jamais
+l’auteur par hypothèse. Aucun audit de secrets, valeurs de profil ou payloads.
+MFA reste facultative en V0. Aucun endpoint de suppression supplémentaire ni export.
+Vérification réelle : 4 tests audit et 14 tests d’isolation passent sur PostgreSQL
+17.11 jetable. La consultation navigateur réelle FR/EN aux trois viewports et
+les refus 401/403 sont démontrés dans .omo/evidence/audit-log-v0/live-browser/proof.json.
+Les gates globaux restent rouges sur le chantier lifecycle et un test profil 429.

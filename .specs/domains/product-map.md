@@ -1,5 +1,13 @@
 # Carte produit — Enterprise AI OS
 
+## Revue PR7 — 2026-10-25
+
+Implémentés : pagination des demandes au-delà de100 (migration0012), rafraîchissement
+des invitations après approbation, sortie du menu mobile au breakpoint desktop et
+destinations invitations/audit avec filtre conservé. Ces corrections ne créent ni
+permission ni fonctionnalité IA supplémentaire. Preuves distinctes SQL/UI et limites
+d'infrastructure : `.specs/changes/2026-10-24-pr7-review/tasks.md`.
+
 ## 1. Vision et périmètre
 
 Fondation SaaS B2B agentique, livrée actuellement comme pilote privé d'identité
@@ -60,7 +68,7 @@ NOT_FOUND (non identifié), UNKNOWN (indéterminable). Aucun ne certifie le dép
 | Agents, outils, jobs, événements et exports | PLANNED | `docs/sdd/000-foundation-v1.3.md` ; aucun runtime trouvé |
 | Facturation et abonnements | PLANNED | Même vision SDD, aucun modèle implémenté trouvé |
 | Signup, docs UI et édition profil/sessions | PLANNED | `docs/architecture/routes-verification.md` |
-| Suppression logique utilisateur/tenant et dates métier | NOT_FOUND | Tests locaux `apps/api/src/business/lifecycle.integration.test.ts` sans migration correspondante |
+| Suppression logique utilisateur/tenant et dates métier | IMPLEMENTED | Migration 0011 ; IDs et lignes conservés, dates imposées et accès révoqués ; SQL opérateur uniquement |
 | Support dédié et ABAC | NOT_FOUND | Ni rôle ni moteur identifié |
 | État courant DB/production | UNKNOWN | Pas de vérification runtime pendant l'audit |
 
@@ -76,3 +84,34 @@ Identité vérifiée → acteur activé → membership/portée → workspace aut
 Provisioning organisation dépend du rôle plateforme ; invitation dépend de l'email
 vérifié et SMTP. L'audit s'inscrit dans les transactions métier. Les futurs outils,
 jobs et agents devront réautoriser leur portée à l'exécution ; ils n'existent pas encore.
+
+## Frontend completion (implementing, 2026-10-24)
+
+- Public: `/signup?link=<opaque UUID>` persists an access request without enrollment.
+- Tenant administration: `/app/members`, `/app/invitations`; the latter generates
+  request links and approves/rejects own-tenant requests through existing invitations.
+- Own identity: `/app/profile`, `/admin/profile`; editable name, readonly email/roles,
+  session list and revocation of other sessions.
+- Platform: `/docs`, content served only by a super-admin-authorized backend route.
+- Evidence: unit/build/browser checks; disposable SQL/security verification pending.
+
+## Brume — implementing (2026-10-24)
+
+DESIGN_UI.md records the approved visual direction and user refinements: 12px body,
+20px page titles, sidebar 264/56px, items 34px/text13/icons16, scrollbars6/4px.
+Reusable UI, invitation/member search/filter/confirmation, account preferences and
+workspace appearance are implemented in source. /docs exposes the super-admin
+interactive gallery. PostgreSQL tests for migration0009 are pending; no production
+or isolation certification is implied. AI components remain design roadmap only.
+
+## Journal V0 — implementing (2026-10-24)
+
+Base persistante et page super-admin `/admin/audit`, globale/tenant et paginée.
+La migration 0010 ajoute les mutations des ressources principales et clés modifiées
+sans valeurs sensibles ; les anciennes traces métier sont conservées. Authentification
+V0 sans MFA obligatoire. Code/API/UI présents ; preuve réelle PostgreSQL audit 4/4 et isolation 14/14,
+consultation navigateur réelle FR/EN aux trois tailles et refus 401/403.
+Pas de migration de la base de développement ni de certification globale :
+les preuves courantes du chantier lifecycle sont consignées dans le delta
+2026-10-24-lifecycle, qui corrige également la collision 429 des fixtures.
+Voir .specs/changes/2026-10-24-audit-log-v0.

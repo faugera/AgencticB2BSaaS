@@ -45,9 +45,16 @@ pnpm test:e2e
 
 `pnpm verify` runs the first five gates. Smoke starts the compiled API, verifies
 real HTTP liveness and graceful shutdown, then stops it; no existing server is
-needed. Use `SMOKE_PORT=3100 pnpm smoke` if port 3099 is busy.
+needed. It uses SIGTERM on POSIX and an IPC disconnect on Windows, both handled
+by the API's graceful shutdown path. Use `SMOKE_PORT=3100 pnpm smoke` if port 3099 is busy.
 Playwright starts the built frontend preview on port 4173 and checks navigation
 and overflow on desktop and mobile. Vitest tests run without Docker or secrets.
+
+The browser suite contains 72 behavioral checks. Cosmetic pixel/font/color tests
+and repeated theme/viewport matrices were removed; FR/EN, desktop/mobile, keyboard
+access, permissions and business regressions remain covered. See
+[test coverage and reduction](docs/testing.md). Database/security/live-auth gates
+are separate and unchanged.
 
 Production entrypoints after `pnpm build`:
 `pnpm --filter @enterprise/api start` and `apps/web/dist` for static hosting.
@@ -90,7 +97,13 @@ Better Auth replaces the former managed-provider proposal. See
 [the setup guide](docs/setup/better-auth.md) for PostgreSQL, local Mailpit email,
 operator invitations and Codespaces ports. Start with `pnpm auth:services`, then
 configure private API environment files, run `pnpm db:provision`,
-`pnpm auth:migrate` and `pnpm dev`. Open `/login`; public registration is disabled.
+`pnpm auth:migrate` and `pnpm dev`. Open `/login` for users or `/admin/login`
+for super-admins. `/admin` requires a persisted super-admin role; public registration is disabled.
+For an explicitly provisioned local test administrator, an ignored
+`apps/web/.env.local` may define `VITE_LOCAL_TEST_ADMIN_HANDLE`,
+`VITE_LOCAL_TEST_ADMIN_EMAIL` and `VITE_LOCAL_TEST_ADMIN_PASSWORD`. The admin
+sign-in page displays them only in Vite development mode on loopback hosts;
+they are excluded from the production UI. Use synthetic test credentials only.
 Legacy `/auth` and `/auth/reset` links remain supported.
 
 `pnpm auth:invite <email> <display-name>` creates an identity invitation only;
@@ -124,3 +137,23 @@ Environment ownership remains split: root `.env.example` is for Compose;
 `apps/api/.env.example` documents runtime auth/SMTP, and
 `apps/api/migration.env.example` is operator-only. Never copy operator credentials
 into runtime or frontend configuration. Examples are not deployment credentials.
+
+### Demandes d'accès et profils
+
+Un tenant-admin obtient un lien `/signup?link=…` depuis `/app/invitations`, le partage
+aux candidats puis traite les demandes de son organisation sur cette même page.
+La demande ne crée aucun compte : une approbation envoie une invitation existante.
+Les pages `/app/members`, `/app/profile` et `/admin/profile` complètent la navigation.
+`/docs` est réservé aux super-admins, y compris son API de contenu.
+La migration additive 0008 accompagne ce parcours ; sa validation sur PostgreSQL
+jetable reste à réaliser (voir le checkpoint de la spec frontend-pages).
+
+### Design system Brume
+
+La charte active est [DESIGN_UI.md](DESIGN_UI.md). La galerie interactive se trouve
+dans `/docs`, onglet « Design system », accessible aux super-admins. Les préférences
+langue/thème sont liées au compte ; l'apparence d'un workspace est personnalisable
+par ses gestionnaires via une palette ou une couleur hexadécimale. La migration
+0009 est requise ; ses tests PostgreSQL restent à exécuter dans une base jetable.
+La page marketing conserve son identité. Aucune notification ou capacité IA fictive
+n'est ajoutée à l'application.

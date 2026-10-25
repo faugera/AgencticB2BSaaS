@@ -1,5 +1,10 @@
 # Sécurité B2B : exigences et preuves
 
+Les curseurs de demandes d'accès (0012) sont relus dans le tenant établi côté serveur,
+jamais globalement. Conserver le refus des rôles ordinaires, l'ordre date/ID stable,
+le plafond100 et les tests de curseur étranger ; les boutons UI ne sont pas une preuve
+d'autorisation. GET `/api/access-requests` valide `before` comme UUID.
+
 Référence décisionnelle : `docs/architecture/0005-private-pilot.md`.
 Matrice : `docs/features-b2b.md`. Statuts décrivent le code inspecté, pas une
 certification de la DB déployée ni l'exécution des tests.
@@ -19,7 +24,7 @@ certification de la DB déployée ni l'exécution des tests.
 | Tests négatifs HTTP/SQL | IMPLEMENTED | `apps/api/src/business/isolation.integration.test.ts`, `tests/e2e/business-live.spec.ts` ; résultats à exécuter pour chaque évolution |
 | Exports, jobs, événements, agents IA | PLANNED | `docs/sdd/000-foundation-v1.3.md` ; aucun runtime identifié |
 | Rôle support dédié / moteur ABAC | NOT_FOUND | Aucun mécanisme identifié dans routes, contrats et migrations inspectés |
-| Suppression logique et dates métier généralisées | NOT_FOUND | Tests locaux dans `apps/api/src/business/lifecycle.integration.test.ts`, sans migration correspondante au bootstrap |
+| Suppression logique utilisateurs/tenants et dates métier | IMPLEMENTED | Migration 0011 ; révocation sessions et acteur, session concurrente sérialisée, RLS tenant actif ; SQL opérateur uniquement |
 
 ## Prescriptions
 
@@ -38,3 +43,29 @@ certification de la DB déployée ni l'exécution des tests.
   son contexte. Ne jamais journaliser secrets, payloads sensibles ou erreurs SQL brutes.
 - Réutiliser `.agents/skills/tenant-boundary/SKILL.md` pour une évolution de sécurité
   et `.agents/skills/verify-change/SKILL.md` pour les gates applicatifs.
+
+## Access-request boundary
+
+An opaque organization link grants collection only, never tenant access. Public
+responses must not disclose whether an email or link exists. Tenant administrators
+review only their own tenant's requests through server-established context and
+narrow SQL functions. Approval reuses invitations and audit; permitted business
+roles are member/tenant_admin, never platform roles. `/api/platform/docs` requires
+super_admin independently of frontend navigation guards.
+
+## UI preferences and appearance
+
+Locale/theme belong to the current actor and cannot be addressed by a client actor
+ID. Workspace appearance changes require workspace_admin in the selected context.
+Private metadata tables remain ungranted; color reads join the RLS workspace and
+writes use narrow audited functions. Never treat theme/context UI as authorization.
+
+## Lecture du journal V0
+
+La lecture globale ou filtrée reste réservée au super-admin actif en HTTP et SQL
+(migration 0010, audit_events). Aucun grant direct privé ni opération de réécriture.
+Les événements de mutation sont atomiques, avec identifiants et clés autorisées
+seulement ; les anciennes traces restent distinguées. Ne jamais inférer l’auteur
+d’une modification d’identité depuis la seule identité cible. Les sources sans
+contexte authentifié restent non attribuées. La MFA demeure facultative en V0.
+Les IDs d’audit doivent survivre aux suppressions sans FK vers les lignes sources.

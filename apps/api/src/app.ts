@@ -27,6 +27,7 @@ export function buildApp({
   trustedProxies?: string[];
 } = {}) {
   const app = Fastify({
+    ajv: { customOptions: { removeAdditional: false } },
     logger: logger
       ? {
           redact: [
@@ -51,6 +52,9 @@ export function buildApp({
     const sqlCode = typeof error.code === 'string' ? error.code : '';
     if (error.validation)
       return reply.code(400).send({ code: 'INVALID_REQUEST' });
+    const status = error.statusCode;
+    if (status === 400 || status === 413 || status === 415)
+      return reply.code(status).send({ code: 'INVALID_REQUEST' });
     if (sqlCode === '42501')
       return reply.code(403).send({ code: 'ACCESS_DENIED' });
     if (sqlCode === '23505') return reply.code(409).send({ code: 'CONFLICT' });

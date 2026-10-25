@@ -1,0 +1,140 @@
+$ node scripts/security.mjs && pnpm audit --audit-level high && pnpm test:auth
+PASS: pnpm-only locks, no private env files, no Clerk imports, credential patterns clear. Not a substitute for a secret-scanning service.
+No known vulnerabilities found
+$ vitest run --config vitest.auth.config.ts
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90mD:/02-PROJETS_PERSO/AgencticB2BSaaS[39m
+
+ [32m✓[39m apps/api/src/auth/flow.integration.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 2783[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps MFA optional and supports TOTP challenges and single-use recovery codes [33m 640[2mms[22m[39m
+     [33m[2m✓[22m[39m supports invitation, verification, password reset, session and revocation [33m 429[2mms[22m[39m
+     [33m[2m✓[22m[39m rate limits sign-in attempts despite forged client IP headers [33m 315[2mms[22m[39m
+     [33m[2m✓[22m[39m does not claim successful invitation delivery when SMTP fails, and allows retry [33m 649[2mms[22m[39m
+ [32m✓[39m apps/api/src/business/access.integration.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 1676[2mms[22m[39m
+ [32m✓[39m apps/api/src/business/isolation.integration.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 2150[2mms[22m[39m
+ [31m❯[39m apps/api/src/business/lifecycle.integration.test.ts [2m([22m[2m6 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[33m 1038[2mms[22m[39m
+[31m     [31m×[31m creates unique identities and organizations with creation dates and no deletion date[39m[32m 4[2mms[22m[39m
+[31m     [31m×[31m sets modification dates in PostgreSQL while preserving identifiers and creation dates[39m[32m 141[2mms[22m[39m
+[31m     [31m×[31m keeps a deleted user, revokes existing sessions and refuses new sign-ins[39m[32m 38[2mms[22m[39m
+[31m     [31m×[31m keeps a deleted organization, closes its workspace scope and revokes pending invitations[39m[32m 5[2mms[22m[39m
+[31m     [31m×[31m does not permit the identity runtime to physically delete a user[39m[32m 11[2mms[22m[39m
+[31m     [31m×[31m serializes a new session against concurrent logical deletion and blocks lazy actor recreation[39m[32m 120[2mms[22m[39m
+ [31m❯[39m apps/api/src/business/audit.integration.test.ts [2m([22m[2m4 tests[22m[2m | [22m[33m4 skipped[39m[2m)[22m[33m 719[2mms[22m[39m
+     [2m[90m↓[39m[22m refuses anonymous, ordinary roles, disabled super-admins and direct SQL access
+     [2m[90m↓[39m[22m records the exact resource, author and field keys atomically without profile values
+     [2m[90m↓[39m[22m keeps deletion history and records identity changes with no fabricated author or secrets
+     [2m[90m↓[39m[22m paginates descending identifiers without overlap and filters tenants in SQL
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m apps/api/src/business/audit.integration.test.ts[2m > [22mpersistent mutation audit and super-admin consultation
+[31m[1mAssertionError[22m: expected 429 to be 200 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 429[39m
+
+[36m [2m❯[22m apps/api/src/business/audit.integration.test.ts:[2m44:35[22m[39m
+    [90m 42|[39m       const actor = await businessTransaction(business, created.user.i…
+    [90m 43|[39m       const response = await app.inject({ method: 'POST', url: '/api/a…
+    [90m 44|[39m       [34mexpect[39m(response[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m200[39m)[33m;[39m
+    [90m   |[39m                                   [31m^[39m
+    [90m 45|[39m       accounts.push({ id: created.user.id, actor, cookie: response.coo…
+    [90m 46|[39m     }
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 6 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m apps/api/src/business/lifecycle.integration.test.ts[2m > [22muser and organization lifecycle metadata[2m > [22mcreates unique identities and organizations with creation dates and no deletion date
+[31m[1merror[22m: column "deletedAt" does not exist[39m
+[90m [2m❯[22m node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m apps/api/src/business/lifecycle.integration.test.ts:[2m72:19[22m[39m
+    [90m 70|[39m
+    [90m 71|[39m   it('creates unique identities and organizations with creation dates …
+    [90m 72|[39m     const users = await operator.query('SELECT id,"createdAt","updated…
+    [90m   |[39m                   [31m^[39m
+    [90m 73|[39m     [34mexpect[39m([35mnew[39m [33mSet[39m(users[33m.[39mrows[33m.[39m[34mmap[39m((row) [33m=>[39m row[33m.[39mid))[33m.[39msize)[33m.[39m[34mtoBe[39m([34m3[39m)[33m;[39m
+    [90m 74|[39m     [35mfor[39m ([35mconst[39m row [35mof[39m users[33m.[39mrows) {
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m apps/api/src/business/lifecycle.integration.test.ts[2m > [22muser and organization lifecycle metadata[2m > [22msets modification dates in PostgreSQL while preserving identifiers and creation dates
+[31m[1mAssertionError[22m: expected 1999 to be greater than 2000[39m
+[36m [2m❯[22m apps/api/src/business/lifecycle.integration.test.ts:[2m93:45[22m[39m
+    [90m 91|[39m     [34mexpect[39m(user[33m.[39mid)[33m.[39m[34mtoBe[39m(memberId)[33m;[39m
+    [90m 92|[39m     [34mexpect[39m(user[33m.[39mcreatedAt)[33m.[39m[34mtoEqual[39m(beforeUser[33m.[39mcreatedAt)[33m;[39m
+    [90m 93|[39m     [34mexpect[39m(user[33m.[39mupdatedAt[33m.[39m[34mgetUTCFullYear[39m())[33m.[39m[34mtoBeGreaterThan[39m([34m2000[39m)[33m;[39m
+    [90m   |[39m                                             [31m^[39m
+    [90m 94|[39m     const beforeTenant = (await operator.query('SELECT created_at FROM…
+    [90m 95|[39m     const tenant = (await operator.query('UPDATE business.tenants SET …
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m apps/api/src/business/lifecycle.integration.test.ts[2m > [22muser and organization lifecycle metadata[2m > [22mkeeps a deleted user, revokes existing sessions and refuses new sign-ins
+[31m[1mAssertionError[22m: expected 429 to be 200 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 429[39m
+
+[36m [2m❯[22m apps/api/src/business/lifecycle.integration.test.ts:[2m105:32[22m[39m
+    [90m103|[39m     const login = () => app.inject({ method: 'POST', url: '/api/auth/s…
+    [90m104|[39m     [35mconst[39m session [33m=[39m [35mawait[39m [34mlogin[39m()[33m;[39m
+    [90m105|[39m     [34mexpect[39m(session[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m200[39m)[33m;[39m
+    [90m   |[39m                                [31m^[39m
+    [90m106|[39m     const cookie = session.cookies.map((value) => `${value.name}=${val…
+    [90m107|[39m     await operator.query('UPDATE identity."user" SET "deletedAt"=now()…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m apps/api/src/business/lifecycle.integration.test.ts[2m > [22muser and organization lifecycle metadata[2m > [22mkeeps a deleted organization, closes its workspace scope and revokes pending invitations
+[31m[1merror[22m: column "deleted_at" of relation "tenants" does not exist[39m
+[90m [2m❯[22m node_modules/.pnpm/pg-pool@3.14.0_pg@8.23.1/node_modules/pg-pool/index.js:[2m45:11[22m[39m
+[36m [2m❯[22m apps/api/src/business/lifecycle.integration.test.ts:[2m120:5[22m[39m
+    [90m118|[39m     [35mconst[39m hash [33m=[39m [34mcreateHash[39m([32m'sha256'[39m)[33m.[39m[34mupdate[39m(token)[33m.[39m[34mdigest[39m([32m'hex'[39m)[33m;[39m
+    [90m119|[39m     await tx(adminId, tenantA, async (client) => client.query("SELECT …
+    [90m120|[39m     await operator.query('UPDATE business.tenants SET deleted_at=now()…
+    [90m   |[39m     [31m^[39m
+    [90m121|[39m     expect((await operator.query('SELECT deleted_at FROM business.tena…
+    [90m122|[39m     expect(await tx(adminId, tenantA, async (client) => (await client.…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m apps/api/src/business/lifecycle.integration.test.ts[2m > [22muser and organization lifecycle metadata[2m > [22mdoes not permit the identity runtime to physically delete a user
+[31m[1mAssertionError[22m: expected [Function] to throw error including 'permission denied' but got 'update or delete on table "user" viol…'[39m
+
+Expected: [32m"permission denied"[39m
+Received: [31m"update or delete on table "user" violates foreign key constraint "actors_identity_id_fkey" on table "actors""[39m
+
+[36m [2m❯[22m apps/api/src/business/lifecycle.integration.test.ts:[2m130:87[22m[39m
+    [90m128|[39m
+    [90m129|[39m   it('does not permit the identity runtime to physically delete a user…
+    [90m130|[39m     await expect(identity.query('DELETE FROM identity."user" WHERE id=…
+    [90m   |[39m                                                                                       [31m^[39m
+    [90m131|[39m   })[33m;[39m
+    [90m132|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m apps/api/src/business/lifecycle.integration.test.ts[2m > [22muser and organization lifecycle metadata[2m > [22mserializes a new session against concurrent logical deletion and blocks lazy actor recreation
+[31m[1merror[22m: column "deletedAt" of relation "user" does not exist[39m
+[90m [2m❯[22m node_modules/.pnpm/pg@8.23.1/node_modules/pg/lib/client.js:[2m694:17[22m[39m
+[36m [2m❯[22m apps/api/src/business/lifecycle.integration.test.ts:[2m141:7[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m30 passed[39m[22m[2m | [22m[33m4 skipped[39m[90m (40)[39m
+[2m   Start at [22m 17:51:01
+[2m   Duration [22m 14.40s[2m (transform 200ms, setup 0ms, import 4.97s, tests 8.37s, environment 0ms)[22m
+
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.

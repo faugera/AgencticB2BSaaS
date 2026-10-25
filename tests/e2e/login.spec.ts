@@ -18,6 +18,7 @@ test('logged-in recovery stays accessible; login refuses an external destination
   await page.route('**/api/me', (route) =>
     route.fulfill({ json: { user: session.user } }),
   );
+  await page.route('**/api/preferences', (route) => route.fulfill({ json: null }));
   await page.route('**/api/workspaces', (route) => route.fulfill({ json: [] }));
   await page.goto('/reset-password?token=synthetic');
   await expect(page.getByLabel('Nouveau mot de passe')).toBeVisible();
@@ -26,7 +27,7 @@ test('logged-in recovery stays accessible; login refuses an external destination
   await page.goto('/login?returnTo=https://evil.example');
   await expect(page).toHaveURL(/\/app$/);
   await expect(
-    page.getByRole('heading', { name: 'Bienvenue, Pilot.' }),
+    page.getByRole('heading', { name: 'Espaces de travail', level: 1 }),
   ).toBeVisible();
 });
 
@@ -132,8 +133,4 @@ test('login remains usable in dark mode with visible keyboard focus', async ({
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.screenshot({
-    path: test.info().outputPath('login-dark.png'),
-    fullPage: true,
-  });
 });

@@ -1,0 +1,18 @@
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+
+Running 9 tests using 2 workers
+
+  ok 2 [chromium] › tests\e2e\audit.spec.ts:29:5 › audit consultation, paging and tenant scope (fr, 375px) (1.6s)
+  ok 1 [chromium] › tests\e2e\audit.spec.ts:29:5 › audit consultation, paging and tenant scope (fr, 768px) (1.6s)
+  ok 4 [chromium] › tests\e2e\audit.spec.ts:29:5 › audit consultation, paging and tenant scope (en, 375px) (1.2s)
+  ok 3 [chromium] › tests\e2e\audit.spec.ts:29:5 › audit consultation, paging and tenant scope (fr, 1280px) (1.4s)
+  ok 5 [chromium] › tests\e2e\audit.spec.ts:29:5 › audit consultation, paging and tenant scope (en, 768px) (1.3s)
+  ok 6 [chromium] › tests\e2e\audit.spec.ts:29:5 › audit consultation, paging and tenant scope (en, 1280px) (1.3s)
+  ok 7 [chromium] › tests\e2e\audit.spec.ts:58:3 › audit page rejects tenant_admin (533ms)
+  ok 8 [chromium] › tests\e2e\audit.spec.ts:58:3 › audit page rejects member (493ms)
+  ok 9 [chromium] › tests\e2e\audit.spec.ts:58:3 › audit page rejects anonymous (481ms)
+[2m[WebServer] [22m[2m17:47:00[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/me[39m
+[2m[WebServer] [22mError: connect ECONNREFUSED 127.0.0.1:3000
+[2m[WebServer] [22m    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2083:16)
+
+  9 passed (12.6s)

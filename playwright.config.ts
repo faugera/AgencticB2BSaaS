@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
+  preserveOutput: 'always',
   testDir: './tests/e2e',
   testIgnore:
     process.env.AUTH_LIVE_TEST === 'true' ? [] : ['**/*-live.spec.ts'],
