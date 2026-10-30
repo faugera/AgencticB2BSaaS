@@ -94,11 +94,18 @@ for (const locale of ['fr', 'en'] as const) for (const width of [375, 768, 1280]
     client = false; await page.goto('/admin/organizations');
     await expect(page.locator('strong').filter({ hasText: organization.name })).toBeVisible(); await shot('organizations-populated');
     await page.getByLabel(label('Organisation cliente', 'Client organization'), { exact: true }).selectOption('org');
+    await expect(page.getByLabel(label('Organisation cliente', 'Client organization'), { exact: true })).toHaveAccessibleDescription('Organisation cliente Exemple International (org)');
     await page.getByLabel(label('Nom du tenant', 'Tenant name'), { exact: true }).fill('Tenant Montréal');
     await page.getByLabel(label('Email de l’administrateur', 'Administrator email'), { exact: true }).fill('admin@example.test');
+    await page.getByLabel(label('Nom de l’organisation', 'Organization name'), { exact: true }).fill('Nouvelle organisation');
+    await page.getByRole('button', { name: label('Créer l’organisation cliente', 'Create client organization'), exact: true }).click();
+    await expect(page.getByRole('status')).toContainText(label('Modification enregistrée', 'Changes saved'));
+    await expect(page.getByLabel(label('Organisation cliente', 'Client organization'), { exact: true })).toHaveValue('org');
+    await expect(page.getByLabel(label('Nom du tenant', 'Tenant name'), { exact: true })).toHaveValue('Tenant Montréal');
     const createTenant = page.getByRole('button', { name: label('Créer et inviter', 'Create and invite'), exact: true });
     await shot('organizations-create-tenant', createTenant); await createTenant.click();
     await expect(page.getByRole('status')).toContainText(label('Modification enregistrée', 'Changes saved')); await shot('organizations-created');
+    await expect(page.getByLabel(label('Organisation cliente', 'Client organization'), { exact: true })).toHaveValue('');
     await proveFormReachability(page, `organizations-created-${locale}-${width}`);
     failWrites = true; await page.getByLabel(label('Nom de l’organisation', 'Organization name'), { exact: true }).fill('Nouvelle organisation');
     await page.getByRole('button', { name: label('Créer l’organisation cliente', 'Create client organization'), exact: true }).click();

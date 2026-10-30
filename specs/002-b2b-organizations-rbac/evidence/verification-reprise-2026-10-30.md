@@ -66,5 +66,18 @@ Les deux derniers défauts ont été reproduits avant correction :
 [identification de rôle](ui-role-identifiant-rouge-2026-10-30.log). Ces journaux
 rapportent des échecs attendus ; le journal vert ci-dessus concerne la correction.
 
+Une revue a relevé que le nom et l'identifiant pouvaient être tronqués dans les
+sélecteurs fermés. Les détails de la sélection sont maintenant affichés et
+reviennent à la ligne. Le test couvre un nom long et un UUID, le contexte de rôle
+et les formulaires aux largeurs 375, 768 et 1280 en FR/EN. La réinitialisation
+croisée des formulaires a également été reproduite puis corrigée. Les journaux
+[contexte rouge](ui-contexte-rouge-2026-10-30.log) et
+[formulaires rouge](ui-formulaires-rouge-2026-10-30.log) sont des échecs attendus ;
+la suite [interface après correction](ui-contexte-final-2026-10-30.log) est verte.
+Ces parcours utilisent des réponses API simulées ; les preuves PostgreSQL et SMTP
+ci-dessus concernent le backend inchangé avant ce dernier correctif d'interface.
+Le [contrôle complémentaire du menu](ui-menu-2026-10-30.log) vérifie l'absence
+de débordement horizontal interne et l'accès au champ de langue après défilement.
+
 Aucune base de développement ou production n'a été migrée. La MFA reste
 facultative en V0 ; les vérifications locales ne certifient pas l'infrastructure.

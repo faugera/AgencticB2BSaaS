@@ -46,3 +46,4 @@ Docker indisponible ; PostgreSQL17 portable et Mailpit isolés utilisés. Résul
 - [x] T021 Distinguer les portées homonymes dans la liste et la confirmation, puis vérifier l'identifiant transmis (FR-009).
 - [x] T022 Distinguer les portées et rôles dans les sélecteurs d'attribution et de contexte ; vérifier octroi et retrait (FR-009).
 - [x] T023 Distinguer les rôles homonymes dans le catalogue et les confirmations globales (FR-008/009).
+- [x] T024 Afficher entièrement la sélection et son identifiant sur les petits écrans ; conserver l'état des formulaires indépendants (FR-009).

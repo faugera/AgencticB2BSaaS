@@ -16,7 +16,7 @@
 :is(.ui-root,.auth-page) h3 { font-size:var(--ui-card-title); margin:var(--ui-space-5) 0 var(--ui-space-3); }
 .ui-root .panel { padding:var(--ui-space-panel) 0; border:0; border-top:1px solid var(--ui-border); border-radius:0; background:transparent; box-shadow:none; margin:var(--ui-space-5) 0; min-width:0; }
 .ui-root .panel:first-child { margin-top:0; border-top:0; }
-.ui-help,.ui-root .ui-help,.ui-field p { color:var(--ui-muted); font-size:var(--ui-text-xs); margin:0; max-width:70ch; }
+.ui-help,.ui-root .ui-help,.ui-field p { color:var(--ui-muted); font-size:var(--ui-text-xs); margin:0; max-width:70ch; overflow-wrap:anywhere; }
 .ui-cluster { display:flex; flex-wrap:wrap; gap:var(--ui-space-2); align-items:center; }
 .ui-root .ui-alert { margin-block:var(--ui-space-4); padding:var(--ui-space-3) var(--ui-space-4); background:var(--ui-soft); border-radius:var(--ui-radius); }
 .ui-root .ui-alert-danger,.ui-field .ui-field-error { color:var(--ui-danger); }

@@ -99,6 +99,13 @@ test('workspace-only administration uses server capabilities and a scoped roster
  await expect(scope.locator('option[value=workspace]')).toHaveText('Espace géré (workspace)');
  await expect(scope.locator('option[value=workspace2]')).toHaveText('Espace géré (workspace2)');
  await scope.selectOption('workspace');
+ await expect(scope).toHaveAccessibleDescription('Espace géré (workspace)');
+ for (const width of [375, 768, 1280]) {
+  await page.setViewportSize({ width, height: 900 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await scope.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `specs/002-b2b-organizations-rbac/evidence/ui/current/workspace-role-selected-${width}.png` });
+ }
  await page.getByLabel('Sélectionner un membre').selectOption('member');
  await expect(page.getByLabel('Sélectionner un rôle').locator('option')).toHaveCount(2);
  await page.getByLabel('Sélectionner un rôle').selectOption('workspace-reader');
@@ -151,11 +158,14 @@ test('role removal confirmation names each scope and preserves access on cancel'
  await expect(page.getByLabel('Sélectionner un rôle').locator('option[value=custom]')).toHaveText('Support (custom)');
  await expect(page.getByLabel('Sélectionner un rôle').locator('option[value=custom2]')).toHaveText('Support (custom2)');
  await page.getByLabel('Sélectionner un rôle').selectOption('custom');
+ await expect(page.getByLabel('Sélectionner un rôle')).toHaveAccessibleDescription('Support (custom)');
  const target = page.getByLabel('Sélectionner une portée');
  await expect(target.locator('option[value=workspace]')).toHaveText('Espace A (workspace)');
  await expect(target.locator('option[value=workspace2]')).toHaveText('Espace A (workspace2)');
  await expect(target.locator('option[value=workspace3]')).toHaveText('Espace A (workspace) (workspace3)');
- await target.selectOption('workspace2'); await page.getByRole('button', { name: 'Attribuer', exact: true }).click();
+ await target.selectOption('workspace2');
+ await expect(target).toHaveAccessibleDescription('Espace A (workspace2)');
+ await page.getByRole('button', { name: 'Attribuer', exact: true }).click();
  await expect.poll(() => writes.length).toBe(2);
  expect(writes[1]).toEqual({ actorId: 'member', roleId: 'custom', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace2', operation: 'grant' });
 });

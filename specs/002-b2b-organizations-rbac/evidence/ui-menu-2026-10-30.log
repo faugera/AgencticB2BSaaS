@@ -1,0 +1,8 @@
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+
+Running 2 tests using 2 workers
+
+  ok 2 [chromium-full] › tests\e2e\admin-layout.spec.ts:5:3 › admin sidebar selects features and preserves organization scope (en) (1.5s)
+  ok 1 [chromium-full] › tests\e2e\admin-layout.spec.ts:5:3 › admin sidebar selects features and preserves organization scope (fr) (1.6s)
+
+  2 passed (5.4s)

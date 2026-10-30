@@ -14,6 +14,7 @@ export function RoleAssignments({ access, roles, people, tenants, organizations,
  const editable = people.filter((person) => person.id !== access.actorId && (superAdmin || person.roles.every((role) => role.level < level)));
  const role = assignable.find((value) => value.id === roleId);
  const targets = role?.scope === 'organization' ? organizations : role?.scope === 'tenant' ? tenants : workspaces.filter((space) => (superAdmin || space.can_assign_roles) && (!workspaceOnly || space.id === initialWorkspaceId));
+ const target = targets.find((item) => item.id === scopeId);
  const tenant = role?.scope === 'tenant' ? tenants.find((value) => value.id === scopeId) : tenants.find((value) => value.id === workspaces.find((space) => space.id === scopeId)?.tenant_id);
  const organizationId = role?.scope === 'organization' ? scopeId : tenant?.organization_id ?? access.organizationId;
  const scopeName = (assignment: RoleAssignment) => {
@@ -26,8 +27,8 @@ export function RoleAssignments({ access, roles, people, tenants, organizations,
  return <section className="panel"><h2>{t('role_assignments')}</h2><p className="ui-help">{t('roles_help')}</p>
   <form onSubmit={(event) => { event.preventDefault(); if (!role || !organizationId) return; action(() => api('/api/role-assignments', { actorId: personId, roleId: role.id, organizationId, ...(role.scope === 'tenant' ? { tenantId: scopeId } : role.scope === 'workspace' ? { tenantId: workspaces.find((value) => value.id === scopeId)?.tenant_id, workspaceId: scopeId } : {}), operation: 'grant' })); }}>
    <Field label={t('select_person')}>{(props) => <Select {...props} required value={personId} onChange={(event) => setPersonId(event.target.value)}><option value="">{t('select_person')}</option>{editable.map((person) => <option key={person.id} value={person.id}>{person.name} — {person.email}</option>)}</Select>}</Field>
-   <Field label={t('select_role')}>{(props) => <Select {...props} required value={roleId} onChange={(event) => { setRoleId(event.target.value); setScopeId(initialWorkspaceId); }}><option value="">{t('select_role')}</option>{assignable.map((item) => <option key={item.id} value={item.id}>{item.name} ({item.id})</option>)}</Select>}</Field>
-   <Field label={t('select_scope')}>{(props) => <Select {...props} required value={scopeId} onChange={(event) => setScopeId(event.target.value)}><option value="">{t('select_scope')}</option>{targets.map((item) => <option key={item.id} value={item.id}>{item.name} ({item.id})</option>)}</Select>}</Field>
+   <Field label={t('select_role')} help={role ? `${role.name} (${role.id})` : ''}>{(props) => <Select {...props} required value={roleId} onChange={(event) => { setRoleId(event.target.value); setScopeId(initialWorkspaceId); }}><option value="">{t('select_role')}</option>{assignable.map((item) => <option key={item.id} value={item.id}>{item.name} ({item.id})</option>)}</Select>}</Field>
+   <Field label={t('select_scope')} help={target ? `${target.name} (${target.id})` : ''}>{(props) => <Select {...props} required value={scopeId} onChange={(event) => setScopeId(event.target.value)}><option value="">{t('select_scope')}</option>{targets.map((item) => <option key={item.id} value={item.id}>{item.name} ({item.id})</option>)}</Select>}</Field>
    <Button type="submit" busy={busy} disabled={!role || !personId || !scopeId || !organizationId}>{t('assign_role')}</Button>
   </form>
   {!people.length && <EmptyState title={t('no_members')} />}
