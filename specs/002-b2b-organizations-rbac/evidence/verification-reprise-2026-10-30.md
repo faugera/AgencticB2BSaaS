@@ -20,5 +20,11 @@ de l'ensemble des états est suivie séparément. Les tests UI avec API simulée
 prouvent pas les autorisations serveur. Les preuves du 25 octobre restent datées
 et ne sont pas présentées comme des exécutions du 30 octobre.
 
+La revue visuelle complète des 378 captures a relevé une confirmation de retrait
+ambiguë. Le titre précise désormais l'action, la personne, le rôle et sa portée,
+avec l'email en remplacement d'un nom vide. Un test a d'abord reproduit le défaut ;
+après correction, les 6 scénarios visuels FR/EN aux trois tailles sont passés.
+Cette correction d'interface est postérieure au commit applicatif indiqué ci-dessus.
+
 Aucune base de développement ou production n'a été migrée. La MFA reste
 facultative en V0 ; les vérifications locales ne certifient pas l'infrastructure.

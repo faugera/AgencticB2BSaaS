@@ -41,3 +41,5 @@ Docker indisponible ; PostgreSQL17 portable et Mailpit isolés utilisés. Résul
 - [x] T018 Garder le catalogue global utilisable sans requête roster hors portée tenant ; régression rouge/verte (FR-009).
 
 - [x] T019 Stabiliser LF des nouvelles migrations au checkout Windows et vérifier les checksums identiques, sans toucher aux anciennes versions (FR-016).
+
+- [x] T020 Nommer l'action, la personne, le rôle et sa portée dans la confirmation de retrait ; vérifier FR/EN et les trois tailles (FR-009).
