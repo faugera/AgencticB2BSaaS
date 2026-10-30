@@ -4,6 +4,8 @@ Branche B2B depuis main f47449c, qui inclut la PR8 fusionnée, 25 octobre 2026. 
 pas les migrations effectivement déployées. [Spec courante](../specs/002-b2b-organizations-rbac/spec.md),
 [modèle](data-model.md), [permissions](features-b2b.md), [runbook](setup/private-pilot.md).
 
+[Schéma d'architecture et des données](architecture.html) · [maintenance du schéma](setup/architecture-diagram.md).
+
 React/Vite → Fastify → PostgreSQL17 via pg. Monolithe modulaire, Better Auth pour
 identité/sessions/email/MFA facultative ; contrats partagés type-only, aucun ORM.
 Client → organisation → tenants → workspaces. Une identité ordinaire appartient à
