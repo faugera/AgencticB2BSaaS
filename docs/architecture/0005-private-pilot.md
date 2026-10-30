@@ -125,7 +125,7 @@ adversarial tests are present ; leurs preuves historiques sont réconciliées da
 le registre, sans inspection de la DB courante.
 
 
-### Modèle B2B courant — 0013 à 0015
+### Modèle B2B courant — 0013 à 0016
 
 Cette décision supersède les anciennes équivalences organisation=tenant, appartenance
 unique et journal super-admin exclusif ci-dessus. Organisation=client, plusieurs tenants
@@ -134,7 +134,8 @@ un seul client mais reçoit plusieurs tenants explicitement. Catalogue global é
 seulement par super-admin ; rôles cumulables dans leur portée. Pyramide : super_admin >
 organization_admin > tenant_admin > workspace_admin > member. Gestion des seuls
 niveaux inférieurs, jamais soi/pairs/supérieurs ; dernier administrateur actif protégé.
-Organisation-admin traverse uniquement son client, lectures auditées. Une appartenance
+Organisation-admin traverse uniquement son client, lectures auditées. L'annuaire d'organisations
+est limité aux organisations accessibles et exclut toute suppression logique. Une appartenance
 explicite invited/suspended refuse le tenant même pour cet administrateur ; absence
 d'appartenance autorise sa traversée. Permissions serveur réévaluées à chaque opération.
 

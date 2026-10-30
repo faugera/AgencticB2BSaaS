@@ -1,6 +1,6 @@
 # Modèle de données courant
 
-Les migrations 0001–0012 sont historiques et immuables. Les migrations 0013–0015
+Les migrations 0001–0012 sont historiques et immuables. Les migrations 0013–0016
 implémentent le [contrat B2B](../specs/002-b2b-organizations-rbac/spec.md).
 Leur présence ne prouve aucune application en production. pg sans ORM ; migrateur
 atomique, verrou transactionnel et checksums opérateur.
@@ -27,7 +27,9 @@ atomique, verrou transactionnel et checksums opérateur.
 
 ## Autorisation
 
-RLS ENABLE/FORCE sur organisations, tenants, workspaces et journal. Métadonnées privées
+RLS ENABLE/FORCE sur organisations, tenants, workspaces et journal. L'annuaire d'organisations
+ne retourne que la portée de l'acteur (toutes les organisations actives pour super-admin) et exclut
+les suppressions logiques. Métadonnées privées
 sans grants runtime directs ; fonctions SECURITY DEFINER à search_path fixe. Runtimes
 non propriétaires, non superuser, sans BYPASSRLS. Le serveur établit identité, tenant,
 IP et user-agent dans la même transaction avec set_config local. Le tenant demandé

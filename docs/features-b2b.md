@@ -8,7 +8,7 @@ Les preuves PR7/PR8 restent [historiques](sdd/legacy-reconciliation.md).
 | --- | --- | --- |
 | Identité invitation-only, vérification, récupération, sessions | IMPLEMENTED | Better Auth ; aucune inscription libre |
 | MFA TOTP et récupération facultatives | IMPLEMENTED | V0 sans MFA obligatoire, y compris super-admin |
-| Organisations clients, plusieurs tenants et workspaces | IMPLEMENTED | Migrations 0013/0014, routes organisation ; un utilisateur ordinaire dans une seule organisation |
+| Organisations clients, plusieurs tenants et workspaces | IMPLEMENTED | Migrations 0013/0014/0016, annuaire limité à la portée ; un utilisateur ordinaire dans une seule organisation |
 | Appartenances multiples explicites dans le même client | IMPLEMENTED | Seul active donne accès ; invited/suspended refusés à la prochaine opération |
 | Catalogue global de rôles personnalisés cumulables | IMPLEMENTED | Lecture administrative avec roles.assign, édition super-admin ; attribution déléguée par portée et niveau |
 | Pyramide et dernier administrateur actif | IMPLEMENTED | Fonctions SQL contrôlent soi/pairs/supérieurs et capacité administrative restante |

@@ -12,7 +12,7 @@ IMPLEMENTED décrit le code ; aucune certification production n'est déduite des
 | Catalogue global et rôles cumulables | IMPLEMENTED | Édition super-admin, délégation explicite et union dans la portée |
 | Pyramide stricte | IMPLEMENTED | Aucun soi/pair/supérieur ; dernier administrateur actif protégé contre concurrence |
 | Organisation-admin transversal | IMPLEMENTED | Son client seulement, privé compris, contrôlé et audité |
-| Transaction locale et RLS FORCE | IMPLEMENTED | Organisations/tenants/workspaces/journal ; fonctions étroites privées sans grants runtime |
+| Transaction locale et RLS FORCE | IMPLEMENTED | Organisations/tenants/workspaces/journal ; annuaire limité à la portée et fonctions étroites sans grants runtime |
 | Runtimes sans propriété/BYPASSRLS | IMPLEMENTED | Provisioning et assertRuntimePrivileges ; état production UNKNOWN |
 | Journal unique append-only runtime | IMPLEMENTED | business.audit_logs ; archive privée figée, pas de valeurs sensibles |
 | Tests négatifs HTTP/SQL | IMPLEMENTED | Suites integration réexécutées pour chaque changement ; mocks insuffisants |
