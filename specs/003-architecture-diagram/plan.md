@@ -22,3 +22,7 @@ limites explicites. Ancien fichier local conservé avant remplacement par un lie
 ## Validation
 Tests négatifs/positifs du contrôle ; `pnpm docs:test`, `pnpm docs:check`, lint et
 inspection navigateur FR aux largeurs 375, 768 et 1280 ; aucune modification SQL.
+La CI détecte aussi un test de rôle qui inspecte un menu fermé et un scénario visuel
+complet de nombreuses captures dont le budget de 30 secondes est insuffisant en CI.
+Ouvrir le menu avant chaque assertion de rôle et marquer uniquement ce scénario lent ;
+conserver toutes les assertions et les deux projets navigateur.

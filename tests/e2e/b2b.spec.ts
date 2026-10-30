@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openSidebar } from './support/sidebar';
 for (const locale of ['fr', 'en'] as const) {
   test(`B2B profile and roles (${locale})`, async ({ page }) => {
     await page.addInitScript((value) => localStorage.setItem('locale', value), locale);
@@ -180,9 +181,12 @@ test('role navigation follows assignment capability rather than member managemen
  });
  await page.goto('/app');
  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Espaces de travail');
+ await openSidebar(page);
  await expect(page.getByRole('link', { name: 'Rôles et permissions', exact: true })).toHaveCount(0);
  await expect(page.locator('.ui-account summary')).toHaveText('person@example.test');
  canAssignWorkspace = true; await page.reload();
+ await expect(page.getByRole('heading', { level: 1 })).toHaveText('Espaces de travail');
+ await openSidebar(page);
  await expect(page.getByRole('link', { name: 'Rôles et permissions', exact: true })).toHaveCount(1);
 });
 

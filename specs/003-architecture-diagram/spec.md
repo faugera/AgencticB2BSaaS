@@ -34,6 +34,7 @@ puis met à jour ou confirme le schéma après revue humaine.
 - **FR-002**: Identifier les limites de la vue et ne pas prétendre inspecter une base déployée.
 - **FR-003**: Signaler les changements des documents de référence et migrations en local et CI ; documenter la revue manuelle et l'actualisation.
 - **FR-004**: Conserver l'accès depuis le fichier local existant vers le schéma versionné.
+- **FR-005**: Les tests navigateur de la branche doivent vérifier les rôles avec le menu mobile ouvert et disposer d'un budget adapté aux captures visuelles sans retirer les assertions.
 
 ### Key Entities
 - Sources suivies : documents d'architecture et de données, fichiers de migration SQL.

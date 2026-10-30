@@ -21,6 +21,7 @@ async function capture(page: Page, name: string, target?: Locator) {
 
 for (const locale of ['fr', 'en'] as const) for (const width of [375, 768, 1280]) {
   test(`current B2B surfaces ${locale} ${width}`, async ({ page }) => {
+    test.slow();
     await page.setViewportSize({ width, height: 900 });
     await page.addInitScript((value) => localStorage.setItem('locale', value), locale);
     const label = (fr: string, en: string) => locale === 'fr' ? fr : en;

@@ -15,3 +15,15 @@
   autre checkout et ne font pas partie de cette PR. Le schéma de cette branche couvre
   les migrations jusqu'à 0015 ; il ne certifie pas la base déployée. Si 0016 est
   intégrée, le contrôle imposera une nouvelle revue des sources.
+
+## Reprise CI de la PR 10
+- FAIL reproduit localement : navigation des rôles sur le projet mobile, menu fermé
+  après rechargement ; l'assertion négative avant rechargement inspectait aussi un
+  menu fermé et ne prouvait pas l'absence du lien.
+- PASS après correction : 14 scénarios ciblés, 6 vues FR/EN et navigation des rôles
+  dans chacun des projets desktop/mobile. Chromium complet local a été utilisé avec
+  les paramètres des deux projets. Les vues mobile ont duré jusqu'à 28 secondes en
+  local ; le journal CI rapporte plusieurs dépassements du budget global de 30 s.
+  Les assertions sont conservées et seul ce scénario lourd est marqué lent.
+- La suite complète CI et les tests SQL/SMTP n'ont pas été relancés localement pour
+  cette correction limitée aux tests ; les résultats du nouveau run CI font foi.
