@@ -24,7 +24,7 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 | apps/api/src/business/store.ts | Transaction locale et identité, audit privilégié, vérification rôles SQL runtime |
 | apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations et composition des modules |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013 profil, 0014 organisations/RBAC, 0015 journal |
+| apps/api/migrations | SQL immuable et checksummé ; 0013 profil, 0014 organisations/RBAC, 0015 journal, 0016 annuaire organisation-scopé |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP
@@ -35,7 +35,7 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 | GET/POST /api/auth/* | Contrats Better Auth ; origine POST et email vérifié |
 | GET /api/me?tenantId | Contexte serveur, tenants accessibles, workspaces RLS |
 | GET /api/tenants | Annuaire des tenants accessibles au contexte |
-| GET/POST /api/organizations | Lecture client-scopée ; création super-admin |
+| GET/POST /api/organizations | Lecture limitée aux organisations accessibles (supprimées exclues) ; création super-admin |
 | POST /api/organizations/:id/tenants | Super-admin ou organisation-admin du client ; adminEmail fournit billing et invitation initiale |
 | GET/POST /api/platform/tenants | Compatibilité super-admin ; POST crée client + premier tenant |
 | GET/POST /api/roles ; PUT /api/roles/:id | Lecture avec roles.assign autorisé ; édition super-admin, impact/confirmation si modification affectante |

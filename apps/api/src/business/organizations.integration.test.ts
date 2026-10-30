@@ -20,6 +20,7 @@ let superIdentity = '';
 let workspace = '';
 let foreignWorkspace = '';
 let customRole = '';
+let deletedOrganization = '';
 const tx = <T>(identity: string, tenant: string | undefined, run: Parameters<typeof businessTransaction<T>>[4]) =>
   businessTransaction(runtime, identity, tenant, 'test.read', run);
 const at = (values: string[], index: number) => {
@@ -44,6 +45,10 @@ describe('Organisation et RBAC persistés', () => {
       organizations.push(await tx(superIdentity, undefined, async client =>
         (await client.query<{ id: string }>('SELECT business.create_organization($1) id', [label])).rows[0]?.id ?? ''));
     }
+    deletedOrganization = await tx(superIdentity, undefined, async client =>
+      (await client.query<{ id: string }>('SELECT business.create_organization($1) id', ['Client supprimé'])).rows[0]?.id ?? '');
+    await tx(superIdentity, undefined, client => client.query(
+      'UPDATE business.organizations SET deleted_at=now() WHERE id=$1', [deletedOrganization]));
     for (const index of [0, 0, 1]) {
       tenants.push(await tx(superIdentity, undefined, async client =>
         (await client.query<{ id: string }>('SELECT business.create_tenant($1,$2,$3) id', [at(organizations, index), 'Tenant', 'billing@example.test'])).rows[0]?.id ?? ''));
@@ -68,6 +73,16 @@ describe('Organisation et RBAC persistés', () => {
     await expect(tx(at(ids, 2), at(tenants, 0), client => client.query('SELECT business.role_catalog()'))).rejects.toThrow();
     expect((await tx(at(ids, 1), at(tenants, 0), client => client.query<{ roles: unknown[] }>('SELECT business.role_catalog() roles'))).rows[0]?.roles.length).toBeGreaterThan(0);
     expect((await tx(at(ids, 0), undefined, client => client.query<{ roles: unknown[] }>('SELECT business.role_catalog() roles'))).rows[0]?.roles.length).toBeGreaterThan(0);
+  });
+
+  it('limite l’annuaire au client de l’acteur et exclut les organisations supprimées', async () => {
+    const memberDirectory = await tx(at(ids, 2), at(tenants, 1), client =>
+      client.query<{ id: string }>('SELECT * FROM business.organization_directory()'));
+    expect(memberDirectory.rows.map(row => row.id)).toEqual([at(organizations, 0)]);
+    const superDirectory = await tx(superIdentity, undefined, client =>
+      client.query<{ id: string }>('SELECT * FROM business.organization_directory()'));
+    expect(superDirectory.rows.map(row => row.id)).toEqual(organizations);
+    expect(superDirectory.rows.map(row => row.id)).not.toContain(deletedOrganization);
   });
 
   it('organisation-admin traverse les workspaces privés de son client seulement', async () => {
