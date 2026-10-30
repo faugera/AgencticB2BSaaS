@@ -40,5 +40,16 @@ Les deux reproductions initiales échouées ont été observées dans cette sess
 mais leurs sorties complètes n'ont pas été archivées dans le dépôt. Cette correction
 d'interface est postérieure au commit applicatif indiqué en début de document.
 
+Une revue a ensuite relevé le cas de plusieurs portées portant le même nom. Le nom
+reste lisible ; l'identifiant est ajouté lorsqu'une autre portée du même type porte
+le même nom. Le [test navigateur de collision](ui-retrait-collision-2026-10-30.log)
+vérifie deux espaces homonymes, l'annulation et l'identifiant envoyé à la confirmation.
+Il a été exécuté sur les sources suivant `c2a271e`, avec 13 scénarios B2B réussis :
+
+```sh
+pnpm --filter @enterprise/web build
+pnpm exec playwright test tests/e2e/b2b.spec.ts tests/e2e/b2b-visual.spec.ts --config specs/002-b2b-organizations-rbac/evidence/playwright-ui.config.ts --workers=3
+```
+
 Aucune base de développement ou production n'a été migrée. La MFA reste
 facultative en V0 ; les vérifications locales ne certifient pas l'infrastructure.

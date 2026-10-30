@@ -19,7 +19,9 @@ export function RoleAssignments({ access, roles, people, tenants, organizations,
  const scopeName = (assignment: RoleAssignment) => {
   const id = assignment.workspaceId ?? assignment.tenantId ?? assignment.organizationId;
   const scopes = assignment.scope === 'organization' ? organizations : assignment.scope === 'tenant' ? tenants : workspaces;
-  return scopes.find((item) => item.id === id)?.name ?? id;
+  const match = scopes.find((item) => item.id === id);
+  if (!match) return id;
+  return scopes.some((item) => item.id !== id && item.name === match.name) ? `${match.name} (${id})` : match.name;
  };
  return <section className="panel"><h2>{t('role_assignments')}</h2><p className="ui-help">{t('roles_help')}</p>
   <form onSubmit={(event) => { event.preventDefault(); if (!role || !organizationId) return; action(() => api('/api/role-assignments', { actorId: personId, roleId: role.id, organizationId, ...(role.scope === 'tenant' ? { tenantId: scopeId } : role.scope === 'workspace' ? { tenantId: workspaces.find((value) => value.id === scopeId)?.tenant_id, workspaceId: scopeId } : {}), operation: 'grant' })); }}>

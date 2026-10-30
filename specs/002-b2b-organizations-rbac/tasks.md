@@ -43,3 +43,4 @@ Docker indisponible ; PostgreSQL17 portable et Mailpit isolés utilisés. Résul
 - [x] T019 Stabiliser LF des nouvelles migrations au checkout Windows et vérifier les checksums identiques, sans toucher aux anciennes versions (FR-016).
 
 - [x] T020 Nommer l'action, la personne, le rôle et sa portée dans la confirmation de retrait ; vérifier FR/EN et les trois tailles (FR-009).
+- [x] T021 Distinguer les portées homonymes dans la liste et la confirmation, puis vérifier l'identifiant transmis (FR-009).
