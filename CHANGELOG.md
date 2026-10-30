@@ -1,5 +1,12 @@
 # Changelog
 
+## B2B — organisations, rôles et profil
+
+- Organisations clients distinctes, tenants multiples et rôles cumulables selon une pyramide contrôlée.
+- Catalogue global super-admin, attributions déléguées et statuts d’adhésion explicites.
+- Profil et préférences enrichis, sans étape onboarding ; journal unique avec consultation par portée.
+- Migrations additives 0013–0015 ; IDs et historique conservés, application opérateur seulement.
+
 ## Correctifs PR7 — 2026-10-25
 
 Demandes d'accès accessibles au-delà de100, invitations rafraîchies après approbation,

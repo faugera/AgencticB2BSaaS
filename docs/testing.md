@@ -59,3 +59,19 @@ NOT_APPLICABLE. Aucun changement de dépendance.
 pnpm docs:test teste le vérificateur avec fixtures valides/invalides ; pnpm docs:check
 vérifie structure, statuts, liens et chemins maintenus. Voir docs/setup/spec-kit.md.
 Ces contrôles ne remplacent aucun gate applicatif ou de sécurité existant.
+
+## Extension B2B — 0013 à0015
+
+Les nombres de la réduction ci-dessus sont historiques. Le nouveau périmètre inclut
+profil strict, catalogue/attributions, organisations, journal unique et suspension.
+Les fixtures anciennes utilisent la création organisation/tenant actuelle et les refus
+de pairs ; aucune assertion d’isolation inter-client n’est supprimée. La découverte
+unitaire vise apps/*/src pour exclure les tests embarqués dans les dépendances.
+Le test de préservation/rejeu requiert une base dédiée vide et le flag explicite
+AUTH_TEST_MIGRATION_PRESERVATION=true ; il reste skipped dans une DB de régression
+déjà migrée. La CI lui réserve une base séparée avant les autres intégrations.
+Les preuves actuelles et limites sont dans
+[la livraison](../specs/002-b2b-organizations-rbac/quickstart.md).
+Les captures/mocks UI ne prouvent ni autorisation ni persistance ; intégrations SQL/HTTP
+et parcours auth/SMTP ont des commandes distinctes. PostgreSQL portable isolé peut
+remplacer Docker indisponible localement, sans toucher une base de développement.

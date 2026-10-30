@@ -1,0 +1,81 @@
+{
+  "sha": "21c2d787475052b80c10dcbff34e5188a7b025eb",
+  "at": "2026-10-25T18:38:12.364Z",
+  "migrations": [
+    {
+      "name": "0001_identity.sql",
+      "identical": true,
+      "sha256": "9efb68d588230c996b7f8ca6b5803c3a35aa6cb0a9d8e645117d624342d1bc92"
+    },
+    {
+      "name": "0002_business.sql",
+      "identical": true,
+      "sha256": "1cc1a10f8b6dcedf36c85fdd09c85e87e9b606699c118317489080e8d3028086"
+    },
+    {
+      "name": "0003_mfa_index.sql",
+      "identical": true,
+      "sha256": "95af96069fa86c3d1adf941cb2ccc0ddc6af4e74ae22257ae48e978171efebd3"
+    },
+    {
+      "name": "0004_workspace_administration.sql",
+      "identical": true,
+      "sha256": "df82ccae0aabff69f9cd4ec9c53340e8ed571c0c68b910018e9d3b5bde863b57"
+    },
+    {
+      "name": "0005_invitation_delivery.sql",
+      "identical": true,
+      "sha256": "6a8c8cb7901b64f473e0d577318d4ee736f87a4f675914bd96eda5ce0c7f5ed3"
+    },
+    {
+      "name": "0006_workspace_scope.sql",
+      "identical": true,
+      "sha256": "92e18683e99a020df393b5371585a61d502d175764e14c81422eaf5aedfc402c"
+    },
+    {
+      "name": "0007_enabled_administrator.sql",
+      "identical": true,
+      "sha256": "a0dd2cf2290c92afec47820a1f80d938ab72a898af0b09128de8a110b302f486"
+    },
+    {
+      "name": "0008_access_requests.sql",
+      "identical": true,
+      "sha256": "f7835a04ae372abfbacd2fb11189ea88da7e67645233d45520e84216b99b36b9"
+    },
+    {
+      "name": "0009_ui_preferences.sql",
+      "identical": true,
+      "sha256": "ef907bbfade505ef27540903c865011526be8d7fc573237d4221f7256776be84"
+    },
+    {
+      "name": "0010_audit_log.sql",
+      "identical": true,
+      "sha256": "3e0686c50f55f388d6d0ab212e4f8c1965dc276b8baf1453f7f20ac9e5cab25e"
+    },
+    {
+      "name": "0011_lifecycle.sql",
+      "identical": true,
+      "sha256": "1129a894b12a4993f8e7e4fde12dff92d2a2bd1348a0c5a5192e8296a7c3d3ba"
+    },
+    {
+      "name": "0012_access_request_pagination.sql",
+      "identical": true,
+      "sha256": "ab83982cd50ab78d955483ae0a4f1a46f224d02587c92db78ac70fec22cf8cc4"
+    },
+    {
+      "name": "0013_profile_metadata.sql",
+      "identical": true,
+      "sha256": "22db30dda1579bc269d4b5725dfcd2528c83bf91e1269d1df16df91308324545"
+    },
+    {
+      "name": "0014_organizations_rbac.sql",
+      "identical": true,
+      "sha256": "2c126aadc1d6b35e9a74f9b65da9e6d6e38cb18b22da8006d2fba16f05111b72"
+    },
+    {
+      "name": "0015_unified_audit.sql",
+      "identical": true,
+      "sha256": "169893ae35e0a16f6959a64f47934ae1ffb2e25cba6322e83a9f77d60f9b6086"
+    }
+  ]
+}

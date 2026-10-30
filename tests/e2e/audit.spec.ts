@@ -11,9 +11,9 @@ async function fixture(page: Page, role: 'super_admin' | 'tenant_admin' | 'membe
       user: { id: 'fixture', name: 'Audit admin', email: 'fixture@example.test' },
       access: { actorId: target, platformRole: role === 'super_admin' ? role : null, tenantRole: role === 'super_admin' ? null : role, tenantId: role === 'super_admin' ? null : tenant, handle: null },
     } });
-    if (url.pathname === '/api/platform/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization A' }] });
+    if (url.pathname === '/api/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization A' }] });
     if (url.pathname === '/api/preferences') return route.fulfill({ json: null });
-    if (url.pathname === '/api/platform/audit') {
+    if (url.pathname === '/api/audit-logs') {
       queries.push(url.search);
       return route.fulfill({ json: { events: [{ id: url.searchParams.has('before') ? '10' : '20', occurred_at: '2026-10-24T10:15:00Z',
         actor_id: target, tenant_id: tenant, action: url.searchParams.has('before') ? 'change.updated' : 'change.created',
@@ -30,7 +30,7 @@ for (const locale of ['fr', 'en'] as const) {
       const queries = await fixture(page);
       let releaseAudit = () => {};
       const initialLoad = new Promise<void>((resolve) => { releaseAudit = resolve; });
-      await page.route('**/api/platform/audit**', async (route) => { await initialLoad; await route.fallback(); });
+      await page.route('**/api/audit-logs**', async (route) => { await initialLoad; await route.fallback(); });
       await page.goto('/admin/audit');
       await expect(page.getByRole('heading', { name: locale === 'fr' ? 'Journal d’audit' : 'Audit log' })).toBeVisible();
       await expect(page.getByRole('status')).toContainText(locale === 'fr' ? 'Chargement' : 'Loading');
@@ -42,12 +42,12 @@ for (const locale of ['fr', 'en'] as const) {
       expect(queries.some((query) => query.includes('before=20'))).toBe(true);
       await expect(page.getByRole('button', { name: locale === 'fr' ? 'Événements plus anciens' : 'Older events' })).toBeDisabled();
       await page.goto('/admin/audit?tenantId=' + tenant);
-      await expect(page.getByText(locale === 'fr' ? 'Événements de l’organisation sélectionnée.' : 'Events for the selected organization.', { exact: true })).toBeVisible();
+      await expect(page.getByText(locale === 'fr' ? 'Événements du tenant actif.' : 'Events for the active tenant.', { exact: true })).toBeVisible();
       await expect.poll(() => queries.some((query) => query.includes('tenantId=' + tenant) && !query.includes('before='))).toBe(true);
-      await page.route('**/api/platform/audit?*', (route) => route.fulfill({ json: { events: [], nextCursor: null } }));
+      await page.route('**/api/audit-logs?*', (route) => route.fulfill({ json: { events: [], nextCursor: null } }));
       await page.getByRole('button', { name: locale === 'fr' ? 'Revenir aux plus récents' : 'Back to latest events' }).click();
       await expect(page.getByText(locale === 'fr' ? 'Aucun événement à afficher.' : 'No events to display.', { exact: true })).toBeVisible();
-      await page.route('**/api/platform/audit?*', (route) => route.fulfill({ status: 503, json: { code: 'INTERNAL_ERROR' } }));
+      await page.route('**/api/audit-logs?*', (route) => route.fulfill({ status: 503, json: { code: 'INTERNAL_ERROR' } }));
       await page.getByRole('button', { name: locale === 'fr' ? 'Revenir aux plus récents' : 'Back to latest events' }).click();
       await expect(page.getByRole('alert')).toBeVisible();
     });

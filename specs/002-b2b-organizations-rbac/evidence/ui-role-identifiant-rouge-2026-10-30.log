@@ -1,0 +1,52 @@
+[WebServer] (node:8880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite preview --host 127.0.0.1
+[WebServer] (node:22536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:39416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium-full] › tests\e2e\b2b.spec.ts:113:1 › role removal confirmation names each scope and preserves access on cancel (5.4s)
+
+
+  1) [chromium-full] › tests\e2e\b2b.spec.ts:113:1 › role removal confirmation names each scope and preserves access on cancel 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveAccessibleName[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('dialog')
+    Expected: [32m"Retirer le rôle — member@example.test — Support[7m (custom)[27m — Organisation cliente · Client A (org)"[39m
+    Received: [31m"Retirer le rôle — member@example.test — Support — Organisation cliente · Client A (org)"[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveAccessibleName" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('dialog')[22m
+    [2m    9 × locator resolved to <dialog open="" class="ui-dialog" aria-labelledby="_r_f_">…</dialog>[22m
+    [2m      - unexpected value "Retirer le rôle — member@example.test — Support — Organisation cliente · Client A (org)"[22m
+
+
+      137 |  for (const [index, scope] of ['Organisation cliente · Client A (org)', 'Tenant · Tenant A (tenant)', 'Espace de travail · Espace A (workspace)', 'Espace de travail · Espace A (workspace2)', 'Espace de travail · Espace A (workspace) (workspace3)'].entries()) {
+      138 |   const trigger = buttons.nth(index); await trigger.click();
+    > 139 |   await expect(page.getByRole('dialog')).toHaveAccessibleName('Retirer le rôle — member@example.test — Support (custom) — ' + scope);
+          |                                          ^
+      140 |   await page.keyboard.press('Escape'); await expect(trigger).toBeFocused();
+      141 |  }
+      142 |  expect(writes).toEqual([]);
+        at D:\02-PROJETS_PERSO\AgencticB2BSaaS\tests\e2e\b2b.spec.ts:139:42
+
+    Error Context: test-results\b2b-role-removal-confirmat-1dc4b--preserves-access-on-cancel-chromium-full\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\b2b-role-removal-confirmat-1dc4b--preserves-access-on-cancel-chromium-full\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\b2b-role-removal-confirmat-1dc4b--preserves-access-on-cancel-chromium-full\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium-full] › tests\e2e\b2b.spec.ts:113:1 › role removal confirmation names each scope and preserves access on cancel 

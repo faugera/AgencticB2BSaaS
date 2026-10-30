@@ -1,94 +1,53 @@
 # Capacités et permissions B2B
 
-## Correctifs de revue PR7
+État de la branche codex/b2b-organizations-rbac, 25 octobre 2026. IMPLEMENTED signifie
+code présent, pas déploiement certifié. Preuves : [spec et livraison](../specs/002-b2b-organizations-rbac/spec.md).
+Les preuves PR7/PR8 restent [historiques](sdd/legacy-reconciliation.md).
 
-Les demandes d'accès sont paginées par100 avec précédent/suivant FR/EN ; elles ne
-disparaissent plus derrière les100 demandes récentes. L'approbation recharge les
-invitations pour rendre le renvoi disponible en cas d'échec SMTP.
-Le passage mobile/desktop libère les contrôles ; les destinations invitations et
-audit conservent la portée organisationnelle, y compris après connexion/MFA.
-Preuves et limites : `.specs/changes/2026-10-24-pr7-review/tasks.md`.
-
-État du code revu le 25 octobre 2026. Statuts : IMPLEMENTED = code présent ; PARTIAL =
-couverture incomplète ; PLANNED = intention documentée ; NOT_FOUND = aucun mécanisme
-identifié ; UNKNOWN = impossible à déterminer. Aucun statut n'est une preuve runtime.
-Carte produit : `../.specs/domains/product-map.md` ; décisions et limites :
-[ADR-005](architecture/0005-private-pilot.md).
-
-Les statuts portent sur le code fusionné dans PR7, revu le 25 octobre.
-Les preuves datées et leurs limites figurent dans [le registre](sdd/legacy-reconciliation.md).
-
-| Capacité | Statut | Preuve et limite |
+| Capacité | Statut | Source et limite |
 | --- | --- | --- |
-| Auth invitation-only, sessions, vérification et récupération | IMPLEMENTED | `apps/api/src/auth/service.ts`, `apps/api/src/auth/operator.ts`, `apps/web/src/auth/AuthPage.tsx` |
-| TOTP et codes de récupération | IMPLEMENTED | Même service, `apps/web/src/pages/Security.tsx` ; activation facultative |
-| Provisioning organisation par super-admin | IMPLEMENTED | `apps/api/src/business/routes.ts`, `/api/platform/tenants` |
-| Invitations tenant, retry, revoke et acceptation | IMPLEMENTED | Routes métier et `apps/api/migrations/0002_business.sql`, `apps/api/migrations/0005_invitation_delivery.sql` ; SMTP synchrone |
-| Workspaces privés ou visibles au tenant | IMPLEMENTED | Routes métier et politiques SQL dans `apps/api/migrations/0002_business.sql` |
-| Affectation/retrait des membres | IMPLEMENTED | Fonctions SQL métier ; dernier admin actif protégé par `apps/api/migrations/0007_enabled_administrator.sql` |
-| Administration UI séparée et navigation de portée | IMPLEMENTED | `apps/web/src/main.tsx`, `apps/web/src/admin/AdminSidebar.tsx`, `apps/web/src/application.tsx` |
-| Désactivation acteur | IMPLEMENTED | Route plateforme et fonction disable_actor ; distincte d'une suppression logique complète |
-| Audit privilégié | PARTIAL | Succès métier et bootstrap ; pas tous les refus/auth, ni export externe |
-| FR/EN, responsive et accessibilité | PARTIAL | Dictionnaires, labels, feedback et media queries présents ; conformité exhaustive non prouvée |
-| SSO/SCIM, passkeys, MFA imposée | PLANNED | ADR-005 et `docs/architecture/routes-verification.md` ; hors pilote |
-| Facturation, agents IA et workflows durables | PLANNED | `docs/sdd/000-foundation-v1.3.md` |
-| Demandes via lien /signup, docs restreintes, profil/sessions | IMPLEMENTED | access-routes.ts, Profile.tsx et migrations 0008/0012 ; aucune inscription libre |
-| Suppression logique utilisateur/organisation | IMPLEMENTED | Migration 0011, marqueurs persistés, sessions révoquées, RLS active seulement ; opération SQL opérateur, sans UI/API |
-| Support dédié / ABAC | NOT_FOUND | Pas de rôle ni moteur identifié |
-| État du déploiement et garanties opérationnelles | UNKNOWN | Aucun contrôle production réalisé |
+| Identité invitation-only, vérification, récupération, sessions | IMPLEMENTED | Better Auth ; aucune inscription libre |
+| MFA TOTP et récupération facultatives | IMPLEMENTED | V0 sans MFA obligatoire, y compris super-admin |
+| Organisations clients, plusieurs tenants et workspaces | IMPLEMENTED | Migrations 0013/0014, routes organisation ; un utilisateur ordinaire dans une seule organisation |
+| Appartenances multiples explicites dans le même client | IMPLEMENTED | Seul active donne accès ; invited/suspended refusés à la prochaine opération |
+| Catalogue global de rôles personnalisés cumulables | IMPLEMENTED | Lecture administrative avec roles.assign, édition super-admin ; attribution déléguée par portée et niveau |
+| Pyramide et dernier administrateur actif | IMPLEMENTED | Fonctions SQL contrôlent soi/pairs/supérieurs et capacité administrative restante |
+| Invitations, demandes et pagination | IMPLEMENTED | SMTP après commit, retry manuel ; tenant-admin ne peut inviter un pair |
+| Profil complet et préférences du compte | IMPLEMENTED | Profil existant, noms inconnus acceptés à invitation ; PUT exige prénom et nom ; poste/département tenant-scopés |
+| Workspaces privés/visibles, apparence Brume | IMPLEMENTED | Permissions contrôlées SQL ; archived_at informatif |
+| Journal unique et consultation par portée | IMPLEMENTED | Migration0015, /api/audit-logs ; ancien journal archivé |
+| Suppression logique et dates | IMPLEMENTED | Opérateur SQL ; révocation accès, IDs conservés ; aucune nouvelle UI de suppression |
+| FR/EN et responsive | PARTIAL | Parcours et captures ciblés ; pas de certification exhaustive d'accessibilité |
+| SSO/SCIM, MFA imposée | PLANNED | Hors V0 |
+| Runtime IA, jobs durables et paiement | PLANNED | Métadonnées abonnement sans comportement de facturation |
+| Support dédié / ABAC | NOT_FOUND | Aucun moteur identifié |
+| Déploiement, HA et restauration | UNKNOWN | Pas d'inspection production |
 
-## Matrice d'autorisation observée
+## Pyramide et portée
 
-Source : `apps/api/src/business/routes.ts`, `apps/api/migrations/0002_business.sql`
-et migrations suivantes. Un workspace_admin est une permission de workspace,
-pas un rôle plateforme ; un acteur non activé n'a aucun accès métier.
+super_admin > organization_admin > tenant_admin > workspace_admin > member.
+Un administrateur gère uniquement les niveaux inférieurs dans la portée concernée :
+aucune modification de soi, de pairs, de supérieurs ni auto-élévation. Un supérieur
+gère les pairs du niveau inférieur. Les rôles personnalisés ne contiennent pas de rôle
+plateforme et leur niveau est dérivé de leurs permissions sensibles.
 
-| Action | Super-admin | Tenant-admin | Workspace-admin | Member |
+| Action | Super-admin | Organisation-admin | Tenant-admin | Workspace-admin / membre |
 | --- | --- | --- | --- | --- |
-| Créer/lister les organisations plateforme | Oui | Non | Non | Non |
-| Créer un workspace | Tenant explicitement sélectionné | Son tenant | Non par ce rôle seul | Non |
-| Lire un workspace | Portée tenant explicite | Son tenant | Workspace autorisé | Visibilité tenant ou appartenance explicite |
-| Modifier workspace / affecter ses membres | Portée autorisée | Son tenant | Son workspace | Non |
-| Inviter / administrer membres tenant | Portée autorisée | Son tenant | Non par ce rôle seul | Non |
-| Désactiver acteur ordinaire | Oui selon fonction SQL | Non | Non | Non |
-| S'attribuer super-admin | Non ; bootstrap opérateur distinct | Non | Non | Non |
+| Créer organisation / modifier catalogue | Oui | Non | Non | Non |
+| Créer tenant | Oui | Son client | Non | Non |
+| Traverser tous workspaces privés | Tenant sélectionné | Son client, audité | Son tenant | Portée explicite ou visibilité autorisée |
+| Gérer attributions inférieures | Portée explicite | Son client | Son tenant | Workspace autorisé avec permission ; membre non |
+| Modifier permissions globales | Oui, impact et confirmation | Non | Non | Non |
+| Lire journal | Global ou tenant | Son client | Tenant avec audit.read | Permission audit.read selon portée |
+| Modifier son profil | Oui | Oui | Oui | Oui, compte propre seulement |
 
-Les succès métier super-admin sont audités avant commit. Son accès permanent
-multi-tenant est une décision explicite ; aucun bypass SQL n'est accordé.
+Les rôles se cumulent par union de permissions, sans traverser leur portée. Une
+modification du catalogue prend effet dès la prochaine opération, avec auteur/date
+et capacités ajoutées/retirées dans le journal. Aucune invalidation de session ne
+remplace la réautorisation serveur. Les événements plateforme tenant=null restent
+super-admin uniquement ; les données d'un autre client ne sont jamais exposées.
 
-## Parcours
-
-L'opérateur invite une identité, qui vérifie son email puis définit son mot de
-passe par récupération. Le bootstrap opérateur lie explicitement une identité
-vérifiée au super-admin. Celui-ci crée l'organisation et invite le tenant-admin.
-L'acceptation exige l'email vérifié correspondant ; elle ne promeut pas un rôle
-préexistant. Le tenant-admin crée les workspaces et gère les accès ; retrait ou
-désactivation est revérifié à la prochaine opération métier. Les invitations
-expirées, réutilisées, révoquées ou inter-tenant sont refusées.
-
-## Parcours et Brume livrés dans PR7
-
-Les demandes via lien /signup ne créent ni identité ni membership. Les administrateurs
-traitent leurs demandes tenant-scopées ; approbation et livraison réutilisent les invitations.
-Le profil permet le nom et les autres sessions, sans modification d'email ou de rôle.
-/docs et son API sont réservés aux super-admins. Les tests réels de demandes, profil et
-sessions sont dans access.integration.test.ts ; preuves historiques dans le registre.
-
-App/admin/auth partagent les primitives Brume, le shell, les préférences compte et la
-couleur workspace (migration 0009). Tests réels : isolation des préférences par identité,
-apparence par rôle et tenant ; UI : navigation, états et FR/EN. La galerie ne crée aucune
-écriture métier fictive. Ni centre de notifications ni runtime IA n'est ajouté.
-
-## Journal d’audit V0 — implémenté dans PR7
-
-`/admin/audit` : consultation super-admin globale ou filtrée par organisation,
-pagination de 50, FR/EN et états vide/erreur. API `/api/platform/audit` et SQL
-`business.audit_events` refusent les rôles ordinaires. Migration 0010 complète
-le journal privé : tenants/workspaces, identités/acteurs, appartenances, invitations,
-demandes et apparence ; mutations effectives avec cible et champs, sans valeurs.
-Auteur absent si aucun contexte métier authentifié ; aucune attribution inventée.
-MFA non obligatoire en V0. Les 9 scénarios UI interceptés sont complétés par 4 tests PostgreSQL audit,
-14 tests d’isolation et 6 vues navigateur avec le vrai backend et refus 401/403.
-La migration est validée uniquement en base jetable, pas appliquée au développement.
-Les blocages lifecycle et fixture profil 429 ont été corrigés par la migration 0011
-et l'isolation des IP de test ; voir le delta 2026-10-24-lifecycle pour les preuves courantes.
+Les routes /app/roles, /admin/roles et /app/audit réutilisent Brume, FR/EN, formulaires
+accessibles et confirmation. Le frontend facilite les choix ; API et SQL font autorité.
+Profil : pas de nouvelle étape onboarding, pas de modification personnelle des rôles,
+du tenant ou du statut. La documentation /docs demeure super-admin uniquement.

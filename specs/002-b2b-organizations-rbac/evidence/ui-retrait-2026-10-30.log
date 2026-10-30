@@ -1,0 +1,28 @@
+[WebServer] (node:15700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite preview --host 127.0.0.1
+[WebServer] (node:9972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 3 workers
+
+(node:36452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 375 (13.9s)
+  ok 2 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 768 (13.9s)
+  ok 1 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 1280 (14.1s)
+  ok 5 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces en 768 (11.9s)
+  ok 4 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces en 375 (12.0s)
+  ok 6 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces en 1280 (12.9s)
+
+  6 passed (31.4s)

@@ -49,8 +49,10 @@ describe('access requests, protected documentation and own-account profile', () 
     }
     await operator.query("UPDATE authorization_private.actors SET platform_role='super_admin' WHERE id=$1", [account(3).actor]);
     for (let index = 0; index < 2; index++) {
-      const result = await businessTransaction(business, account(3).id, undefined, 'fixture.tenant', async (client) =>
-        (await client.query<{ id: string }>('INSERT INTO business.tenants(name) VALUES($1) RETURNING id', ['Access fixture'])).rows[0]?.id);
+      const result = await businessTransaction(business, account(3).id, undefined, 'fixture.tenant', async (client) => {
+        const organization = (await client.query<{ id: string }>("SELECT business.create_organization('Access fixture') id")).rows[0]?.id;
+        return (await client.query<{ id: string }>("SELECT business.create_tenant($1,'Access fixture','access@example.test') id", [organization])).rows[0]?.id;
+      });
       if (!result) throw new Error('Missing fixture tenant');
       tenants.push(result);
       await operator.query("INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'tenant_admin')", [account(index * 2).actor, result]);
@@ -62,7 +64,7 @@ describe('access requests, protected documentation and own-account profile', () 
     const get = (index: number) => app.inject({ url: '/api/preferences', headers: { cookie: account(index).cookie } });
     expect((await put('/api/preferences', { locale: 'en', theme: 'dark' })).statusCode).toBe(401);
     expect((await put('/api/preferences', { locale: 'en', theme: 'dark' }, 0)).statusCode).toBe(200);
-    expect((await get(0)).json()).toEqual({ locale: 'en', theme: 'dark' });
+    expect((await get(0)).json()).toEqual({ locale: 'en', theme: 'dark', timezone: 'Europe/Paris', date_format: 'DD/MM/YYYY' });
     expect((await get(1)).json()).toBeNull();
     expect((await put('/api/preferences', { locale: 'fr', theme: 'light', actorId: account(1).actor }, 0)).statusCode).toBe(400);
     const created = await post('/api/workspaces', { name: 'Appearance fixture', visibility: 'tenant' }, 0);

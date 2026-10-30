@@ -1,0 +1,37 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90mD:/02-PROJETS_PERSO/AgencticB2BSaaS[39m
+
+ [31m❯[39m apps/api/src/business/b2b-http.integration.test.ts [2m([22m[2m5 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 3567[2mms[22m[39m
+[31m     [31m×[31m crée organisation et tenants par HTTP et conserve leur portée persistée[39m[32m 82[2mms[22m[39m
+     [32m✓[39m lit un ancien nom incomplet puis enregistre prénom et nom seuls dans la vérité SDK[32m 61[2mms[22m[39m
+     [32m✓[39m persiste poste et département dans le tenant actif sans donner accès au client étranger[32m 125[2mms[22m[39m
+     [33m[2m✓[22m[39m applique les rôles custom dès la requête suivante et exige confirmation de leur impact [33m 851[2mms[22m[39m
+     [33m[2m✓[22m[39m refuse les memberships invited et suspended avec une session SDK toujours valide [33m 730[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m apps/api/src/business/b2b-http.integration.test.ts[2m > [22mContrats B2B HTTP avec sessions et PostgreSQL réels[2m > [22mcrée organisation et tenants par HTTP et conserve leur portée persistée
+[31m[1mAssertionError[22m: expected 200 to be 403 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 403[39m
+[31m+ 200[39m
+
+[36m [2m❯[22m apps/api/src/business/b2b-http.integration.test.ts:[2m89:53[22m[39m
+    [90m 87|[39m     [34mexpect[39m(invited[33m.[39mrows)[33m.[39m[34mtoHaveLength[39m([34m3[39m)[33m;[39m
+    [90m 88|[39m     for (const user of invited.rows) expect(user).toEqual({ name: '', …
+    [90m 89|[39m     [34mexpect[39m(([35mawait[39m [35mget[39m([32m'/api/roles'[39m[33m,[39m [34m1[39m))[33m.[39mstatusCode)[33m.[39m[34mtoBe[39m([34m403[39m)[33m;[39m
+    [90m   |[39m                                                     [31m^[39m
+    [90m 90|[39m   })[33m;[39m
+    [90m 91|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m4 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 19:22:33
+[2m   Duration [22m 5.55s[2m (transform 224ms, setup 0ms, import 1.69s, tests 3.57s, environment 0ms)[22m
+

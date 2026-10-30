@@ -30,6 +30,7 @@ export function useLocalPreferences() {
 }
 export function useAccountPreferences(identity: string) {
   const current = useLocalPreferences();
+  const [details, setDetails] = useState<Pick<UIPreferences, 'timezone' | 'date_format'>>({ timezone: 'Europe/Paris', date_format: 'DD/MM/YYYY' });
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
@@ -38,7 +39,7 @@ export function useAccountPreferences(identity: string) {
     setReady(false); setError(false);
     void api<UIPreferences | null>('/api/preferences').then(async (value) => {
       if (!active) return;
-      if (value && ['fr', 'en'].includes(value.locale) && ['system', 'light', 'dark'].includes(value.theme)) setLocalPreferences(value);
+      if (value && ['fr', 'en'].includes(value.locale) && ['system', 'light', 'dark'].includes(value.theme)) { setLocalPreferences(value); setDetails({ timezone: value.timezone ?? 'Europe/Paris', date_format: value.date_format ?? 'DD/MM/YYYY' }); }
       else if (value === null) await api('/api/preferences', { locale, theme }, 'PUT');
       if (active) setReady(true);
     }).catch(() => { if (active) { setError(true); setReady(true); } });
@@ -46,7 +47,7 @@ export function useAccountPreferences(identity: string) {
   }, [identity]);
   async function save(next: UIPreferences) {
     setBusy(true); setError(false);
-    try { await api('/api/preferences', next, 'PUT'); setLocalPreferences(next); } catch { setError(true); } finally { setBusy(false); }
+    try { const value = { ...details, ...next }; await api('/api/preferences', value, 'PUT'); setLocalPreferences(value); setDetails({ timezone: value.timezone ?? 'Europe/Paris', date_format: value.date_format ?? 'DD/MM/YYYY' }); return true; } catch { setError(true); return false; } finally { setBusy(false); }
   }
-  return { ...current, save, busy: busy || !ready, error };
+  return { ...current, ...details, save, busy: busy || !ready, error };
 }

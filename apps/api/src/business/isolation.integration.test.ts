@@ -104,7 +104,7 @@ describe('PostgreSQL B2B adversarial isolation', () => {
         async (client) => {
           const row = (
             await client.query<{ id: string }>(
-              'INSERT INTO business.tenants(name) VALUES($1) RETURNING id',
+              "SELECT business.create_tenant((SELECT business.create_organization($1)),$1,'isolation@example.test') id",
               ['Test ' + index],
             )
           ).rows[0]!;
@@ -230,7 +230,7 @@ describe('PostgreSQL B2B adversarial isolation', () => {
       }),
     ).toBe(0);
   });
-  it('rejects cross-tenant composite references and one-user/two-tenant memberships', async () => {
+  it('rejects cross-client memberships and references while allowing explicit same-client tenant membership', async () => {
     await expect(
       tx(0, tenants[0], async (client) =>
         client.query("SELECT business.assign_workspace($1,$2,'member')", [
@@ -245,6 +245,15 @@ describe('PostgreSQL B2B adversarial isolation', () => {
         [actors[1], tenants[1]],
       ),
     ).rejects.toThrow();
+  });
+  it('allows an explicit second tenant membership inside the same organization only', async () => {
+    const sibling = await businessTransaction(business, superId, tenants[0], 'fixture.sibling', async (client) =>
+      (await client.query<{ id: string }>("SELECT business.create_tenant((SELECT organization_id FROM business.tenants WHERE id=$1),'Sibling','sibling@example.test') id", [tenants[0]])).rows[0]?.id);
+    await operator.query("INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'member')", [actors[1], sibling]);
+    try {
+      expect((await tx(1, sibling, async (_client, context) => context)).tenantId).toBe(sibling);
+      await expect(tx(1, tenants[1], async () => null)).rejects.toThrow('ACCESS_DENIED');
+    } finally { await operator.query("UPDATE authorization_private.memberships SET status='suspended' WHERE actor_id=$1 AND tenant_id=$2", [actors[1], sibling]); }
   });
   it('does not leak transaction context between concurrent pooled queries, even after errors', async () => {
     await Promise.all(
@@ -334,9 +343,9 @@ describe('PostgreSQL B2B adversarial isolation', () => {
         client.query('SELECT business.accept_invitation($1)', [hash(token)]),
       ),
     ).rejects.toThrow();
-    await tx(1, undefined, async (client) =>
-      client.query('SELECT business.accept_invitation($1)', [hash(token)]),
-    );
+    await expect(tx(1, undefined, async (client) => client.query('SELECT business.accept_invitation($1)', [hash(token)]))).rejects.toThrow('INVITATION_INVALID');
+    await tx(0, tenants[0], async (client) => client.query("SELECT business.set_membership_status($1,'active')", [actors[1]]));
+    await tx(1, undefined, async (client) => client.query('SELECT business.accept_invitation($1)', [hash(token)]));
     await expect(
       tx(1, undefined, async (client) =>
         client.query('SELECT business.accept_invitation($1)', [hash(token)]),
@@ -368,7 +377,7 @@ describe('PostgreSQL B2B adversarial isolation', () => {
     const count = Number(
       (
         await operator.query<{ count: string }>(
-          'SELECT count(*) FROM authorization_private.audit',
+          'SELECT count(*) FROM business.audit_logs',
         )
       ).rows[0]!.count,
     );
@@ -386,16 +395,16 @@ describe('PostgreSQL B2B adversarial isolation', () => {
       Number(
         (
           await operator.query<{ count: string }>(
-            'SELECT count(*) FROM authorization_private.audit',
+            'SELECT count(*) FROM business.audit_logs',
           )
         ).rows[0]!.count,
       ),
     ).toBeGreaterThan(count);
     await expect(
-      business.query('DELETE FROM authorization_private.audit'),
+      business.query('DELETE FROM business.audit_logs'),
     ).rejects.toThrow();
     await expect(
-      business.query("UPDATE authorization_private.audit SET action='hidden'"),
+      business.query("UPDATE business.audit_logs SET action='hidden'"),
     ).rejects.toThrow();
   });
 
@@ -469,6 +478,9 @@ describe('PostgreSQL B2B adversarial isolation', () => {
         })
       ).statusCode,
     ).toBe(403);
+    await expect(businessTransaction(business, superId, undefined, 'actor.disabled', async (client) =>
+      client.query('SELECT business.disable_actor($1)', [actors[2]]))).rejects.toThrow('LAST_ADMIN');
+    await operator.query("UPDATE authorization_private.memberships SET role='tenant_admin' WHERE actor_id=$1 AND tenant_id=$2", [actors[3], tenants[1]]);
     await businessTransaction(
       business,
       superId,
@@ -493,18 +505,17 @@ describe('PostgreSQL B2B adversarial isolation', () => {
       client.query('SELECT business.disable_actor($1)', [actors[1]]),
     );
     try {
-      await expect(tx(0, tenants[0], async (client) => {
+      await expect(businessTransaction(business, superId, tenants[0], 'test.last_admin', async (client) => {
         await client.query('SELECT business.remove_member($1)', [actors[0]]);
         // Roll back even if the guard regresses, preserving the shared fixture.
         throw new Error('Removal unexpectedly succeeded');
       })).rejects.toThrow('LAST_ADMIN');
-      await tx(0, tenants[0], async (client) =>
-        client.query('SELECT business.remove_member($1)', [actors[1]]),
-      );
+      await expect(tx(0, tenants[0], async (client) => client.query('SELECT business.remove_member($1)', [actors[1]]))).rejects.toThrow('ACCESS_DENIED');
+      await businessTransaction(business, superId, tenants[0], 'test.remove_disabled', async (client) => client.query('SELECT business.remove_member($1)', [actors[1]]));
     } finally {
       await operator.query('UPDATE authorization_private.actors SET enabled=true WHERE id=$1', [actors[1]]);
       await operator.query(
-        "INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'member') ON CONFLICT(actor_id) DO UPDATE SET role='member'",
+        "INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'member') ON CONFLICT(tenant_id,actor_id) DO UPDATE SET status='active',role='member'",
         [actors[1], tenants[0]],
       );
     }
@@ -515,14 +526,14 @@ describe('PostgreSQL B2B adversarial isolation', () => {
       "UPDATE authorization_private.memberships SET role='tenant_admin' WHERE actor_id=$1",
       [actors[1]],
     );
-    const results = await Promise.allSettled([
-      tx(0, tenants[0], async (client) =>
-        client.query('SELECT business.remove_member($1)', [actors[1]]),
-      ),
-      tx(1, tenants[0], async (client) =>
-        client.query('SELECT business.remove_member($1)', [actors[0]]),
-      ),
+    const peerResults = await Promise.allSettled([
+      tx(0, tenants[0], async (client) => client.query('SELECT business.remove_member($1)', [actors[1]])),
+      tx(1, tenants[0], async (client) => client.query('SELECT business.remove_member($1)', [actors[0]])),
     ]);
+    expect(peerResults.every((result) => result.status === 'rejected')).toBe(true);
+    const results = await Promise.allSettled([actors[0], actors[1]].map((actor) =>
+      businessTransaction(business, superId, tenants[0], 'test.concurrent_removal', async (client) =>
+        client.query('SELECT business.remove_member($1)', [actor]))));
     expect(
       results.filter((result) => result.status === 'fulfilled'),
     ).toHaveLength(1);
@@ -530,7 +541,7 @@ describe('PostgreSQL B2B adversarial isolation', () => {
       Number(
         (
           await operator.query<{ count: string }>(
-            "SELECT count(*) FROM authorization_private.memberships WHERE tenant_id=$1 AND role='tenant_admin'",
+            "SELECT count(*) FROM authorization_private.memberships WHERE tenant_id=$1 AND role='tenant_admin' AND status='active'",
             [tenants[0]],
           )
         ).rows[0]!.count,

@@ -37,7 +37,7 @@ test('super-admin navigation and sign-out stay in the admin portal', async ({ pa
   });
   await page.goto('/app');
   await expect(page).toHaveURL(/\/admin$/);
-  await expect(page.getByRole('heading', { name: 'Administration de la plateforme' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Vue d’ensemble' })).toBeVisible();
   await openSidebar(page);
   await page.getByRole('link', { name: 'Sécurité du compte', exact: true }).click();
   await expect(page).toHaveURL(/\/admin\/security$/);

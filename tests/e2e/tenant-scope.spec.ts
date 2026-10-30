@@ -5,7 +5,7 @@ for (const locale of ['fr', 'en'] as const) {
   test(`organization scope follows browser history and writes (${locale})`, async ({ page }) => {
     const tenantA = '10000000-0000-4000-8000-000000000001';
     const tenantB = '10000000-0000-4000-8000-000000000002';
-    const label = locale === 'fr' ? 'Organisation active' : 'Active organization';
+    const label = locale === 'fr' ? 'Tenant actif' : 'Active tenant';
     const requests: string[] = [];
     await page.addInitScript((value) => localStorage.setItem('locale', value), locale);
     await page.route('**/api/**', (route) => {
@@ -16,7 +16,7 @@ for (const locale of ['fr', 'en'] as const) {
             user: { id: 'operator', name: 'Operator', email: 'operator@example.test' },
             access: { actorId: 'operator', platformRole: 'super_admin', tenantId: null, tenantRole: null, handle: null },
           }
-        : url.pathname === '/api/platform/tenants'
+        : url.pathname === '/api/tenants'
           ? [{ id: tenantA, name: 'Organization A' }, { id: tenantB, name: 'Organization B' }]
           : route.request().method() === 'POST' ? { id: 'created' } : [];
       return route.fulfill({ json });

@@ -1,0 +1,44 @@
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+
+Running 1 test using 1 worker
+
+  x  1 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 375 (10.6s)
+
+
+  1) [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 375 ─────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveValue[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByLabel('Organisation cliente', { exact: true })
+    Expected: [32m"org"[39m
+    Received: [31m""[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveValue" with timeout 5000ms[22m
+    [2m  - waiting for getByLabel('Organisation cliente', { exact: true })[22m
+    [2m    9 × locator resolved to <select id="_r_3_" required="" class="ui-input " name="organizationId">…</select>[22m
+    [2m      - unexpected value ""[22m
+
+
+      101 |     await page.getByRole('button', { name: label('Créer l’organisation cliente', 'Create client organization'), exact: true }).click();
+      102 |     await expect(page.getByRole('status')).toContainText(label('Modification enregistrée', 'Changes saved'));
+    > 103 |     await expect(page.getByLabel(label('Organisation cliente', 'Client organization'), { exact: true })).toHaveValue('org');
+          |                                                                                                          ^
+      104 |     await expect(page.getByLabel(label('Nom du tenant', 'Tenant name'), { exact: true })).toHaveValue('Tenant Montréal');
+      105 |     const createTenant = page.getByRole('button', { name: label('Créer et inviter', 'Create and invite'), exact: true });
+      106 |     await shot('organizations-create-tenant', createTenant); await createTenant.click();
+        at D:\02-PROJETS_PERSO\AgencticB2BSaaS\tests\e2e\b2b-visual.spec.ts:103:106
+
+    Error Context: test-results\b2b-visual-current-B2B-surfaces-fr-375-chromium-full\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\b2b-visual-current-B2B-surfaces-fr-375-chromium-full\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\b2b-visual-current-B2B-surfaces-fr-375-chromium-full\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 375 ──────────────

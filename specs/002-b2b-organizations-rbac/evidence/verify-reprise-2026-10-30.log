@@ -1,0 +1,45 @@
+$ pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm smoke
+$ tsc --noEmit && pnpm -r typecheck
+Scope: 3 of 4 workspace projects
+packages/shared typecheck$ tsc --noEmit
+packages/shared typecheck: Done
+apps/api typecheck$ tsc --noEmit
+apps/web typecheck$ tsc --noEmit
+apps/api typecheck: Done
+apps/web typecheck: Done
+$ eslint . --max-warnings 0
+$ vitest run
+
+ RUN  v4.1.12 D:/02-PROJETS_PERSO/AgencticB2BSaaS
+
+
+ Test Files  11 passed (11)
+      Tests  52 passed (52)
+   Start at  14:34:13
+   Duration  2.12s (transform 626ms, setup 0ms, import 5.48s, tests 1.38s, environment 1ms)
+
+$ pnpm -r build
+Scope: 3 of 4 workspace projects
+packages/shared build$ tsc --noEmit
+packages/shared build: Done
+apps/web build$ tsc --noEmit && vite build
+apps/api build$ tsc -p tsconfig.build.json
+apps/api build: Done
+apps/web build: vite v7.3.7 building client environment for production...
+apps/web build: transforming...
+apps/web build: ✓ 4703 modules transformed.
+apps/web build: rendering chunks...
+apps/web build: computing gzip size...
+apps/web build: dist/index.html                                         0.63 kB │ gzip:   0.36 kB
+apps/web build: dist/assets/lato-latin-ext-700-normal-C6gwlRgY.woff2    5.55 kB
+apps/web build: dist/assets/lato-latin-ext-400-normal-CK4GAP86.woff2    5.61 kB
+apps/web build: dist/assets/lato-latin-400-normal-B11PyLys.woff        17.45 kB
+apps/web build: dist/assets/lato-latin-700-normal-DAdL7O4w.woff        17.62 kB
+apps/web build: dist/assets/lato-latin-700-normal-BUGMgin4.woff2       23.04 kB
+apps/web build: dist/assets/lato-latin-400-normal-BEhtfm5r.woff2       23.58 kB
+apps/web build: dist/assets/index-C_vJvkOl.css                         47.01 kB │ gzip:  17.12 kB
+apps/web build: dist/assets/index-CJ3vck03.js                         377.54 kB │ gzip: 117.25 kB
+apps/web build: ✓ built in 4.40s
+apps/web build: Done
+$ node scripts/smoke.mjs
+PASS: built API /health and graceful shutdown

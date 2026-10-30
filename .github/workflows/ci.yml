@@ -49,6 +49,14 @@ jobs:
           docker compose up -d --wait postgres mailpit
           docker compose exec -T postgres psql -U enterprise -d enterprise_ai_os -c 'SELECT 1'
           docker compose exec -T postgres createdb -U enterprise enterprise_auth_test_ci
+          docker compose exec -T postgres createdb -U enterprise enterprise_auth_test_b2b_migration
+          docker compose exec -T postgres createdb -U enterprise enterprise_auth_test_live_ci
+      - name: Historical migration preservation and replay
+        env:
+          AUTH_TEST_MIGRATION_PRESERVATION: "true"
+          AUTH_TEST_DATABASE_URL: postgres://identity_runtime:ci-auth-runtime@127.0.0.1:5432/enterprise_auth_test_b2b_migration
+          AUTH_TEST_MIGRATION_DATABASE_URL: postgres://enterprise:ci-ephemeral-password@127.0.0.1:5432/enterprise_auth_test_b2b_migration
+        run: pnpm exec vitest run --config vitest.auth.config.ts apps/api/src/business/migration-preservation.integration.test.ts
       - name: Security and PostgreSQL authentication lifecycle
         env:
           AUTH_TEST_DATABASE_URL: postgres://identity_runtime:ci-auth-runtime@127.0.0.1:5432/enterprise_auth_test_ci
@@ -64,14 +72,18 @@ jobs:
           AUTH_ENABLED: "true"
           BETTER_AUTH_URL: http://127.0.0.1:4173
           BETTER_AUTH_SECRET: ci-only-auth-secret-for-an-ephemeral-run-${{ github.run_id }}
-          DATABASE_URL: postgres://identity_runtime:ci-auth-runtime@127.0.0.1:5432/enterprise_auth_test_ci
-          BUSINESS_DATABASE_URL: postgres://business_runtime:ci-auth-runtime@127.0.0.1:5432/enterprise_auth_test_ci
-          AUTH_TEST_MIGRATION_DATABASE_URL: postgres://enterprise:ci-ephemeral-password@127.0.0.1:5432/enterprise_auth_test_ci
+          DATABASE_URL: postgres://identity_runtime:ci-auth-runtime@127.0.0.1:5432/enterprise_auth_test_live_ci
+          BUSINESS_DATABASE_URL: postgres://business_runtime:ci-auth-runtime@127.0.0.1:5432/enterprise_auth_test_live_ci
+          MIGRATION_DATABASE_URL: postgres://enterprise:ci-ephemeral-password@127.0.0.1:5432/enterprise_auth_test_live_ci
+          AUTH_TEST_MIGRATION_DATABASE_URL: postgres://enterprise:ci-ephemeral-password@127.0.0.1:5432/enterprise_auth_test_live_ci
           SMTP_HOST: 127.0.0.1
           SMTP_PORT: "1025"
           MAIL_FROM: test@example.test
           AUTH_TEST_MAILPIT_URL: http://127.0.0.1:8025
-        run: pnpm test:auth:e2e
+        run: |
+          pnpm db:provision
+          pnpm auth:migrate
+          pnpm test:auth:e2e
       - name: Stop PostgreSQL
         if: always()
         run: docker compose down

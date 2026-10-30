@@ -1,17 +1,17 @@
 rules:
   - id: database
     change_type: Schéma DB, relation, contrainte ou migration
-    targets: [docs/data-model.md]
+    targets: [docs/data-model.md, docs/architecture.html]
     policy: required
     reason: Maintenir le modèle réellement livré et ses frontières.
   - id: security
     change_type: Isolation tenant/workspace, RBAC ou IAM
-    targets: [docs/architecture/0005-private-pilot.md, docs/features-b2b.md, .specs/standards/b2b-tenancy-rbac.md]
+    targets: [docs/architecture/0005-private-pilot.md, docs/features-b2b.md, .specs/standards/b2b-tenancy-rbac.md, docs/architecture.html]
     policy: required
     reason: Synchroniser garanties, matrice de permissions et lacunes.
   - id: api
     change_type: Endpoint ou contrat API
-    targets: [docs/architecture.md]
+    targets: [docs/architecture.md, docs/architecture.html]
     policy: required
     reason: Maintenir les flux et références des contrats HTTP.
   - id: environment
@@ -31,7 +31,7 @@ rules:
     reason: Consigner un changement réel sans inventer d'historique ni entrée documentaire artificielle.
   - id: internal-refactor
     change_type: Refactoring interne
-    targets: [docs/architecture.md]
+    targets: [docs/architecture.md, docs/architecture.html]
     policy: review
     reason: Modifier uniquement si une frontière ou un flux documenté change.
   - id: isolated-css

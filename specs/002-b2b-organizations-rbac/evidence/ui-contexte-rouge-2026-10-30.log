@@ -1,0 +1,81 @@
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+
+Running 2 tests using 2 workers
+
+  x  1 [chromium-full] › tests\e2e\admin-layout.spec.ts:5:3 › admin sidebar selects features and preserves organization scope (fr) (5.5s)
+  x  2 [chromium-full] › tests\e2e\admin-layout.spec.ts:5:3 › admin sidebar selects features and preserves organization scope (en) (5.5s)
+
+
+  1) [chromium-full] › tests\e2e\admin-layout.spec.ts:5:3 › admin sidebar selects features and preserves organization scope (fr)
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('#admin-scope-help')
+    Expected substring: [32m"Une organisation avec un nom suffisamment long pour dépasser la largeur du menu (10000000-0000-4000-8000-000000000001)"[39m
+    Received string:    [31m"Le tenant sélectionné détermine les espaces, membres et événements affichés."[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for locator('#admin-scope-help')[22m
+    [2m    9 × locator resolved to <p class="ui-help" id="admin-scope-help">Le tenant sélectionné détermine les espaces, memb…</p>[22m
+    [2m      - unexpected value "Le tenant sélectionné détermine les espaces, membres et événements affichés."[22m
+
+
+      21 |     await expect(organizations).toBeVisible();
+      22 |     await page.getByLabel(locale === 'fr' ? 'Tenant actif' : 'Active tenant').selectOption(tenant);
+    > 23 |     await expect(page.locator('#admin-scope-help')).toContainText(tenantName + ' (' + tenant + ')');
+         |                                                     ^
+      24 |     await expect(page.locator('#admin-scope-help')).toBeVisible();
+      25 |     await organizations.click();
+      26 |     await expect(page).toHaveURL('/admin/organizations?tenantId=' + tenant);
+        at D:\02-PROJETS_PERSO\AgencticB2BSaaS\tests\e2e\admin-layout.spec.ts:23:53
+
+    Error Context: test-results\admin-layout-admin-sidebar-790fb-rves-organization-scope-fr--chromium-full\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\admin-layout-admin-sidebar-790fb-rves-organization-scope-fr--chromium-full\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\admin-layout-admin-sidebar-790fb-rves-organization-scope-fr--chromium-full\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium-full] › tests\e2e\admin-layout.spec.ts:5:3 › admin sidebar selects features and preserves organization scope (en)
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('#admin-scope-help')
+    Expected substring: [32m"Une organisation avec un nom suffisamment long pour dépasser la largeur du menu (10000000-0000-4000-8000-000000000001)"[39m
+    Received string:    [31m"The selected tenant determines the displayed workspaces, members and events."[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for locator('#admin-scope-help')[22m
+    [2m    9 × locator resolved to <p class="ui-help" id="admin-scope-help">The selected tenant determines the displayed work…</p>[22m
+    [2m      - unexpected value "The selected tenant determines the displayed workspaces, members and events."[22m
+
+
+      21 |     await expect(organizations).toBeVisible();
+      22 |     await page.getByLabel(locale === 'fr' ? 'Tenant actif' : 'Active tenant').selectOption(tenant);
+    > 23 |     await expect(page.locator('#admin-scope-help')).toContainText(tenantName + ' (' + tenant + ')');
+         |                                                     ^
+      24 |     await expect(page.locator('#admin-scope-help')).toBeVisible();
+      25 |     await organizations.click();
+      26 |     await expect(page).toHaveURL('/admin/organizations?tenantId=' + tenant);
+        at D:\02-PROJETS_PERSO\AgencticB2BSaaS\tests\e2e\admin-layout.spec.ts:23:53
+
+    Error Context: test-results\admin-layout-admin-sidebar-07580-rves-organization-scope-en--chromium-full\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\admin-layout-admin-sidebar-07580-rves-organization-scope-en--chromium-full\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\admin-layout-admin-sidebar-07580-rves-organization-scope-en--chromium-full\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium-full] › tests\e2e\admin-layout.spec.ts:5:3 › admin sidebar selects features and preserves organization scope (fr)
+    [chromium-full] › tests\e2e\admin-layout.spec.ts:5:3 › admin sidebar selects features and preserves organization scope (en)

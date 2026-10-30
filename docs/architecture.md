@@ -1,117 +1,70 @@
-# Architecture actuelle — index technique
+# Architecture actuelle
 
-## Correctifs PR7 (2026-10-25)
+Branche B2B depuis main f47449c, qui inclut la PR8 fusionnée, 25 octobre 2026. Ce document décrit le code,
+pas les migrations effectivement déployées. [Spec courante](../specs/002-b2b-organizations-rbac/spec.md),
+[modèle](data-model.md), [permissions](features-b2b.md), [runbook](setup/private-pilot.md).
 
-GET `/api/access-requests` accepte `before` (UUID facultatif), en plus de `tenantId`.
-Le tableau reste limité à100 ; la page suivante utilise l'ID du dernier élément.
-L'ordre SQL stable est `(created_at DESC,id DESC)` et le curseur est relu dans
-l'organisation autorisée. Le frontend conserve un historique précédent/suivant et
-recharge aussi les invitations après approbation, même si leur livraison échoue.
-Le menu mobile se ferme à partir de768px ; le contenu cesse d'être inert.
-Les super-admins ouvrant `/app/invitations` (avec ou sans slash final) rejoignent
-`/admin/members`, filtre conservé. Le retour de connexion/MFA accepte `/admin/audit`.
+[Schéma d'architecture et des données](architecture.html) · [maintenance du schéma](setup/architecture-diagram.md).
 
-État du code fusionné dans main par PR7 (10b4e7c), revu le 25 octobre 2026.
-IMPLEMENTED signifie présent dans le code ; l'application des migrations à une DB n'est
-pas déduite. [ADR-005](architecture/0005-private-pilot.md) gouverne les frontières,
-[le runbook](setup/private-pilot.md) les opérations, [le registre](sdd/legacy-reconciliation.md)
-les anciennes preuves. Aucun résultat produit n'est relancé pour cette migration.
+React/Vite → Fastify → PostgreSQL17 via pg. Monolithe modulaire, Better Auth pour
+identité/sessions/email/MFA facultative ; contrats partagés type-only, aucun ORM.
+Client → organisation → tenants → workspaces. Une identité ordinaire appartient à
+un seul client, avec attributions explicites dans plusieurs de ses tenants.
 
-## Modules et flux
+Chaque opération métier établit depuis la session vérifiée un contexte transactionnel
+local : identité, tenant demandé et réautorisé, permissions persistées, IP et user-agent
+serveur. COMMIT inclut l'audit applicable ; ROLLBACK annule mutations et traces.
+Les fonctions privées et RLS protègent les portées ; le navigateur n'est pas une autorité.
+Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 
-| Module | Responsabilité et référence |
+| Module | Responsabilité |
 | --- | --- |
-| Web | React/Vite, React Router, langues et état local ; `apps/web/src/main.tsx`, `apps/web/src/application.tsx` |
-| API | Construction Fastify dans `apps/api/src/app.ts`, démarrage/config dans `apps/api/src/server.ts`, `apps/api/src/config.ts`, `apps/api/src/proxy.ts` |
-| Identité | Better Auth, sessions PostgreSQL, email et MFA ; `apps/api/src/auth/service.ts`, `apps/api/src/auth/routes.ts`, `apps/api/src/auth/mail.ts` |
-| Métier | Routes et autorisation transactionnelle ; `apps/api/src/business/routes.ts`, `apps/api/src/business/store.ts` |
-| Contrats | Types seuls dans `packages/shared/src/index.ts` ; dépendance partagée des deux apps, pas d'import web→API |
-| Persistance | `pg` sans ORM, SQL revu dans `apps/api/migrations`, exécution opérateur explicite par `apps/api/src/auth/migrate.ts` |
+| apps/web/src | React Router, Brume, FR/EN, portail app/admin ; formulaires et sélection de portée |
+| apps/api/src/auth | Better Auth, provisioning/migrations opérateur, invitations identité et SMTP |
+| apps/api/src/business/store.ts | Transaction locale et identité, audit privilégié, vérification rôles SQL runtime |
+| apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations et composition des modules |
+| profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
+| apps/api/migrations | SQL immuable et checksummé ; 0013 profil, 0014 organisations/RBAC, 0015 journal |
+| packages/shared/src/index.ts | Types publics seuls |
 
-Le navigateur appelle `/api` en same-origin (proxy local dans `apps/web/vite.config.ts` ;
-reverse proxy à configurer en déploiement). Better Auth établit une session vérifiée.
-Chaque opération métier dérive l'identité côté serveur, ouvre une transaction,
-relit acteur actif et rôle, établit une portée tenant locale à cette transaction,
-exécute la requête autorisée, inscrit l'audit applicable, puis commit ou rollback.
-L'envoi SMTP des invitations suit le commit ; l'état d'envoi est enregistré séparément.
-Il n'y a pas de worker/outbox ni de garantie de reprise automatique des mails pending.
+## Contrats HTTP
 
-## Surface HTTP actuelle
-
-Source des contrats détaillés et schémas : `apps/api/src/business/routes.ts` ;
-types publics partagés : `packages/shared/src/index.ts`.
-
-| Méthode / chemin | Fonction et contrôle principal |
+| Surface | Contrôle et comportement |
 | --- | --- |
-| GET `/health`, `/ready` | Liveness indépendante ; readiness DB/auth et privilèges |
-| GET/POST `/api/auth/*` | Adaptateur Better Auth, origines contrôlées sur POST |
-| GET `/api/me` | Identité vérifiée et, si métier activé, contexte et workspaces autorisés |
-| GET/POST `/api/platform/tenants` | Annuaire/création d'organisations, super-admin requis |
-| GET/POST `/api/workspaces` | Liste selon RLS ; création par administrateur tenant autorisé |
-| GET/PATCH `/api/workspaces/:id` | Lecture autorisée / modification par administrateur workspace |
-| GET/POST `/api/workspaces/:id/members` | Liste et affectation via fonctions SQL contrôlées |
-| DELETE `/api/workspaces/:id/members/:actorId` | Retrait d'accès workspace autorisé |
-| GET `/api/members` ; DELETE `/api/members/:id` | Administration tenant ; protection du dernier administrateur |
-| GET/POST `/api/invitations` | Consultation/création autorisée |
-| POST `/api/invitations/accept`, `/api/invitations/:id` | Acceptation liée à l'email vérifié ; retry/revoke administrateur |
-| POST `/api/platform/actors/:id/disable` | Désactivation d'acteur par super-admin |
+| GET /health, /ready | Liveness ; readiness DB/auth/privilèges |
+| GET/POST /api/auth/* | Contrats Better Auth ; origine POST et email vérifié |
+| GET /api/me?tenantId | Contexte serveur, tenants accessibles, workspaces RLS |
+| GET /api/tenants | Annuaire des tenants accessibles au contexte |
+| GET/POST /api/organizations | Lecture client-scopée ; création super-admin |
+| POST /api/organizations/:id/tenants | Super-admin ou organisation-admin du client ; adminEmail fournit billing et invitation initiale |
+| GET/POST /api/platform/tenants | Compatibilité super-admin ; POST crée client + premier tenant |
+| GET/POST /api/roles ; PUT /api/roles/:id | Lecture avec roles.assign autorisé ; édition super-admin, impact/confirmation si modification affectante |
+| GET/POST /api/role-assignments | Portée et pyramide SQL ; grant/revoke explicites |
+| PATCH /api/members/:id/status | Statut invited/active/suspended ; inférieur seulement, dernier admin protégé |
+| GET/PUT /api/profile?tenantId | Compte propre ; PUT prénom/nom valides, champs personnels et emploi du tenant sélectionné |
+| GET/PUT /api/preferences | Compte propre, locale/theme/timezone/date_format ; aucun sélecteur identité |
+| GET/POST /api/workspaces ; GET/PATCH /api/workspaces/:id | RLS et permissions de création/modification |
+| GET/POST/DELETE membres workspace ; GET/DELETE membres tenant | Fonctions étroites, hiérarchie et dernier admin ; retrait tenant = suspension |
+| GET/POST /api/invitations ; POST accept/retry/revoke | Email vérifié, portée, expiration48h, hash et anti-rejeu ; rôle pair interdit |
+| POST /api/access-link ; GET/POST /api/access-requests ; POST /:id | Collecte publique sans identité ; revue autorisée, pagination100 et curseur UUID tenant-scopé |
+| GET /api/audit-logs?tenantId&before | Journal actif unique, pagination50, curseur UUID ; plateforme super-admin, tenant permission audit.read |
+| GET /api/platform/docs | Super-admin uniquement |
+| POST /api/platform/actors/:id/disable | Super-admin ; dernier admin actif protégé |
 
-`tenantId` est une demande de portée validée côté serveur. L'absence d'accès ne se
-résout jamais par une permission frontend. Les erreurs métier sont centralisées
-dans `apps/api/src/app.ts` ; Better Auth conserve son contrat propre.
-Les notes de routes datées sont historiques ; voir le registre pour leur réconciliation.
+L'ancienne route /api/platform/audit est retirée. Le journal privé historique reste
+archivé et ses traces sont copiées avec legacy_id ; aucun deuxième journal actif.
+Les réponses d'erreurs métier restent génériques ; aucun secret/valeur de profil audité.
 
-## Sécurité et limites
+## Interface et limites
 
-RLS ENABLE/FORCE s'applique à `business.tenants` et `business.workspaces`.
-Les métadonnées `authorization_private` sont accessibles par fonctions SQL étroites,
-pas par grants runtime directs. Runtimes identité/métier distincts du propriétaire
-et de l'opérateur ; privilèges vérifiés au démarrage et en readiness.
-Voir [modèle](data-model.md) et [matrice B2B](features-b2b.md).
+Profil existant enrichi, sans onboarding supplémentaire. Routes /app/roles et
+/admin/roles pour catalogue/attributions ; /app/audit et /admin/audit selon portée.
+Organisation-admin traverse son seul client avec lecture auditée. Les permissions
+se cumulent dans leur scope ; une appartenance explicite inactive refuse l'accès.
+DESIGN_UI.md gouverne Brume, FR par défaut, EN, clavier et trois tailles d'écran.
 
-L'audit couvre les succès métier privilégiés, pas tous les refus ni l'ensemble
-du cycle auth. MFA reste optionnelle. Aucun runtime agents/jobs/exports trouvé.
-L'état DB appliqué, la configuration production et le comportement courant ne sont
-pas déduits de la seule présence du code ou des tests.
-
-ADR-001 est historique ; ADR-003 est supersédé par ADR-004, dont les anciennes
-mentions IAM pending sont supersédées par ADR-005. Les specs `docs/sdd` décrivent
-aussi des objectifs futurs ; elles ne prouvent pas leur implémentation.
-
-## Demandes, profils et Brume
-
-/signup?link=<uuid> collecte une demande sans identité ou membership. /app/invitations
-permet aux tenant-admins de créer un lien et traiter leurs demandes ; un super-admin
-utilise /admin/members. Contrats : POST /api/access-link, GET/POST /api/access-requests,
-POST /api/access-requests/:id pour approuver/rejeter. La portée authentifiée vient du
-serveur ; la collecte publique n'accepte que le lien opaque comme destination tenant.
-/app/profile et /admin/profile utilisent Better Auth pour le nom et les autres sessions.
-/docs et GET /api/platform/docs exigent super-admin ; le guide est servi par l'API,
-pas embarqué dans le bundle public. Les tests réels sont dans access.integration.test.ts.
-
-DESIGN_UI.md gouverne app/admin/auth ; les primitives et le shell vivent dans
-apps/web/src/ui et les compositions dans pages. Lato est auto-hébergée et les icônes
-Phosphor sont limitées au menu latéral. Le marketing conserve son identité visuelle.
-GET/PUT /api/preferences lit/enregistre langue et thème de l'acteur courant ; cache local
-avant connexion. PUT /api/workspaces/:id/appearance accepte seulement color nullable
-#RRGGBB dans la portée autorisée. Session, Origin, rôle et transaction restent contrôlés.
-Les propriétés supplémentaires sont refusées. La migration0009 et les tests réels
-préférences/apparence sont inclus dans les preuves CI historiques du registre.
-
-## Journal d’audit V0 — 2026-10-24
-
-GET `/api/platform/audit?tenantId=<uuid>&before=<bigint>` retourne au plus 50 événements
-et nextCursor (texte ou null), ordre id décroissant, cache no-store. Les contrôles
-HTTP et SQL exigent un super-admin actif ; tenantId filtre une consultation déjà
-autorisée. `/admin/audit` réutilise le shell Brume, FR/EN, états et pagination.
-La migration 0010 complète l’audit existant par des événements change.created,
-change.updated, change.deleted atomiques et limités aux champs autorisés. Les
-traces métier existantes sont conservées. Les écritures identité/opérateur/publiques
-sans contexte authentifié ont un auteur non renseigné ; la cible ne devient jamais
-l’auteur par hypothèse. Aucun audit de secrets, valeurs de profil ou payloads.
-MFA reste facultative en V0. Aucun endpoint de suppression supplémentaire ni export.
-Vérification réelle : 4 tests audit et 14 tests d’isolation passent sur PostgreSQL
-17.11 jetable. La consultation navigateur réelle FR/EN aux trois viewports et
-les refus 401/403 sont démontrés dans .omo/evidence/audit-log-v0/live-browser/proof.json.
-Les anciens échecs lifecycle et profil429 ont été corrigés avant la CI réussie de PR7 ;
-voir le registre. Cela ne constitue pas une nouvelle exécution locale.
+Runtimes SQL non propriétaires sans BYPASSRLS. RLS FORCE sur organisations/tenants/
+workspaces/journal, tables privées sans grants directs. Un serveur ou credential
+compromis pouvant forger le contexte n'est pas neutralisé par RLS.
+MFA facultative V0 ; ni runtime IA, ni paiement, ni export/rétention externe,
+ni haute disponibilité certifiée. Preuves historiques : [registre](sdd/legacy-reconciliation.md).

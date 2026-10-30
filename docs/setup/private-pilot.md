@@ -137,3 +137,21 @@ appropriately named disposable restored copy. Encrypt backups, restrict access,
 separately preserve auth/SMTP secrets, set retention and rehearse recovery before
 opening the pilot. Infrastructure-specific backup automation/RTO is not deployed
 by this repository.
+
+## Reprise B2B — migrations0013 à0015
+
+Sauvegarder puis éprouver la restauration sur une copie isolée avant application
+avec pnpm auth:migrate et credentials opérateur séparés. Le provisioning reste
+une commande séparée ; ne jamais donner le rôle propriétaire au runtime.
+Une organisation par ancien tenant ; aucune fusion automatique de clients. Vérifier
+les admins actifs et invitations admissibles fournissant billing_email : aucune
+source valide provoque un rollback complet avec diagnostic. Corriger la source
+depuis les opérations autorisées puis relancer le migrateur, sans éditer un ancien SQL.
+Les noms inconnus et joined_at inconnu restent null ; compléter depuis Mon profil.
+Préserver les IDs/dates/états email vérifié et marqueurs supprimés. Le journal privé
+reste archive ; consulter désormais /api/audit-logs et /app/audit ou /admin/audit.
+Le curseur est UUID, ancien endpoint supprimé. Attribuer organization_admin explicitement
+via super-admin ; ne pas déduire ce rôle d’une ancienne appartenance tenant-admin.
+Les champs abonnement sont informatifs, aucune facturation automatique.
+Validation et commandes : [quickstart](../../specs/002-b2b-organizations-rbac/quickstart.md).
+Aucune application à la base de développement ou production par les tests de cette PR.

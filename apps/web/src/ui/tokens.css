@@ -1,3 +1,4 @@
+:root { --ui-mobile-clearance:88px; }
 .ui-root,.auth-page {
   --ui-bg:#fafafc; --ui-surface:#fff; --ui-sidebar:#f2f2f5; --ui-soft:#f5f5f8;
   --ui-text:#25262b; --ui-muted:#666775; --ui-border:#dedee7;
@@ -7,7 +8,7 @@
   --ui-space-1:4px; --ui-space-2:8px; --ui-space-3:12px; --ui-space-4:16px;
   --ui-space-5:24px; --ui-space-6:32px; --ui-space-7:48px;
   --ui-space-half:2px; --ui-space-one-half:6px; --ui-space-three-half:14px; --ui-space-panel:20px;
-  --ui-space-cell-y:10px; --ui-page-max:1600px; --ui-mobile-clearance:88px;
+  --ui-space-cell-y:10px; --ui-page-max:1600px;
   --sidebar-width:264px; --sidebar-collapsed:56px; --sidebar-padding-x:16px; --sidebar-padding-y:16px;
   --nav-item-height:34px; --nav-item-gap:3px; --nav-group-gap:16px; --nav-icon-gap:10px; --nav-submenu-indent:20px;
   --ui-radius:6px; --ui-radius-panel:8px; --ui-control:44px; --ui-motion:140ms;

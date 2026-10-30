@@ -17,7 +17,7 @@ IAM/tenant/MFA statements in ADR-004 and the earlier Task 002 plan.
 - Better Auth owns identity, verified-email login, server sessions, optional TOTP
   and single-use recovery codes. MFA remains optional **including super-admin**.
   This is an explicit pilot risk, not a platform-enforced production policy.
-- Business roles are persisted locally: `super_admin`, `tenant_admin`,
+- Historique supersédé par le modèle B2B ci-dessous : business roles were persisted locally: `super_admin`, `tenant_admin`,
   `workspace_admin`, `member`. Unique actor membership enforces one ordinary
   organization. Workspaces are private unless an administrator changes visibility.
 - An operator explicitly binds one verified identity and an application handle
@@ -25,7 +25,7 @@ IAM/tenant/MFA statements in ADR-004 and the earlier Task 002 plan.
   cannot choose a different super-admin or silently reactivate a disabled actor.
 - Super-admin standing access is intentional. Tenant content needs explicit
   tenant scope, passes RLS, and every successful super-admin business read/write
-  appends audit before commit. Ordinary users cannot select another tenant.
+  appends audit before commit. Ordinary users can select only explicitly attributed tenants within their client.
 
 ## SQL trust boundary
 
@@ -124,27 +124,28 @@ no public route and performs no synthetic business writes. New migration 0009 an
 adversarial tests are present ; leurs preuves historiques sont réconciliées dans
 le registre, sans inspection de la DB courante.
 
-### Journal V0 et décision MFA (2026-10-24)
 
-Décision utilisateur : aucune MFA obligatoire en V0 ; le TOTP facultatif existant
-est conservé. Le journal est consultable seulement par super-admin actif, avec
-contrôle HTTP et fonction SQL audit_events. Aucune lecture/table privée accordée
-aux runtimes. La migration 0010 ajoute des triggers de mutations atomiques avec
-la transaction, des types de cible et noms de champs sans valeurs. Les anciens
-événements restent lisibles ; aucun historique antérieur n’est reconstitué.
-Les écritures sans contexte métier (identité, opérateur, demande publique) ne
-permettent pas d’établir un auteur authentifié : celui-ci reste null. Les IDs
-historiques survivent aux suppressions futures sans FK de l’audit vers la cible.
-La migration 0011 ajoute la suppression logique opérateur utilisateur/tenant ;
-pas de rétention/export/alerting. Dates de création conservées, modification imposée
-par trigger, marqueur de suppression irréversible via UPDATE ordinaire.
-Les identités supprimées perdent leurs sessions et leur acteur actif ; les sessions
-concurrentes sont sérialisées avec la suppression. Le runtime ne peut supprimer
-physiquement identity.user. Les tenants supprimés sont exclus par RLS, même pour
-le super-admin ; leurs invitations en attente et liens de collecte sont révoqués.
-Les helpers d'autorisation restent privés/étroits, sans propriété ni BYPASSRLS runtime.
-Tests SQL/HTTP audit : 4/4 réussis sur PostgreSQL 17.11 jetable ; isolation : 14/14.
-La page a également été vérifiée avec le vrai backend, sans mocks, en FR/EN aux
-trois tailles et avec refus 401/403. Les échecs lifecycle et la collision 429 des
-fixtures sont corrigés dans le delta 2026-10-24-lifecycle ; ses tâches consignent
-les résultats de vérification courants, sans certification de la DB de développement.
+### Modèle B2B courant — 0013 à 0015
+
+Cette décision supersède les anciennes équivalences organisation=tenant, appartenance
+unique et journal super-admin exclusif ci-dessus. Organisation=client, plusieurs tenants
+par organisation et plusieurs workspaces par tenant. Un acteur ordinaire reste dans
+un seul client mais reçoit plusieurs tenants explicitement. Catalogue global éditable
+seulement par super-admin ; rôles cumulables dans leur portée. Pyramide : super_admin >
+organization_admin > tenant_admin > workspace_admin > member. Gestion des seuls
+niveaux inférieurs, jamais soi/pairs/supérieurs ; dernier administrateur actif protégé.
+Organisation-admin traverse uniquement son client, lectures auditées. Une appartenance
+explicite invited/suspended refuse le tenant même pour cet administrateur ; absence
+d'appartenance autorise sa traversée. Permissions serveur réévaluées à chaque opération.
+
+Journal actif unique business.audit_logs avec RLS, événements plateforme tenant=null
+réservés au super-admin, événements tenant selon audit.read. Archive privée conservée
+sans nouvelle écriture ; IDs cible texte et snapshots historiques sans FK destructrice.
+Modifications du catalogue : impact affiché, confirmation explicite, effet immédiat,
+auteur/date/capacités ajoutées ou retirées audités. Pas de secrets ni valeurs de profil.
+Profil existant enrichi, noms inconnus nullables à invitation ; PUT complet exige prénom
+et nom. Metadata abonnement sans paiement. MFA toujours facultative en V0.
+
+[Modèle courant](../data-model.md), [matrice](../features-b2b.md),
+[specification](../../specs/002-b2b-organizations-rbac/spec.md). Preuves locales séparées
+des anciennes preuves PR7 ; aucune application à une base de développement/production.

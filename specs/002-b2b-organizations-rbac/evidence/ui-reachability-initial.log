@@ -1,0 +1,42 @@
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+
+Running 1 test using 1 worker
+
+  x  1 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 375 (7.1s)
+
+
+  1) [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 375 ─────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThanOrEqual[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: <= [32m839[39m
+    Received:    [31m847.5[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+       at support\reachability.ts:6
+
+      4 | async function expectUnobscured(page: Page, control: Locator) {
+      5 |   const navigation = await page.locator('.ui-bottom-nav').isVisible() ? await page.locator('.ui-bottom-nav').boundingBox() : null;
+    > 6 |   await expect.poll(async () => { const box = await control.boundingBox(); return (box?.y ?? 0) + (box?.height ?? 0); }).toBeLessThanOrEqual(navigation?.y ?? page.viewportSize()?.height ?? 900);
+        |   ^
+      7 |   const bounds = await control.boundingBox();
+      8 |   expect(bounds).not.toBeNull();
+      9 |   expect(bounds?.y).toBeGreaterThanOrEqual(0);
+        at expectUnobscured (D:\02-PROJETS_PERSO\AgencticB2BSaaS\tests\e2e\support\reachability.ts:6:3)
+        at proveFormReachability (D:\02-PROJETS_PERSO\AgencticB2BSaaS\tests\e2e\support\reachability.ts:31:7)
+        at D:\02-PROJETS_PERSO\AgencticB2BSaaS\tests\e2e\b2b-visual.spec.ts:58:5
+
+    Error Context: test-results\b2b-visual-current-B2B-surfaces-fr-375-chromium-full\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\b2b-visual-current-B2B-surfaces-fr-375-chromium-full\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\b2b-visual-current-B2B-surfaces-fr-375-chromium-full\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 375 ──────────────

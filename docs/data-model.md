@@ -1,102 +1,58 @@
-# Modèle de données observé
+# Modèle de données courant
 
-## Pagination des demandes — migration0012
+Les migrations 0001–0012 sont historiques et immuables. Les migrations 0013–0015
+implémentent le [contrat B2B](../specs/002-b2b-organizations-rbac/spec.md).
+Leur présence ne prouve aucune application en production. pg sans ORM ; migrateur
+atomique, verrou transactionnel et checksums opérateur.
 
-`business.access_requests(before_id uuid DEFAULT NULL)` remplace la signature sans
-argument ; les appels sans argument restent valides. Index privé
-`(tenant_id,created_at DESC,id DESC)`, ordre date/UUID stable et100 lignes maximum.
-Le curseur est recherché uniquement dans le tenant autorisé : un curseur étranger
-ou absent ne renvoie aucune ligne. Toutes les demandes, y compris anciennes et déjà
-examinées, restent atteignables. Aucun effacement ni nouveau droit runtime.
-
-Source : migrations SQL 0001 à 0012 fusionnées dans PR7. Leur présence ne prouve pas
-leur application à la base courante. Les résultats historiques sont réconciliés dans
-[le registre](sdd/legacy-reconciliation.md).
-Aucun ORM : requêtes `pg` et fonctions SQL ; migration atomique avec verrou
-et checksums dans `apps/api/src/auth/migrate.ts`.
-
-| Schéma / entité | Relations et contraintes principales |
+| Entité | Relations et contraintes |
 | --- | --- |
-| identity.user | PK texte, email unique, emailVerified, dates createdAt/updatedAt, twoFactorEnabled |
-| identity.session | User FK avec cascade, token unique et expiration |
-| identity.account | User FK avec cascade, identifiant/provider et secrets de compte |
-| identity.verification | Identifiant, valeur et expiration des vérifications |
-| identity.rateLimit | Clé unique, compteur et dernier appel |
-| identity.twoFactor | User FK avec cascade, secret TOTP et codes de récupération |
-| business.tenants | PK UUID ; nom de 1 à 100 caractères ; organisation = tenant |
-| authorization_private.actors | PK UUID, identity_id unique FK user, handle unique, enabled, platform_role null ou super_admin |
-| authorization_private.memberships | actor_id PK : au plus un tenant ordinaire par acteur ; FK tenant ; rôle tenant_admin/member ; unique tenant+actor |
-| business.workspaces | PK UUID, FK tenant, unique tenant+id ; visibilité private/tenant, private par défaut ; nom borné |
-| authorization_private.workspace_members | PK workspace+actor ; FK composites tenant+workspace et tenant+actor ; workspace_admin/member |
-| authorization_private.invitations | FK tenant, email, rôle, token_hash unique, expiration 48h, états accepté/révoqué et delivery pending/sent/failed |
-| authorization_private.audit | PK bigint, date, acteur/tenant FK, action et resource_id ; sans mutation runtime autorisée |
-| migration_history.versions | Créée par l'opérateur de migration : nom PK, checksum, applied_at |
+| identity.user | PK texte conservée ; email et emailVerified canoniques Better Auth ; name/image canoniques ; first_name/last_name nullables jusqu'au profil complet ; phone_number E.164 ; dates historiques et deletedAt conservés |
+| identity.session/account/verification/twoFactor/rateLimit | Identité Better Auth et secrets privés ; pas de droits métier implicites |
+| business.organizations | Client ; PK UUID ; nom et suppression logique |
+| business.tenants | FK organization ; plusieurs tenants par client ; slug stable globalement unique ; billing_email obligatoire, VAT, country FR, subscription_tier/status et metadata objet ; dates et suppression logique |
+| authorization_private.actors | identity_id unique ; une organisation ordinaire au maximum ; enabled ; platform_role super_admin ou null |
+| authorization_private.memberships | PK actor_id+tenant_id ; même organisation que l'acteur ; status invited/active/suspended ; seul active autorise ; invited_by FK SET NULL, joined_at nullable, job_title et department |
+| business.workspaces | FK tenant, clé tenant+id ; slug unique par tenant, description, archived_at informatif ; visibilité private/tenant |
+| authorization_private.workspace_members | Références composites tenant+workspace et tenant+acteur ; rôles fixes compatibles |
+| authorization_private.role_catalog | Catalogue global ; scopes organization/tenant/workspace ; permissions bornées, niveau dérivé, delegable ; builtins protégés, archivage |
+| authorization_private.role_assignments | Rôles cumulables avec portée explicite ; aucune attribution plateforme par ce catalogue |
+| authorization_private.invitations | Hash de jeton, email vérifié à acceptation, rôle, tenant, expiration et livraison ; invited_by conservé si connu |
+| authorization_private.ui_preferences | Acteur courant ; locale fr/en, theme system/light/dark, timezone Europe/Paris et date_format DD/MM/YYYY par défaut |
+| authorization_private.workspace_appearance | Couleur nullable #RRGGBB, référence composite au workspace |
+| authorization_private.access_links/access_requests | Lien opaque de collecte ; demandes uniques tenant+email ; aucune identité créée à la collecte |
+| business.audit_logs | Journal actif unique append-only runtime ; PK UUID, date, auteur/cible snapshots, target_id texte, tenant nullable pour plateforme, champs autorisés et différences de capacités |
+| authorization_private.audit | Archive conservée sans nouvelles écritures ; reprise vers journal avec legacy_id |
+| migration_history.versions | Nom/checksum/applied_at opérateur uniquement |
 
-`0003_mfa_index.sql` ajoute l'index MFA ; `0004_workspace_administration.sql`
-ajoute la lecture administrative des membres ; `0005_invitation_delivery.sql`
-corrige l'accusé de livraison après acceptation concurrente ; `0006_workspace_scope.sql`
-resserre la portée de lecture ; `0007_enabled_administrator.sql` protège le dernier
-administrateur actif lors des retraits. Ne jamais réécrire une migration appliquée.
+## Autorisation
 
-## Autorisation et tenancy
+RLS ENABLE/FORCE sur organisations, tenants, workspaces et journal. Métadonnées privées
+sans grants runtime directs ; fonctions SECURITY DEFINER à search_path fixe. Runtimes
+non propriétaires, non superuser, sans BYPASSRLS. Le serveur établit identité, tenant,
+IP et user-agent dans la même transaction avec set_config local. Le tenant demandé
+par le navigateur est revérifié depuis les appartenances et permissions persistées.
 
-Les tenants/workspaces ont RLS ENABLE/FORCE ; politiques basées sur les fonctions
-`tenant_access`, `tenant_admin`, `workspace_access`, `workspace_admin`. Les tables
-privées n'ont pas RLS généralisée : aucun accès runtime direct, fonctions SECURITY
-DEFINER autorisées avec search_path fixe. Voir [ADR-005](architecture/0005-private-pilot.md).
+Seul active ouvre un tenant ; une appartenance explicite inactive refuse aussi l'accès
+organisation-admin, tandis que son accès transversal sans appartenance reste autorisé.
+Les permissions tenant ne traversent jamais un autre tenant. Les références composites
+interdisent l'affectation d'un workspace d'un autre client/tenant.
 
-Les rôles SQL `identity_runtime` et `business_runtime` sont sans propriété et sans
-BYPASSRLS ; `business_owner` est non-login. Le serveur établit `app.identity_id`
-et `app.tenant_id` par `set_config(..., true)` dans la même transaction. La portée
-client n'est jamais une preuve d'appartenance. Le runtime identité ne dispose
-pas d'une autorisation métier par sa seule session.
+## Reprise et exploitation
 
-## Écarts constatés
+Une organisation est créée par ancien tenant, sans fusion arbitraire de clients.
+Les IDs, dates, email vérifié et marqueurs de suppression restent conservés. Un prénom
+ou nom impossible à établir reste null ; joined_at historique inconnu reste null.
+Le billing provient d'un admin actif déterministe, sinon d'une invitation admissible ;
+absence de source = diagnostic et rollback, jamais adresse inventée. Slugs générés
+une fois avec unicité ; rejeu sans doublons via historique checksummé.
 
-La migration 0011 conserve les PK existantes et ajoute `identity.user.deletedAt`
-et `business.tenants.created_at/updated_at/deleted_at` (timestamptz).
-Les dates de création restent immuables ; les triggers imposent la modification.
-Les anciens tenants reçoivent la date de migration, pas une création historique exacte.
-L'opérateur supprime logiquement par UPDATE du marqueur ; les lignes sont conservées,
-le marqueur ne peut être effacé, et aucune UI/API de suppression n'est ajoutée.
-La suppression d'identité révoque les sessions et désactive l'acteur ; toute nouvelle
-session est refusée, y compris lors d'une suppression concurrente. Le runtime perd DELETE.
-Un tenant supprimé est exclu des lectures/autorisations, ses invitations en attente
-sont révoquées et ses liens de collecte retirés. L'audit conserve les IDs et marqueurs,
-sans les valeurs sensibles. Migration testée uniquement sur base jetable.
-Les suppressions de memberships sont des retraits physiques d'association avec
-cascade des affectations workspace, pas une suppression logique d'utilisateur/tenant.
-Pas de tables identifiées pour facturation, exécutions IA ou jobs durables.
-L'état réel des rôles, schémas et migrations déployés reste UNKNOWN sans inspection DB.
+Suppression logique conserve les lignes/IDs et révoque l'accès ; retrait de membership
+suspend l'association. archived_at de workspace ne change pas l'autorisation.
+L'ancien journal reste archivé ; les secrets et valeurs de profil ne sont pas audités.
+L'ordre du nouveau journal est date/UUID décroissant avec curseur UUID et 50 événements.
+Les demandes d'accès conservent leur pagination date/UUID par 100, curseur tenant-scopé.
 
-## Access requests (migration 0008, 2026-10-24)
-
-`authorization_private.access_links` stores one opaque UUID link per tenant.
-`authorization_private.access_requests` stores first/last name, normalized email,
-status, creation/review dates and the resulting invitation ID. `(tenant_id,email)`
-is unique; duplicate public submissions receive the same generic response.
-Runtime access uses narrow SECURITY DEFINER functions, without private-table grants.
-Approval locks the request, checks tenant administration and calls `business.invite`.
-Migration 0008 has not been applied or verified against disposable PostgreSQL here.
-
-## UI preferences and workspace appearance (0009)
-
-`authorization_private.ui_preferences` stores locale fr/en and theme system/light/dark
-for the current enabled actor. Clients cannot select an actor. `workspace_appearance`
-stores nullable #RRGGBB colors with a composite tenant/workspace reference. Both
-private tables have no runtime grants; narrow functions own access. Reads of colors
-join the RLS-protected workspace; writes require workspace_admin and are audited.
-Migration 0009 is additive and has not yet been applied to a disposable database
-in this session; see the Brume verification checkpoint before release.
-
-## Journal V0 (migration 0010)
-
-La table privée audit ajoute resource_type et changed_fields (noms des champs,
-jamais leurs valeurs). Les identifiants auteur/tenant restent conservés sans FK
-vers les lignes sources afin de préserver l’historique après suppression. Index
-(tenant_id,id DESC), pagination bigint sans conversion en Number. Des triggers
-AFTER tracent les mutations effectives de tenants, workspaces, acteurs, identités,
-appartenances, invitations, demandes et apparence. Un UPDATE sans changement des
-champs autorisés ne génère pas de mutation ; rollback annule également l’audit.
-Les anciennes traces métier restent présentes et distinctes. Migration validée sur PostgreSQL 17.11 jetable (4 tests audit). Non appliquée
-à la base de développement ; historique existant conservé.
+Preuves actuelles : [dossier de livraison](../specs/002-b2b-organizations-rbac/quickstart.md).
+Les anciennes preuves restent dans le [registre historique](sdd/legacy-reconciliation.md).
+Ni facturation exécutée, ni runtime IA, ni certification de production.

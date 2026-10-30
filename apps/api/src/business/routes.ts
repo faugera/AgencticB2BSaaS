@@ -11,6 +11,8 @@ import type { AccessContext } from './store.js';
 import { registerUIRoutes } from './ui-routes.js';
 import { registerAuditRoutes } from './audit-routes.js';
 import { registerAccessRoutes } from './access-routes.js';
+import { registerProfileRoutes } from './profile-routes.js';
+import { registerRbacRoutes } from './rbac-routes.js';
 
 const uuid = { type: 'string', format: 'uuid' } as const;
 const shortName = { type: 'string', minLength: 1, maxLength: 100 } as const;
@@ -61,6 +63,7 @@ export function registerBusinessRoutes(
       tenant,
       action,
       async (client, context) => run(client, context),
+      { ip: request.ip, userAgent: request.headers['user-agent'] ?? null },
     );
   };
   const requireSuper = (context: AccessContext) => {
@@ -80,7 +83,7 @@ export function registerBusinessRoutes(
         config,
         send,
         email,
-        email.split('@')[0] ?? 'Invited',
+        '',
         false,
       );
       await send({
@@ -104,9 +107,11 @@ export function registerBusinessRoutes(
     return delivery;
   };
   registerUIRoutes(app, transact);
+  registerProfileRoutes(app, transact);
+  registerRbacRoutes(app, transact);
   registerAuditRoutes(app, transact);
   registerAccessRoutes(app, { pool, origin: config.baseURL, transact, deliver });
-  app.get('/api/me', async (request) =>
+  app.get<Scoped>('/api/me', { schema: { querystring: tenantQuery } }, async (request) =>
     transact(request, 'context.read', async (client, context) => {
       const session = await auth.api.getSession({
         headers: fromNodeHeaders(request.headers),
@@ -120,11 +125,11 @@ export function registerBusinessRoutes(
         access: context,
         workspaces: (
           await client.query(
-            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.workspace_color(id) color FROM business.workspaces ORDER BY name',
+            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.can($$roles.assign$$,id) can_assign_roles,business.workspace_level(id) role_level,business.workspace_color(id) color FROM business.workspaces ORDER BY name',
           )
         ).rows,
       };
-    }),
+    }, request.query.tenantId),
   );
   app.get('/api/platform/tenants', async (request) =>
     transact(request, 'platform.tenants.read', async (client, context) => {
@@ -134,32 +139,16 @@ export function registerBusinessRoutes(
       ).rows;
     }),
   );
-  app.post<{ Body: { name: string; adminEmail: string } }>(
-    '/api/platform/tenants',
-    {
-      config: { rateLimit: { max: 3, timeWindow: '1 minute' } },
-      schema: {
-        body: {
-          type: 'object',
-          additionalProperties: false,
-          required: ['name', 'adminEmail'],
-          properties: { name: shortName, adminEmail: emailSchema },
-        },
-      },
-    },
-    async (request, reply) => {
-      const token = randomBytes(32).toString('base64url');
+  const createTenant = async (request: FastifyRequest<{ Body: { name: string; adminEmail: string } }>, reply: import('fastify').FastifyReply, organization?: string) => {
+    const token = randomBytes(32).toString('base64url');
       const result = await transact(
         request,
         'tenant.created',
-        async (client, context) => {
-          requireSuper(context);
-          const tenant = (
-            await client.query<{ id: string }>(
-              'INSERT INTO business.tenants(name) VALUES($1) RETURNING id',
-              [request.body.name],
-            )
-          ).rows[0]!;
+        async (client) => {
+          const organizationId = organization ?? (await client.query<{ id: string }>('SELECT business.create_organization($1) id', [request.body.name])).rows[0]?.id;
+          if (!organizationId) throw new AccessError(403, 'ACCESS_DENIED');
+          const tenant = (await client.query<{ id: string }>('SELECT business.create_tenant($1,$2,$3) id', [organizationId, request.body.name, request.body.adminEmail])).rows[0];
+          if (!tenant) throw new AccessError(403, 'ACCESS_DENIED');
           await client.query("SELECT set_config('app.tenant_id',$1,true)", [
             tenant.id,
           ]);
@@ -184,8 +173,10 @@ export function registerBusinessRoutes(
         token,
       );
       return reply.code(201).send({ ...result, delivery });
-    },
-  );
+  };
+  const tenantBody = { type: 'object', additionalProperties: false, required: ['name', 'adminEmail'], properties: { name: shortName, adminEmail: emailSchema } } as const;
+  app.post<{ Body: { name: string; adminEmail: string } }>('/api/platform/tenants', { config: { rateLimit: { max: 3, timeWindow: '1 minute' } }, schema: { body: tenantBody } }, (request, reply) => createTenant(request, reply));
+  app.post<{ Params: { id: string }; Body: { name: string; adminEmail: string } }>('/api/organizations/:id/tenants', { config: { rateLimit: { max: 3, timeWindow: '1 minute' } }, schema: { params: { type: 'object', required: ['id'], additionalProperties: false, properties: { id: uuid } }, body: tenantBody } }, (request, reply) => createTenant(request, reply, request.params.id));
   app.get<Scoped>(
     '/api/workspaces',
     { schema: { querystring: tenantQuery } },
@@ -196,7 +187,7 @@ export function registerBusinessRoutes(
         async (client) =>
           (
             await client.query(
-              'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.workspace_color(id) color FROM business.workspaces ORDER BY name',
+              'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.can($$roles.assign$$,id) can_assign_roles,business.workspace_level(id) role_level,business.workspace_color(id) color FROM business.workspaces ORDER BY name',
             )
           ).rows,
         request.query.tenantId,
@@ -252,7 +243,7 @@ export function registerBusinessRoutes(
         'workspace.read',
         async (client) => {
           const result = await client.query(
-            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.workspace_color(id) color FROM business.workspaces WHERE id=$1',
+            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.can($$roles.assign$$,id) can_assign_roles,business.workspace_level(id) role_level,business.workspace_color(id) color FROM business.workspaces WHERE id=$1',
             [request.params.id],
           );
           if (!result.rowCount) throw new AccessError(404, 'NOT_FOUND');

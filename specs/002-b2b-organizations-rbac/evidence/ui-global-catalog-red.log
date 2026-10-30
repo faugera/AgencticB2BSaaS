@@ -1,0 +1,40 @@
+[2m[WebServer] [22m[2m$ vite preview --host 127.0.0.1[22m
+
+Running 1 test using 1 worker
+
+  x  1 [chromium-full] › tests\e2e\b2b.spec.ts:127:1 › global catalog never loads a roster without a tenant selection (639ms)
+
+
+  1) [chromium-full] › tests\e2e\b2b.spec.ts:127:1 › global catalog never loads a roster without a tenant selection 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "http://127.0.0.1:4173/api/role-assignments?",[39m
+    [31m+ ][39m
+
+      139 |  await page.getByText('Modifier', { exact: true }).click();
+      140 |  await expect(page.locator('details[open]').getByLabel('Nom du rôle')).toHaveValue('Support');
+    > 141 |  expect(rosterRequests).toEqual([]);
+          |                         ^
+      142 |  await expect(page.getByRole('alert')).toHaveCount(0);
+      143 |  await expect(page.getByText('Le tenant sélectionné détermine les espaces, membres et événements affichés.', { exact: true }).last()).toBeVisible();
+      144 | });
+        at D:\02-PROJETS_PERSO\AgencticB2BSaaS\tests\e2e\b2b.spec.ts:141:25
+
+    Error Context: test-results\b2b-global-catalog-never-l-5adce--without-a-tenant-selection-chromium-full\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\b2b-global-catalog-never-l-5adce--without-a-tenant-selection-chromium-full\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\b2b-global-catalog-never-l-5adce--without-a-tenant-selection-chromium-full\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium-full] › tests\e2e\b2b.spec.ts:127:1 › global catalog never loads a roster without a tenant selection 

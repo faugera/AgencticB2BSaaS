@@ -1,0 +1,35 @@
+[WebServer] (node:12252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite preview --host 127.0.0.1
+[WebServer] (node:38308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 3 workers
+
+(node:38024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  3 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 768 (13.5s)
+  ok  1 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 375 (13.7s)
+  ok  2 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces fr 1280 (14.6s)
+  ok  5 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces en 768 (11.4s)
+  ok  4 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces en 375 (11.7s)
+  ok  7 [chromium-full] › tests\e2e\b2b.spec.ts:3:3 › B2B profile and roles (fr) (1.5s)
+  ok  8 [chromium-full] › tests\e2e\b2b.spec.ts:3:3 › B2B profile and roles (en) (1.5s)
+  ok  9 [chromium-full] › tests\e2e\b2b.spec.ts:55:1 › client role assignment keeps tenant scope and excludes self and peers (565ms)
+  ok  6 [chromium-full] › tests\e2e\b2b-visual.spec.ts:23:3 › current B2B surfaces en 1280 (12.7s)
+  ok 10 [chromium-full] › tests\e2e\b2b.spec.ts:81:1 › workspace-only administration uses server capabilities and a scoped roster (630ms)
+  ok 12 [chromium-full] › tests\e2e\b2b.spec.ts:157:1 › role navigation follows assignment capability rather than member management (465ms)
+  ok 13 [chromium-full] › tests\e2e\b2b.spec.ts:173:1 › global catalog never loads a roster without a tenant selection (533ms)
+  ok 11 [chromium-full] › tests\e2e\b2b.spec.ts:113:1 › role removal confirmation names each scope and preserves access on cancel (1.0s)
+
+  13 passed (32.3s)

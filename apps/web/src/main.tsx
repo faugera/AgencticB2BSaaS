@@ -159,10 +159,10 @@ createRoot(root).render(
         ].map((path) => (
           <Route key={path} path={path} element={<AuthPage key={path} admin={path.startsWith('/admin/')} />} />
         ))}
-        {['/app', '/app/security', '/app/profile', '/app/members', '/app/invitations', '/app/workspaces/:id'].map((path) => (
+        {['/app', '/app/security', '/app/roles', '/app/audit', '/app/organizations', '/app/profile', '/app/members', '/app/invitations', '/app/workspaces/:id'].map((path) => (
           <Route key={path} path={path} element={<Application />} />
         ))}
-        {['/admin', '/admin/organizations', '/admin/workspaces', '/admin/members', '/admin/audit', '/admin/security', '/admin/profile', '/admin/workspaces/:id'].map((path) => (
+        {['/admin', '/admin/organizations', '/admin/roles', '/admin/workspaces', '/admin/members', '/admin/audit', '/admin/security', '/admin/profile', '/admin/workspaces/:id'].map((path) => (
           <Route key={path} path={path} element={<Application key="admin" adminOnly />} />
         ))}
         <Route path="/invite" element={<AcceptInvitation />} />
