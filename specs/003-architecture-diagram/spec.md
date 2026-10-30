@@ -35,6 +35,7 @@ puis met à jour ou confirme le schéma après revue humaine.
 - **FR-003**: Signaler les changements des documents de référence et migrations en local et CI ; documenter la revue manuelle et l'actualisation.
 - **FR-004**: Conserver l'accès depuis le fichier local existant vers le schéma versionné.
 - **FR-005**: Les tests navigateur de la branche doivent vérifier les rôles avec le menu mobile ouvert et disposer d'un budget adapté aux captures visuelles sans retirer les assertions.
+- **FR-006**: Les parcours réels SMTP utilisent une base jetable distincte des tests de sécurité, sans affaiblir le refus de modifier un opérateur non-fixture.
 
 ### Key Entities
 - Sources suivies : documents d'architecture et de données, fichiers de migration SQL.

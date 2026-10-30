@@ -12,3 +12,4 @@
 - [x] T005 Vérifier contrôles documentaires, tests ciblés et affichage ; consigner limites (SC-001..003).
 - [ ] T006 Publier une PR dédiée vers main, dépendante de la PR B2B 9, sans fusion.
 - [x] T007 Corriger les tests CI de navigation mobile et le budget des captures, puis vérifier les deux projets (FR-005).
+- [x] T008 Isoler la base du parcours réel et vérifier provisioning, migrations et SMTP (FR-006).

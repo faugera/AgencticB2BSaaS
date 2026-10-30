@@ -26,3 +26,5 @@ La CI détecte aussi un test de rôle qui inspecte un menu fermé et un scénari
 complet de nombreuses captures dont le budget de 30 secondes est insuffisant en CI.
 Ouvrir le menu avant chaque assertion de rôle et marquer uniquement ce scénario lent ;
 conserver toutes les assertions et les deux projets navigateur.
+En CI, isoler les parcours SMTP dans une troisième base jetable, provisionnée et
+migrée avant les tests, pour ne pas réutiliser l'opérateur des tests de sécurité.

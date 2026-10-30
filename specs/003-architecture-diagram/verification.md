@@ -27,3 +27,12 @@
   Les assertions sont conservées et seul ce scénario lourd est marqué lent.
 - La suite complète CI et les tests SQL/SMTP n'ont pas été relancés localement pour
   cette correction limitée aux tests ; les résultats du nouveau run CI font foi.
+
+Le run CI suivant a passé 98 tests navigateur puis échoué au parcours réel : la base
+des tests de sécurité contenait un opérateur que la protection du parcours refusait
+de modifier. Reproduction locale : 13 tests d'organisations créent les fixtures dans
+une base jetable, puis le parcours sur cette même base échoue avec ce refus attendu.
+Après séparation, `pnpm db:provision`, `pnpm auth:migrate` et `pnpm test:auth:e2e`
+passent sur une autre base PostgreSQL 17 jetable avec Mailpit : 2 parcours desktop et
+2 mobile. Le garde-fou n'a pas changé. Les services jetables ont été arrêtés ; aucune
+base de développement ou de production n'a été utilisée.
