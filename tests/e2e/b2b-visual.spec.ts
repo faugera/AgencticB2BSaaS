@@ -86,7 +86,7 @@ for (const locale of ['fr', 'en'] as const) for (const width of [375, 768, 1280]
     await proveFormReachability(page, `client-assignment-success-${locale}-${width}`);
     await shot('client-assignment-last-action', page.getByRole('button', { name: label('Suspendre', 'Suspend'), exact: true }));
     await page.getByRole('button', { name: label('Retirer le rôle', 'Revoke role'), exact: true }).click();
-    await expect(page.getByRole('dialog')).toHaveAccessibleName(label('Retirer le rôle', 'Revoke role') + ' — Alexandra Dupont — Support international — Tenant · tenant');
+    await expect(page.getByRole('dialog')).toHaveAccessibleName(label('Retirer le rôle', 'Revoke role') + ' — Alexandra Dupont — Support international — Tenant · Tenant Paris — équipe opérations internationales');
     await shot('client-revoke-dialog'); await page.keyboard.press('Escape');
     failWrites = true; await page.getByRole('button', { name: label('Attribuer', 'Assign'), exact: true }).click();
     await expect(page.getByRole('alert')).toBeVisible(); await shot('client-assignment-error'); failWrites = false;

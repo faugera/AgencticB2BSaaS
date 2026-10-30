@@ -108,6 +108,35 @@ test('workspace-only administration uses server capabilities and a scoped roster
  await expect(page.getByRole('button', { name: 'Suspendre', exact: true })).toHaveCount(0);
 });
 
+test('role removal confirmation names each scope and preserves access on cancel', async ({ page }) => {
+ const writes: unknown[] = [];
+ const role = { id: 'custom', code: 'custom', name: 'Support', level: 0, permissions: [], delegable: true, builtin: false, archivedAt: null, updatedAt: '2026-10-24T08:00:00Z', impactCount: 0 };
+ await page.route('**/api/**', (route) => {
+  const path = new URL(route.request().url()).pathname;
+  if (path === '/api/me') return route.fulfill({ json: { user: { id: 'super', name: 'Admin', email: 'admin@example.test' }, access: { actorId: 'super', platformRole: 'super_admin', tenantId: 'tenant', tenantRole: null, permissions: ['roles.assign'], level: 4 } } });
+  if (path === '/api/roles') return route.fulfill({ json: [role] });
+  if (path === '/api/tenants') return route.fulfill({ json: [{ id: 'tenant', name: 'Tenant A', organization_id: 'org' }] });
+  if (path === '/api/organizations') return route.fulfill({ json: [{ id: 'org', name: 'Client A' }] });
+  if (path === '/api/workspaces') return route.fulfill({ json: [{ id: 'workspace', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }] });
+  if (path === '/api/role-assignments' && route.request().method() === 'POST') { writes.push(route.request().postDataJSON()); return route.fulfill({ json: { saved: true } }); }
+  if (path === '/api/role-assignments') return route.fulfill({ json: [{ id: 'member', name: '', email: 'member@example.test', status: 'active', roles: [
+   { ...role, scope: 'organization', organizationId: 'org', tenantId: null, workspaceId: null },
+   { ...role, scope: 'tenant', organizationId: 'org', tenantId: 'tenant', workspaceId: null },
+   { ...role, scope: 'workspace', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace' },
+  ] }] });
+  if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'light' } });
+  return route.fulfill({ json: [] });
+ });
+ await page.goto('/admin/roles?tenantId=tenant');
+ const buttons = page.getByRole('button', { name: 'Retirer le rôle', exact: true });
+ for (const [index, scope] of ['Organisation cliente · Client A', 'Tenant · Tenant A', 'Espace de travail · Espace A'].entries()) {
+  const trigger = buttons.nth(index); await trigger.click();
+  await expect(page.getByRole('dialog')).toHaveAccessibleName('Retirer le rôle — member@example.test — Support — ' + scope);
+  await page.keyboard.press('Escape'); await expect(trigger).toBeFocused();
+ }
+ expect(writes).toEqual([]);
+});
+
 test('role navigation follows assignment capability rather than member management', async ({ page }) => {
  let canAssignWorkspace = false;
  await page.route('**/api/**', (route) => {

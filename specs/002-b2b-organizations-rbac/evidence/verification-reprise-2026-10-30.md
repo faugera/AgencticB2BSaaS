@@ -22,8 +22,11 @@ et ne sont pas présentées comme des exécutions du 30 octobre.
 
 La revue visuelle complète des 378 captures a relevé une confirmation de retrait
 ambiguë. Le titre précise désormais l'action, la personne, le rôle et sa portée,
-avec l'email en remplacement d'un nom vide. Un test a d'abord reproduit le défaut ;
-après correction, les 6 scénarios visuels FR/EN aux trois tailles sont passés.
+avec l'email en remplacement d'un nom vide et le nom de portée lorsqu'il est connu.
+Les assertions ont d'abord reproduit les défauts ; après correction, les
+[6 scénarios visuels FR/EN aux trois tailles](ui-retrait-2026-10-30.log) et le
+[test des trois portées et de l'annulation](ui-retrait-portees-2026-10-30.log)
+sont passés. Les réponses API de ces scénarios sont simulées.
 Cette correction d'interface est postérieure au commit applicatif indiqué ci-dessus.
 
 Aucune base de développement ou production n'a été migrée. La MFA reste
