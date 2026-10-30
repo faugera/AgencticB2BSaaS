@@ -41,15 +41,30 @@ mais leurs sorties complètes n'ont pas été archivées dans le dépôt. Cette 
 d'interface est postérieure au commit applicatif indiqué en début de document.
 
 Une revue a ensuite relevé le cas de plusieurs portées portant le même nom. Le nom
-reste lisible ; l'identifiant est ajouté lorsqu'une autre portée du même type porte
-le même nom. Le [test navigateur de collision](ui-retrait-collision-2026-10-30.log)
-vérifie deux espaces homonymes, l'annulation et l'identifiant envoyé à la confirmation.
-Il a été exécuté sur les sources suivant `c2a271e`, avec 13 scénarios B2B réussis :
+reste lisible et son identifiant est affiché pour éviter toute ambiguïté, y compris
+dans les sélecteurs de contexte et d'attribution. Le
+[test navigateur de collision](ui-selection-2026-10-30.log) vérifie deux espaces
+homonymes, un nom contenant lui-même un identifiant, l'annulation et les identifiants
+envoyés à l'octroi et au retrait. Il a été exécuté sur les sources suivant `476ee6e`,
+avec 13 scénarios B2B réussis. Une revue complémentaire a conduit à afficher aussi
+les identifiants dans les sélecteurs d'organisation, de tenant, d'espace et de rôle,
+ainsi que dans les confirmations de rôle : un nom libre pouvant lui-même contenir
+un identifiant, la distinction reste explicite. Le test de collision couvre aussi
+l'attribution à l'espace sélectionné et deux rôles homonymes. Les
+[49 scénarios d'interface](ui-final-identifiants-2026-10-30.log)
+et les [4 parcours SMTP réels](auth-selection-2026-10-30.log) sont passés. Commandes :
 
 ```sh
 pnpm --filter @enterprise/web build
 pnpm exec playwright test tests/e2e/b2b.spec.ts tests/e2e/b2b-visual.spec.ts --config specs/002-b2b-organizations-rbac/evidence/playwright-ui.config.ts --workers=3
+pnpm exec playwright test --config specs/002-b2b-organizations-rbac/evidence/playwright-ui.config.ts --workers=3
+pnpm test:auth:e2e --config specs/002-b2b-organizations-rbac/evidence/playwright-live.config.ts
 ```
+
+Les deux derniers défauts ont été reproduits avant correction :
+[identification de portée](ui-identifiant-rouge-2026-10-30.log) et
+[identification de rôle](ui-role-identifiant-rouge-2026-10-30.log). Ces journaux
+rapportent des échecs attendus ; le journal vert ci-dessus concerne la correction.
 
 Aucune base de développement ou production n'a été migrée. La MFA reste
 facultative en V0 ; les vérifications locales ne certifient pas l'infrastructure.

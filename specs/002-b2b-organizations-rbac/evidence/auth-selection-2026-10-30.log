@@ -1,0 +1,43 @@
+$ node scripts/auth-e2e.mjs "--config" "specs/002-b2b-organizations-rbac/evidence/playwright-live.config.ts"
+[WebServer] (node:10216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite preview --host 127.0.0.1
+[WebServer] (node:37108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:33936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ node --env-file-if-exists=.env dist/server.js
+[WebServer] (node:39052) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:26640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop] › tests\e2e\auth-live.spec.ts:12:1 › invited identity activates, sets password, signs in and signs out with PostgreSQL and SMTP (2.7s)
+  ok 2 [desktop] › tests\e2e\business-live.spec.ts:14:1 › operator creates a tenant; verified invitee accepts and manages a private workspace (3.6s)
+
+  2 passed (16.0s)
+[WebServer] (node:39016) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite preview --host 127.0.0.1
+[WebServer] (node:26844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:19164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ node --env-file-if-exists=.env dist/server.js
+[WebServer] (node:21448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:38192) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38192) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [mobile] › tests\e2e\auth-live.spec.ts:12:1 › invited identity activates, sets password, signs in and signs out with PostgreSQL and SMTP (3.0s)
+  ok 2 [mobile] › tests\e2e\business-live.spec.ts:14:1 › operator creates a tenant; verified invitee accepts and manages a private workspace (6.8s)
+
+  2 passed (17.8s)

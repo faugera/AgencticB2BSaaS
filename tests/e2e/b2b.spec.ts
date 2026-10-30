@@ -87,7 +87,7 @@ test('workspace-only administration uses server capabilities and a scoped roster
   if (path === '/api/roles') return route.fulfill({ json: [role, { ...role, id: 'tenant-role', scope: 'tenant', name: 'Tenant reader' }] });
   if (path === '/api/tenants') return route.fulfill({ json: [{ id: 'tenant', name: 'Tenant', organization_id: 'org' }] });
   if (path === '/api/organizations') return route.fulfill({ json: [{ id: 'org', name: 'Client' }] });
-  if (path === '/api/workspaces') return route.fulfill({ json: [{ id: 'workspace', tenant_id: 'tenant', name: 'Espace géré', visibility: 'private', can_assign_roles: true, role_level: 1 }, { id: 'readonly', tenant_id: 'tenant', name: 'Lecture seule', visibility: 'tenant', can_assign_roles: false, role_level: 0 }] });
+  if (path === '/api/workspaces') return route.fulfill({ json: [{ id: 'workspace', tenant_id: 'tenant', name: 'Espace géré', visibility: 'private', can_assign_roles: true, role_level: 1 }, { id: 'workspace2', tenant_id: 'tenant', name: 'Espace géré', visibility: 'private', can_assign_roles: true, role_level: 1 }, { id: 'readonly', tenant_id: 'tenant', name: 'Lecture seule', visibility: 'tenant', can_assign_roles: false, role_level: 0 }] });
   if (path === '/api/role-assignments' && route.request().method() === 'POST') { writes.push(route.request().postDataJSON()); return route.fulfill({ json: { saved: true } }); }
   if (path === '/api/role-assignments') { queries.push(url.search); return route.fulfill({ json: [{ id: 'member', name: 'Member', email: 'member@example.test', status: 'active', roles: [] }] }); }
   if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'light' } });
@@ -95,7 +95,9 @@ test('workspace-only administration uses server capabilities and a scoped roster
  });
  await page.goto('/app/roles?tenantId=tenant');
  const scope = page.locator('main').getByLabel('Espace actif');
- await expect(scope.locator('option')).toHaveCount(2); expect(queries).toEqual([]);
+ await expect(scope.locator('option')).toHaveCount(3); expect(queries).toEqual([]);
+ await expect(scope.locator('option[value=workspace]')).toHaveText('Espace géré (workspace)');
+ await expect(scope.locator('option[value=workspace2]')).toHaveText('Espace géré (workspace2)');
  await scope.selectOption('workspace');
  await page.getByLabel('Sélectionner un membre').selectOption('member');
  await expect(page.getByLabel('Sélectionner un rôle').locator('option')).toHaveCount(2);
@@ -114,25 +116,27 @@ test('role removal confirmation names each scope and preserves access on cancel'
  await page.route('**/api/**', (route) => {
   const path = new URL(route.request().url()).pathname;
   if (path === '/api/me') return route.fulfill({ json: { user: { id: 'super', name: 'Admin', email: 'admin@example.test' }, access: { actorId: 'super', platformRole: 'super_admin', tenantId: 'tenant', tenantRole: null, permissions: ['roles.assign'], level: 4 } } });
-  if (path === '/api/roles') return route.fulfill({ json: [role] });
+  if (path === '/api/roles') return route.fulfill({ json: [{ ...role, scope: 'workspace' }, { ...role, id: 'custom2', scope: 'workspace' }] });
   if (path === '/api/tenants') return route.fulfill({ json: [{ id: 'tenant', name: 'Tenant A', organization_id: 'org' }] });
   if (path === '/api/organizations') return route.fulfill({ json: [{ id: 'org', name: 'Client A' }] });
-  if (path === '/api/workspaces') return route.fulfill({ json: [{ id: 'workspace', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }, { id: 'workspace2', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }] });
+  if (path === '/api/workspaces') return route.fulfill({ json: [{ id: 'workspace', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }, { id: 'workspace2', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }, { id: 'workspace3', name: 'Espace A (workspace)', tenant_id: 'tenant', visibility: 'private' }] });
   if (path === '/api/role-assignments' && route.request().method() === 'POST') { writes.push(route.request().postDataJSON()); return route.fulfill({ json: { saved: true } }); }
   if (path === '/api/role-assignments') return route.fulfill({ json: [{ id: 'member', name: '', email: 'member@example.test', status: 'active', roles: [
    { ...role, scope: 'organization', organizationId: 'org', tenantId: null, workspaceId: null },
    { ...role, scope: 'tenant', organizationId: 'org', tenantId: 'tenant', workspaceId: null },
    { ...role, scope: 'workspace', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace' },
    { ...role, scope: 'workspace', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace2' },
+   { ...role, scope: 'workspace', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace3' },
+   { ...role, id: 'custom2', scope: 'workspace', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace2' },
   ] }] });
   if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'light' } });
   return route.fulfill({ json: [] });
  });
  await page.goto('/admin/roles?tenantId=tenant');
  const buttons = page.getByRole('button', { name: 'Retirer le rôle', exact: true });
- for (const [index, scope] of ['Organisation cliente · Client A', 'Tenant · Tenant A', 'Espace de travail · Espace A (workspace)', 'Espace de travail · Espace A (workspace2)'].entries()) {
+ for (const [index, scope] of ['Organisation cliente · Client A (org)', 'Tenant · Tenant A (tenant)', 'Espace de travail · Espace A (workspace)', 'Espace de travail · Espace A (workspace2)', 'Espace de travail · Espace A (workspace) (workspace3)'].entries()) {
   const trigger = buttons.nth(index); await trigger.click();
-  await expect(page.getByRole('dialog')).toHaveAccessibleName('Retirer le rôle — member@example.test — Support — ' + scope);
+  await expect(page.getByRole('dialog')).toHaveAccessibleName('Retirer le rôle — member@example.test — Support (custom) — ' + scope);
   await page.keyboard.press('Escape'); await expect(trigger).toBeFocused();
  }
  expect(writes).toEqual([]);
@@ -140,6 +144,20 @@ test('role removal confirmation names each scope and preserves access on cancel'
  await page.getByRole('dialog').getByRole('button', { name: 'Confirmer' }).click();
  await expect.poll(() => writes.length).toBe(1);
  expect(writes[0]).toEqual({ actorId: 'member', roleId: 'custom', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace2', operation: 'revoke' });
+ await buttons.nth(5).click();
+ await expect(page.getByRole('dialog')).toHaveAccessibleName('Retirer le rôle — member@example.test — Support (custom2) — Espace de travail · Espace A (workspace2)');
+ await page.keyboard.press('Escape');
+ await page.getByLabel('Sélectionner un membre').selectOption('member');
+ await expect(page.getByLabel('Sélectionner un rôle').locator('option[value=custom]')).toHaveText('Support (custom)');
+ await expect(page.getByLabel('Sélectionner un rôle').locator('option[value=custom2]')).toHaveText('Support (custom2)');
+ await page.getByLabel('Sélectionner un rôle').selectOption('custom');
+ const target = page.getByLabel('Sélectionner une portée');
+ await expect(target.locator('option[value=workspace]')).toHaveText('Espace A (workspace)');
+ await expect(target.locator('option[value=workspace2]')).toHaveText('Espace A (workspace2)');
+ await expect(target.locator('option[value=workspace3]')).toHaveText('Espace A (workspace) (workspace3)');
+ await target.selectOption('workspace2'); await page.getByRole('button', { name: 'Attribuer', exact: true }).click();
+ await expect.poll(() => writes.length).toBe(2);
+ expect(writes[1]).toEqual({ actorId: 'member', roleId: 'custom', organizationId: 'org', tenantId: 'tenant', workspaceId: 'workspace2', operation: 'grant' });
 });
 
 test('role navigation follows assignment capability rather than member management', async ({ page }) => {

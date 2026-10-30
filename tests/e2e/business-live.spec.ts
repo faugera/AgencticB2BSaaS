@@ -81,7 +81,10 @@ test('operator creates a tenant; verified invitee accepts and manages a private 
   await page.getByLabel('Nom de l’organisation').fill(tenantName);
   await page.getByRole('button', { name: 'Créer l’organisation cliente', exact: true }).click();
   await expect(page.getByRole('status')).toContainText('Modification enregistrée');
-  await page.getByLabel('Organisation cliente', { exact: true }).selectOption({ label: tenantName });
+  const organizationSelect = page.getByLabel('Organisation cliente', { exact: true });
+  const organizationId = await organizationSelect.locator('option').filter({ hasText: tenantName }).getAttribute('value');
+  if (!organizationId) throw new Error('Created organization is missing');
+  await organizationSelect.selectOption(organizationId);
   await page.getByLabel('Nom du tenant', { exact: true }).fill(tenantName + ' — Paris');
   await page.getByLabel('Email de l’administrateur').fill(adminEmail);
   await page
