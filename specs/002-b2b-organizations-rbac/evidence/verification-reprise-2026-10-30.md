@@ -23,11 +23,22 @@ et ne sont pas présentées comme des exécutions du 30 octobre.
 La revue visuelle complète des 378 captures a relevé une confirmation de retrait
 ambiguë. Le titre précise désormais l'action, la personne, le rôle et sa portée,
 avec l'email en remplacement d'un nom vide et le nom de portée lorsqu'il est connu.
-Les assertions ont d'abord reproduit les défauts ; après correction, les
+Après correction, les
 [6 scénarios visuels FR/EN aux trois tailles](ui-retrait-2026-10-30.log) et le
 [test des trois portées et de l'annulation](ui-retrait-portees-2026-10-30.log)
 sont passés. Les réponses API de ces scénarios sont simulées.
-Cette correction d'interface est postérieure au commit applicatif indiqué ci-dessus.
+Ils ont été exécutés le 30 octobre sur les sources ensuite enregistrées dans le
+commit `c2a271e36c18e86c67b730d2fab219baa8846048`. Le build et les commandes étaient :
+
+```sh
+pnpm --filter @enterprise/web build
+pnpm exec playwright test tests/e2e/b2b-visual.spec.ts --config specs/002-b2b-organizations-rbac/evidence/playwright-ui.config.ts --workers=3
+pnpm exec playwright test tests/e2e/b2b.spec.ts --config specs/002-b2b-organizations-rbac/evidence/playwright-ui.config.ts --grep 'role removal confirmation' --workers=1
+```
+
+Les deux reproductions initiales échouées ont été observées dans cette session,
+mais leurs sorties complètes n'ont pas été archivées dans le dépôt. Cette correction
+d'interface est postérieure au commit applicatif indiqué en début de document.
 
 Aucune base de développement ou production n'a été migrée. La MFA reste
 facultative en V0 ; les vérifications locales ne certifient pas l'infrastructure.
