@@ -4,6 +4,11 @@ Date : 25 octobre 2026
 Révision vérifiée : `163f198e32887eaa729874f42c64f842f07d649c`  
 Périmètre : rendu navigateur, navigation mobile fixe et reachability clavier du delta courant. Aucun produit n’a été modifié pendant cette revue.
 
+Cette revue est une preuve historique du 25 octobre pour la révision indiquée.
+Le déplacement ultérieur du token Brume dans `b1ffbca` n'est pas couvert par
+ce verdict ; la reprise du 30 octobre est documentée dans
+[verification-reprise-2026-10-30.md](verification-reprise-2026-10-30.md).
+
 ## Verdict global
 
 **PASS.** Le défaut précédent d’occlusion mobile est corrigé et démontré par la matrice Chromium finale : 6/6 scénarios, 90 captures ciblées (scroll + focus), 6 vues du catalogue global et 288 vues d’ensemble. Aucun blocker visuel ou fonctionnel ne reste dans le périmètre de ce delta.
