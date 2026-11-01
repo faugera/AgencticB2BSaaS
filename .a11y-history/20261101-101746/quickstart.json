@@ -1,0 +1,29 @@
+{
+  "skill": "markdown-scanner",
+  "scope": ["specs/004-profile-scope-editing/quickstart.md"],
+  "findings": [
+    {
+      "rule": "MD-PLAIN-PASSIVE",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "high",
+      "location": "quickstart.md:25",
+      "summary": "Une consigne utilise une formulation passive, moins directe à comprendre.",
+      "fix": "Remplacer « aucune base de développement ou de production ne doit être utilisée » par « N’utilisez aucune base de développement ou de production ».",
+      "evidence": "aucune base de développement ou de production ne doit être utilisée"
+    }
+  ],
+  "passed": [
+    "Liens descriptifs : aucun lien ni URL.",
+    "Texte alternatif : aucune image.",
+    "Hiérarchie des titres : un H1, des H2 séquentiels, aucun défaut apparent.",
+    "Tableaux : aucun tableau.",
+    "Émojis : aucun émoji détecté.",
+    "Diagrammes Mermaid et ASCII : aucun diagramme.",
+    "Normalisation des tirets : aucun tiret cadratin ou demi-cadratin dans le texte courant.",
+    "Ancres : aucune ancre à valider."
+  ],
+  "notes": [
+    "Le scanner MCP et markdownlint-cli2 n’ont pas pu lire ou contrôler le fichier depuis leur périmètre d’accès ; le contenu a été examiné directement."
+  ]
+}

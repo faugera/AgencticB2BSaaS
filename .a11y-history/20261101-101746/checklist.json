@@ -1,0 +1,39 @@
+{
+  "skill": "markdown-scanner",
+  "scope": ["specs/004-profile-scope-editing/checklists/requirements.md"],
+  "findings": [
+    {
+      "rule": "MD-HEADING-001",
+      "wcag": "2.4.6 AA",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "checklists/requirements.md:32",
+      "summary": "Le titre « Notes » ne décrit pas clairement le contenu de cette section.",
+      "fix": "Remplacer « Notes » par un titre plus précis, par exemple « État du contrôle et suivi de l’implémentation ».",
+      "evidence": "## Notes"
+    },
+    {
+      "rule": "MD-PLAIN-001",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "checklists/requirements.md:1",
+      "summary": "Le terme technique « tenant » n’est pas expliqué dans le document.",
+      "fix": "Remplacer « tenant » par un terme destiné aux parties prenantes, ou ajouter une brève explication en langage courant.",
+      "evidence": "Édition sûre du profil par tenant"
+    }
+  ],
+  "passed": [
+    "Liens descriptifs : le lien « spec.md » décrit sa destination.",
+    "Texte alternatif : aucune image.",
+    "Tableaux : aucun tableau.",
+    "Émojis : aucun émoji détecté.",
+    "Diagrammes Mermaid et ASCII : aucun diagramme détecté.",
+    "Normalisation des tirets : aucun tiret cadratin ou demi-cadratin détecté dans le texte courant.",
+    "Ancres : aucun lien d’ancre détecté."
+  ],
+  "notes": [
+    "Le scanner automatisé n’a pas pu accéder au fichier ; les domaines ont été vérifiés directement.",
+    "markdownlint-cli2 a signalé une ligne MD013 de 105 caractères ; cette règle ne correspond pas à un domaine d’accessibilité."
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "skill": "markdown-scanner",
+  "scope": ["specs/004-profile-scope-editing/contracts/api.md"],
+  "findings": [
+    {
+      "rule": "MD-PLAIN-001",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "contracts/api.md:7",
+      "summary": "Le terme anglais « membership active » n’est pas expliqué dans ce contrat rédigé en français.",
+      "fix": "Remplacer « membership active » par un terme français adapté, par exemple « adhésion active », ou expliquer le terme à sa première occurrence.",
+      "evidence": "sa membership active dans cette portée"
+    },
+    {
+      "rule": "MD-PLAIN-002",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "contracts/api.md:8",
+      "summary": "L’acronyme « DTO » apparaît sans être développé à sa première occurrence.",
+      "fix": "Remplacer « DTO strict » par « objet de transfert de données (DTO) strict » à la première occurrence.",
+      "evidence": "DTO strict"
+    }
+  ],
+  "passed": [
+    "Liens descriptifs : aucun problème relevé.",
+    "Texte alternatif des images : aucun problème relevé.",
+    "Hiérarchie des titres : aucun problème relevé.",
+    "Accessibilité des tableaux : aucun problème relevé.",
+    "Émojis : aucun émoji détecté.",
+    "Diagrammes Mermaid et ASCII : aucun problème relevé.",
+    "Normalisation des tirets : aucun problème relevé.",
+    "Ancres : aucun problème relevé.",
+    "Langage clair, longueur des phrases et structure des listes : aucun problème relevé."
+  ],
+  "notes": [
+    "Le scanner automatisé n’a pas pu lire le fichier depuis son périmètre d’accès ; les domaines ont été examinés manuellement."
+  ]
+}

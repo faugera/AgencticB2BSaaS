@@ -1,0 +1,51 @@
+{
+  "skill": "markdown-scanner",
+  "scope": ["specs/004-profile-scope-editing/spec.md"],
+  "findings": [
+    {
+      "rule": "MD022",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "high",
+      "location": "spec.md:10",
+      "summary": "Le titre « User Story 1 » n’est pas suivi d’une ligne vide.",
+      "fix": "Ajouter une ligne vide après le titre avant le paragraphe suivant.",
+      "evidence": "### User Story 1 - Modifier son profil (Priority: P1)"
+    },
+    {
+      "rule": "MD022",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "high",
+      "location": "spec.md:26",
+      "summary": "Le titre « User Story 2 » n’est pas suivi d’une ligne vide.",
+      "fix": "Ajouter une ligne vide après le titre avant le paragraphe suivant.",
+      "evidence": "### User Story 2 - Changer de tenant sur le profil (Priority: P1)"
+    },
+    {
+      "rule": "PLAIN-LANGUAGE-001",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "spec.md:1",
+      "summary": "Le terme technique « tenant » apparaît sans explication à sa première occurrence.",
+      "fix": "Définir « tenant » dès sa première occurrence, par exemple comme l’organisation ou l’espace de travail concerné.",
+      "evidence": "Édition sûre du profil par tenant"
+    }
+  ],
+  "passed": [
+    "Liens descriptifs : aucun lien ni URL repéré.",
+    "Texte alternatif : aucune image repérée.",
+    "Hiérarchie des titres : un seul H1 et aucun saut de niveau ; deux espacements MD022 signalés.",
+    "Tableaux : aucun tableau repéré.",
+    "Émojis : aucun émoji repéré.",
+    "Diagrammes Mermaid et ASCII : aucun diagramme repéré.",
+    "Normalisation des tirets : aucun tiret cadratin ou demi-cadratin, ni double tiret dans le texte courant.",
+    "Ancres : aucun lien d’ancre repéré.",
+    "Langage clair et listes : aucun paragraphe de plus de 150 mots ni phrase de plus de 40 mots repéré."
+  ],
+  "notes": [
+    "Le scanner automatisé n’a pas pu lire le fichier depuis son périmètre d’accès ; les domaines ont été examinés directement.",
+    "markdownlint-cli2 a signalé 20 dépassements MD013 et 2 violations MD032 ; ces règles ne correspondent pas aux domaines d’accessibilité examinés."
+  ]
+}
