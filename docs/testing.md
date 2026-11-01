@@ -30,11 +30,18 @@ imposer de couleur CSS calculée. Aucun code produit ni permission n'est modifi�
 
 - `pnpm verify` : types,lint,tests unitaires,build,smoke.
 - `pnpm test:e2e` : 72 scénarios navigateur sur frontend compilé ; fixtures HTTP.
-- `pnpm verify:security` : audit dépendances et intégrations PostgreSQL réelles.
+- `pnpm verify:security` : contrôles sécurité, audit dépendances et intégrations
+  PostgreSQL centrales, hors suite d'isolation dédiée.
 - `pnpm verify:tenant-isolation` : refus SQL/HTTP inter-tenant.
+- `pnpm test:auth:core` : intégrations PostgreSQL sauf
+  `isolation.integration.test.ts`, exécutée par la porte dédiée ci-dessus.
+- `pnpm test:auth` : suite complète, y compris isolation, pour une validation locale exhaustive.
 - `pnpm test:auth:e2e` : activation/MFA/session et collaboration avec PostgreSQL/SMTP réels.
 
-Les trois derniers gates et leurs assertions sont inchangés. Ils restent dans la CI.
+La CI lance `test:auth:core` via `verify:security`, puis l'isolation une fois via
+`verify:tenant-isolation`. La sélection évite de relancer 15 scénarios d'isolation ;
+aucune assertion ni suite distincte n'est supprimée. `pnpm test:auth` garde tous
+les fichiers d'intégration pour une validation exhaustive.
 Les tests UI simulés ne remplacent pas une preuve d'autorisation serveur.
 
 ## Vérification exécutée

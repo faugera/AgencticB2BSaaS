@@ -24,8 +24,9 @@
     "auth:invite": "pnpm --filter @enterprise/api auth:invite",
     "auth:services": "docker compose up -d --wait postgres mailpit",
     "test:auth": "vitest run --config vitest.auth.config.ts",
+    "test:auth:core": "vitest run --config vitest.auth.config.ts --exclude apps/api/src/business/isolation.integration.test.ts",
     "verify:tenant-isolation": "vitest run --config vitest.auth.config.ts apps/api/src/business/isolation.integration.test.ts",
-    "verify:security": "node scripts/security.mjs && pnpm audit --audit-level high && pnpm test:auth",
+    "verify:security": "node scripts/security.mjs && pnpm audit --audit-level high && pnpm test:auth:core",
     "test:auth:e2e": "node scripts/auth-e2e.mjs",
     "docs:check": "node scripts/docs-check.mjs && node scripts/architecture-sync.mjs",
     "docs:test": "node --test scripts/docs-check.test.mjs scripts/architecture-sync.test.mjs"

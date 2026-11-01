@@ -25,8 +25,9 @@ Références factuelles : `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml
 | Build / smoke | `pnpm build`, `pnpm smoke` | Smoke nécessite le build |
 | Vérification globale | `pnpm verify` | Types, lint, unitaires, build, smoke ; pas E2E/DB |
 | E2E | `pnpm test:e2e` | Build et Chromium disponibles |
-| Auth DB | `pnpm test:auth` | PostgreSQL jetable explicite |
-| Sécurité | `pnpm verify:security` | Script sécurité, audit dépendances, auth DB ; accès réseau |
+| Auth DB complète | `pnpm test:auth` | PostgreSQL jetable explicite |
+| Auth DB centrale | `pnpm test:auth:core` | PostgreSQL jetable ; exclut l'isolation lancée séparément en CI |
+| Sécurité | `pnpm verify:security` | Script sécurité, audit dépendances et auth DB centrale ; accès réseau |
 | Isolation | `pnpm verify:tenant-isolation` | PostgreSQL jetable explicite |
 | Auth navigateur | `pnpm test:auth:e2e` | Build, PostgreSQL et Mailpit configurés |
 
