@@ -1,0 +1,47 @@
+{
+  "skill": "markdown-scanner",
+  "scope": ["specs/004-profile-scope-editing/plan.md"],
+  "findings": [
+    {
+      "rule": "MD013",
+      "wcag": "n/a",
+      "severity": "minor",
+      "location": "plan.md:16,19,27,29,37,39,40,47,61",
+      "summary": "Neuf lignes dépassent la limite de 80 caractères signalée par markdownlint.",
+      "fix": "Reformater ces lignes pour respecter la limite de 80 caractères configurée.",
+      "evidence": "Lignes 16, 19, 27, 29, 37, 39, 40, 47 et 61."
+    },
+    {
+      "rule": "MD-PLAIN-001",
+      "wcag": "n/a",
+      "severity": "minor",
+      "location": "plan.md:16,37",
+      "summary": "Les termes anglais « membership » et « query tenant » ne sont pas expliqués à leur première occurrence.",
+      "fix": "Les remplacer par des formulations françaises explicites, par exemple « adhésion au tenant » et « requête associée au tenant », ou les définir à leur première occurrence.",
+      "evidence": "« membership pour les métadonnées professionnelles du tenant » ; « query tenant »."
+    },
+    {
+      "rule": "MD-PLAIN-002",
+      "wcag": "n/a",
+      "severity": "minor",
+      "location": "plan.md:61",
+      "summary": "La formulation passive « seront vérifiés » ne précise pas qui doit vérifier les routes et les tests.",
+      "fix": "Employer une formulation active, par exemple : « Vérifier les routes et les tests d’intégration PostgreSQL existants sans créer de middleware ni de migration. »",
+      "evidence": "« Les routes et tests d'intégration PostgreSQL existants seront vérifiés »."
+    }
+  ],
+  "passed": [
+    "Liens descriptifs : aucun problème relevé.",
+    "Textes alternatifs : aucun problème relevé.",
+    "Hiérarchie des titres : aucun problème relevé.",
+    "Accessibilité des tableaux : aucun problème relevé.",
+    "Émojis : aucun émoji détecté.",
+    "Diagrammes Mermaid et ASCII : aucun problème relevé.",
+    "Normalisation des tirets : aucun tiret cadratin ou demi-cadratin détecté.",
+    "Ancres internes : aucune ancre à valider."
+  ],
+  "notes": [
+    "Le scanner automatisé n’a pas pu lire le fichier depuis son périmètre d’accès ; les domaines ont été examinés manuellement.",
+    "markdownlint-cli2 a signalé neuf dépassements de longueur de ligne."
+  ]
+}

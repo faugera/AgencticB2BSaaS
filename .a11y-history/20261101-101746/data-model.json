@@ -1,0 +1,31 @@
+{
+  "skill": "markdown-scanner",
+  "scope": ["specs/004-profile-scope-editing/data-model.md"],
+  "findings": [
+    {
+      "rule": "MD9-TECHNICAL-JARGON",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "data-model.md:13",
+      "summary": "Le texte emploie « query tenant » et « transaction » sans expliquer ces termes techniques.",
+      "fix": "Remplacer « query tenant » par une formulation française et définir « transaction » et « tenant » à leur première occurrence, ou renvoyer vers un glossaire.",
+      "evidence": "La query tenant demande un contexte ; elle ne confère aucun accès. La transaction vérifie l'acteur et le tenant..."
+    }
+  ],
+  "passed": [
+    "Liens descriptifs : aucun lien ni URL.",
+    "Texte alternatif : aucune image.",
+    "Hiérarchie des titres : un H1 sans saut de niveau.",
+    "Tableaux : en-têtes présents, aucune cellule initiale vide et texte explicatif avant le tableau.",
+    "Émojis : aucun émoji détecté.",
+    "Diagrammes Mermaid et ASCII : aucun diagramme détecté.",
+    "Normalisation des tirets : aucun tiret typographique ou double tiret dans le texte courant.",
+    "Ancres : aucun lien d’ancre à valider.",
+    "Langage clair et listes : aucun paragraphe de plus de 150 mots, aucune phrase de plus de 40 mots et aucune liste."
+  ],
+  "notes": [
+    "Le scanner automatisé n’a pas pu accéder au fichier ; les domaines ont été vérifiés par lecture directe.",
+    "markdownlint a signalé MD013 aux lignes 8, 10 et 11 ; cette règle ne correspond pas à un domaine d’accessibilité."
+  ]
+}
