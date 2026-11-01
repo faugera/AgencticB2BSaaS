@@ -5,6 +5,22 @@ import { fileURLToPath } from 'node:url';
 
 const historical = /^(?:docs\/sdd\/legacy-skills\/|docs\/architecture\/[^/]*verification\.md$|docs\/design\/css-normalization\.md$)/;
 const statuses = new Set(['Draft', 'In Progress', 'Complete']);
+const requiredWorkflowSteps = [
+  ['specify', 'speckit.specify'],
+  ['review-spec', null],
+  ['clarify', 'speckit.clarify'],
+  ['review-clarifications', null],
+  ['plan', 'speckit.plan'],
+  ['review-plan', null],
+  ['tasks', 'speckit.tasks'],
+  ['review-tasks', null],
+  ['analyze', 'speckit.analyze'],
+  ['approve-implementation', null],
+  ['implement', 'speckit.implement'],
+  ['converge', 'speckit.converge'],
+  ['review-convergence', null],
+];
+const projectSkills = ['tenant-boundary', 'verify-change'];
 
 async function exists(file) {
   try { await stat(file); return true; }
@@ -23,6 +39,118 @@ async function markdownFiles(root, directory) {
   return files;
 }
 
+function workflowStepBlocks(text) {
+  const section = text.match(/^steps:\s*\r?\n([\s\S]*)$/m)?.[1];
+  if (!section) return null;
+  const steps = [];
+  for (const line of section.split(/\r?\n/)) {
+    const start = line.match(/^ {2}- id:\s*([a-z0-9-]+)\s*$/);
+    if (start) steps.push({ id: start[1], lines: [] });
+    else if (steps.length) steps.at(-1).lines.push(line);
+  }
+  return steps;
+}
+
+function stepField(step, field) {
+  const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return step.lines.join('\n').match(new RegExp(`^    ${escaped}:\\s*(.*?)\\s*$`, 'm'))?.[1];
+}
+
+async function checkWorkflow(root, errors) {
+  const file = '.specify/workflows/speckit/workflow.yml';
+  const text = await readFile(path.join(root, file), 'utf8');
+  const steps = workflowStepBlocks(text);
+  if (!steps) {
+    errors.push(`${file}: section steps absente ou invalide`);
+    return;
+  }
+
+  const lines = text.split(/\r?\n/);
+  const anyIndex = lines.findIndex((line) => /^ {4}any:\s*$/.test(line));
+  const integrations = new Set();
+  if (anyIndex >= 0) {
+    for (const line of lines.slice(anyIndex + 1)) {
+      const match = line.match(/^ {6}-\s*["']?([a-z0-9-]+)["']?\s*$/);
+      if (!match) break;
+      integrations.add(match[1]);
+    }
+  }
+  for (const integration of ['codex', 'claude']) {
+    if (!integrations.has(integration)) errors.push(`${file}: intégration requise absente : ${integration}`);
+  }
+
+  const actualIds = steps.map((step) => step.id);
+  const expectedIds = requiredWorkflowSteps.map(([id]) => id);
+  for (const [id] of requiredWorkflowSteps) {
+    if (!actualIds.includes(id)) errors.push(`${file}: étape obligatoire absente : ${id}`);
+  }
+  for (const id of actualIds) {
+    if (!expectedIds.includes(id)) errors.push(`${file}: étape non prévue : ${id}`);
+  }
+  if (actualIds.length === expectedIds.length && actualIds.some((id, index) => id !== expectedIds[index])) {
+    errors.push(`${file}: ordre des étapes Spec Kit invalide`);
+  }
+
+  for (const step of steps) {
+    const command = stepField(step, 'command');
+    if (command && /\b(?:merge|deploy|deployment)\b/i.test(command)) {
+      errors.push(`${file}: commande de merge/déploiement interdite : ${command}`);
+    }
+  }
+
+  for (const [id, command] of requiredWorkflowSteps) {
+    const step = steps.find((candidate) => candidate.id === id);
+    if (!step) continue;
+    if (command) {
+      if (stepField(step, 'command') !== command) errors.push(`${file}: commande attendue ${command} dans l'étape ${id}`);
+    } else {
+      if (stepField(step, 'type') !== 'gate') errors.push(`${file}: l'étape ${id} doit être une porte de revue`);
+      const options = stepField(step, 'options')?.match(/\[([^\]]*)\]/)?.[1]
+        .split(',').map((option) => option.trim().replace(/^["']|["']$/g, '')) ?? [];
+      if (!options.includes('approve') || !options.includes('reject')) {
+        errors.push(`${file}: la porte ${id} doit proposer approve et reject`);
+      }
+      if (stepField(step, 'on_reject') !== 'abort') errors.push(`${file}: la porte ${id} doit interrompre le cycle avec on_reject: abort`);
+    }
+  }
+
+  const workflowVersion = text.match(/^ {2}version:\s*["']?([^"'\s]+)["']?\s*$/m)?.[1];
+  if (!workflowVersion) errors.push(`${file}: version du workflow absente`);
+  const registryFile = '.specify/workflows/workflow-registry.json';
+  let registry;
+  try { registry = JSON.parse(await readFile(path.join(root, registryFile), 'utf8')); }
+  catch (error) {
+    if (error.code === 'ENOENT') errors.push(`${registryFile}: registre de workflow absent`);
+    else if (error instanceof SyntaxError) errors.push(`${registryFile}: JSON invalide : ${error.message}`);
+    else throw error;
+  }
+  if (registry && registry.workflows?.speckit?.version !== workflowVersion) {
+    errors.push(`${registryFile}: version Spec Kit différente de workflow.yml`);
+  }
+}
+
+async function checkProjectSkills(root, errors) {
+  for (const skill of projectSkills) {
+    const source = `.agents/skills/${skill}/SKILL.md`;
+    const mirror = `.claude/skills/${skill}/SKILL.md`;
+    let sourceBytes;
+    let mirrorBytes;
+    try { sourceBytes = await readFile(path.join(root, source)); }
+    catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      errors.push(`${source}: skill projet absent`);
+    }
+    try { mirrorBytes = await readFile(path.join(root, mirror)); }
+    catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      errors.push(`${mirror}: skill projet absent`);
+    }
+    if (sourceBytes && mirrorBytes && !sourceBytes.equals(mirrorBytes)) {
+      errors.push(`${skill}: contenu différent entre .agents/skills et .claude/skills`);
+    }
+  }
+}
+
 export async function checkDocuments(root) {
   root = path.resolve(root);
   const errors = [];
@@ -39,7 +167,8 @@ export async function checkDocuments(root) {
 
   const files = ['AGENTS.md', 'CLAUDE.md', 'README.md', 'DESIGN.md', 'DESIGN_UI.md',
     '.specify/memory/constitution.md', '.agents/skills/tenant-boundary/SKILL.md',
-    '.agents/skills/verify-change/SKILL.md'];
+    '.agents/skills/verify-change/SKILL.md', '.claude/skills/tenant-boundary/SKILL.md',
+    '.claude/skills/verify-change/SKILL.md'];
   for (const directory of ['docs', 'specs', '.specs/standards', '.specs/domains']) {
     files.push(...await markdownFiles(root, directory));
   }
@@ -104,6 +233,11 @@ export async function checkDocuments(root) {
       }
     }
   }
+
+  const workflowFile = path.join(root, '.specify/workflows/speckit/workflow.yml');
+  if (await exists(workflowFile)) await checkWorkflow(root, errors);
+  else errors.push('.specify/workflows/speckit/workflow.yml: fichier de workflow absent');
+  await checkProjectSkills(root, errors);
 
   const stateFile = path.join(root, '.specify/integration.json');
   if (await exists(stateFile)) {
