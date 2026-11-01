@@ -34,8 +34,9 @@ requires:
     any:
       - codex
       - claude
+      - copilot
 steps:
-${steps.map(([id, action]) => `  - id: ${id}\n    ${action}${action === 'type: gate' ? '\n    options: [approve, reject]\n    on_reject: abort' : ''}`).join('\n')}
+${steps.map(([id, action]) => `  - id: ${id}\n    ${action}${action.startsWith('command:') ? '\n    integration: "{{ inputs.integration }}"' : ''}${action === 'type: gate' ? '\n    options: [approve, reject]\n    on_reject: abort' : ''}`).join('\n')}
 `;
 }
 
@@ -117,6 +118,12 @@ test('accepts angle-wrapped local paths and flags missing task structure', async
   assert(errors[0].includes('T001'));
 });
 
+test('accepts French plan headings used by project features', async (t) => {
+  const { root, put } = await fixture(t);
+  await put('specs/001-demo/plan.md', '# Plan\n## Résumé\n## Vérification de la constitution\n');
+  assert.deepEqual(await checkDocuments(root), []);
+});
+
 test('reports invalid URI encoding and unresolved reference links', async (t) => {
   const { root, put } = await fixture(t);
   await put('docs/invalid.md', '[bad](%ZZ.md)\n[missing][undefined]\n');
@@ -133,20 +140,21 @@ test('fails explicitly when routing syntax is unsupported rather than ignoring i
 
 test('verifies managed files and detects content changes and version drift', async (t) => {
   const { root, put } = await fixture(t);
-  await put('.specify/integration.json', JSON.stringify({ version: '1.2.3', installed_integrations: ['codex', 'claude'] }));
+  await put('.specify/integration.json', JSON.stringify({ version: '1.2.3', default_integration: 'codex', installed_integrations: ['codex', 'claude', 'copilot'] }));
   const file = '.agents/skills/speckit-demo/SKILL.md';
   await put(file, '# Official\n');
   const hash = createHash('sha256').update('# Official\n').digest('hex');
-  for (const integration of ['codex', 'claude', 'speckit']) {
+  for (const integration of ['codex', 'claude', 'copilot', 'speckit']) {
     await put(`.specify/integrations/${integration}.manifest.json`, JSON.stringify({ version: '1.2.3', files: { [file]: hash } }));
   }
   assert.deepEqual(await checkDocuments(root), []);
   await put(file, '# Modified\n');
-  await put('.specify/integration.json', JSON.stringify({ version: '1.2.4', installed_integrations: ['codex'] }));
+  await put('.specify/integration.json', JSON.stringify({ version: '1.2.4', default_integration: 'codex', installed_integrations: ['codex'] }));
   const errors = await checkDocuments(root);
   assert(errors.some((e) => e.includes('officiel modifié')));
   assert(errors.some((e) => e.includes('version attendue')));
   assert(errors.some((e) => e.includes('intégration absente claude')));
+  assert(errors.some((e) => e.includes('intégration absente copilot')));
 });
 
 test('accepts the complete Spec Kit workflow and matching project skills', async (t) => {
@@ -176,6 +184,14 @@ test('requires aborting gates before implementation and convergence', async (t) 
   assert(errors.some((error) => error.includes('approve-implementation') && error.includes('abort')));
 });
 
+test('routes Spec Kit steps through the selected integration', async (t) => {
+  const { root, put } = await fixture(t);
+  await put('.specify/workflows/speckit/workflow.yml',
+    workflowText().replace('    integration: "{{ inputs.integration }}"', '    integration: copilot'));
+  assert((await checkDocuments(root)).some((error) =>
+    error.includes('étape specify') && error.includes("intégration sélectionnée")));
+});
+
 test('rejects automatic merge or deployment steps', async (t) => {
   const { root, put } = await fixture(t);
   await put('.specify/workflows/speckit/workflow.yml', `${workflowText()}\n  - id: publish\n    command: github.merge\n`);
@@ -185,12 +201,46 @@ test('rejects automatic merge or deployment steps', async (t) => {
 
 test('requires both supported integrations and the configured workflow file', async (t) => {
   const { root, put } = await fixture(t);
-  const workflow = workflowText().replace('      - codex\n', '');
-  await put('.specify/workflows/speckit/workflow.yml', workflow);
-  assert((await checkDocuments(root)).some((error) => error.includes('codex')));
+  const missingCopilot = workflowText().replace('      - copilot\n', '');
+  await put('.specify/workflows/speckit/workflow.yml', missingCopilot);
+  assert((await checkDocuments(root)).some((error) => error.includes('copilot')));
 
   await rm(path.join(root, '.specify/workflows/speckit/workflow.yml'));
   assert((await checkDocuments(root)).some((error) => error.includes('workflow.yml')));
+});
+
+test('requires a Copilot manifest alongside the installed integration', async (t) => {
+  const { root, put } = await fixture(t);
+  await put('.specify/integration.json', JSON.stringify({
+    version: '1.2.3',
+    default_integration: 'codex',
+    installed_integrations: ['codex', 'claude', 'copilot'],
+  }));
+  for (const integration of ['codex', 'claude', 'copilot', 'speckit']) {
+    await put(`.specify/integrations/${integration}.manifest.json`, JSON.stringify({
+      version: '1.2.3',
+      files: {},
+    }));
+  }
+  const manifest = path.join(root, '.specify/integrations/copilot.manifest.json');
+  await rm(manifest);
+  assert((await checkDocuments(root)).some((error) => error.includes('copilot.manifest.json') && error.includes('absent')));
+});
+
+test('requires Codex to remain the default integration', async (t) => {
+  const { root, put } = await fixture(t);
+  await put('.specify/integration.json', JSON.stringify({
+    version: '1.2.3',
+    default_integration: 'copilot',
+    installed_integrations: ['codex', 'claude', 'copilot'],
+  }));
+  for (const integration of ['codex', 'claude', 'copilot', 'speckit']) {
+    await put(`.specify/integrations/${integration}.manifest.json`, JSON.stringify({
+      version: '1.2.3',
+      files: {},
+    }));
+  }
+  assert((await checkDocuments(root)).some((error) => error.includes('défaut Codex')));
 });
 
 test('requires the workflow registry version to match its definition', async (t) => {

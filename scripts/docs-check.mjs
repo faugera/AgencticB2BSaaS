@@ -75,7 +75,7 @@ async function checkWorkflow(root, errors) {
       integrations.add(match[1]);
     }
   }
-  for (const integration of ['codex', 'claude']) {
+  for (const integration of ['codex', 'claude', 'copilot']) {
     if (!integrations.has(integration)) errors.push(`${file}: intégration requise absente : ${integration}`);
   }
 
@@ -95,6 +95,10 @@ async function checkWorkflow(root, errors) {
     const command = stepField(step, 'command');
     if (command && /\b(?:merge|deploy|deployment)\b/i.test(command)) {
       errors.push(`${file}: commande de merge/déploiement interdite : ${command}`);
+    }
+    const selectedIntegration = stepField(step, 'integration')?.replace(/^["']|["']$/g, '');
+    if (command?.startsWith('speckit.') && selectedIntegration !== '{{ inputs.integration }}') {
+      errors.push(`${file}: l'étape ${step.id} ne transmet pas l'intégration sélectionnée`);
     }
   }
 
@@ -213,15 +217,15 @@ export async function checkDocuments(root) {
       if (!entry.isDirectory()) continue;
       const directory = `specs/${entry.name}`;
       for (const [name, headings] of [
-        ['spec.md', ['User Scenarios & Testing', 'Requirements', 'Success Criteria']],
-        ['plan.md', ['Summary', 'Constitution Check']], ['tasks.md', []],
+        ['spec.md', [['User Scenarios & Testing'], ['Requirements'], ['Success Criteria']]],
+        ['plan.md', [['Summary', 'Résumé'], ['Constitution Check', 'Vérification de la constitution']]], ['tasks.md', []],
       ]) {
         const file = `${directory}/${name}`;
         if (!await exists(path.join(root, file))) { errors.push(`${file}: fichier obligatoire absent`); continue; }
         const text = await readFile(path.join(root, file), 'utf8');
-        for (const heading of headings) {
-          if (!text.split('\n').some((line) => line.startsWith(`## ${heading}`))) {
-            errors.push(`${file}: section obligatoire ${heading}`);
+        for (const alternatives of headings) {
+          if (!text.split('\n').some((line) => alternatives.some((heading) => line.startsWith(`## ${heading}`)))) {
+            errors.push(`${file}: section obligatoire ${alternatives[0]}`);
           }
         }
         if (name === 'spec.md' && !statuses.has(text.match(/^\*\*Status\*\*:\s*(.*?)\s*$/m)?.[1])) {
@@ -243,7 +247,10 @@ export async function checkDocuments(root) {
   if (await exists(stateFile)) {
     const state = JSON.parse(await readFile(stateFile, 'utf8'));
     if (state.version !== '1.2.3') errors.push('.specify/integration.json: version attendue 1.2.3');
-    for (const integration of ['codex', 'claude', 'speckit']) {
+    if (state.default_integration !== 'codex') {
+      errors.push('.specify/integration.json: intégration par défaut Codex attendue');
+    }
+    for (const integration of ['codex', 'claude', 'copilot', 'speckit']) {
       if (integration !== 'speckit' && !state.installed_integrations.includes(integration)) {
         errors.push(`.specify/integration.json: intégration absente ${integration}`);
       }

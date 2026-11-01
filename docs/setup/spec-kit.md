@@ -1,7 +1,7 @@
 # Spec Kit : contrat de travail
 
 ## Installation reproductible
-Spec Kit 1.2.3 est figé pour Codex et Claude Code. Source officielle :
+Spec Kit 1.2.3 est figé pour Codex, Claude Code et GitHub Copilot. Source officielle :
 [release v1.2.3](https://github.com/github/spec-kit/releases/tag/v1.2.3).
 Le paquet installé a été comparé au wheel officiel PyPI : 377 fichiers identiques ;
 SHA256 945ad1cdfddf3e5cf138259827564af4b41c4ade053e16a4222f1589248d0eaa.
@@ -20,6 +20,43 @@ Sur un nouveau dépôt seulement : init --here --integration codex avec
 Les scripts Bash fonctionnent sous Git Bash Windows et Linux. Les intégrations lisent
 la même [constitution](../../.specify/memory/constitution.md). Les conventions détaillées
 se chargent depuis [l'index](../../.specs/standards/index.yml), pas en recopiant les règles.
+
+### Ajouter l’intégration GitHub Copilot
+
+L’intégration Copilot est officielle dans Spec Kit 1.2.3. Ce dépôt utilise son mode
+skills, qui génère les commandes `/speckit-<commande>` sous `.github/skills/`.
+Le fichier `.gitattributes` conserve ces fichiers en LF pour que leurs empreintes restent
+valides sous Windows avec `core.autocrlf` activé.
+Avant toute installation forcée, examiner `.github/skills/` et
+`.github/hooks/speckit.json` et préserver tout contenu local. Le catalogue Spec Kit
+1.2.3 ne déclare pas Copilot compatible avec une installation multiple ; après revue
+des destinations et autorisation explicite, l’ajout au dépôt s’effectue ainsi :
+
+~~~sh
+specify integration install copilot --script sh --integration-options="--skills" --force
+specify integration status --json
+~~~
+
+L’installation conserve Codex comme défaut et garde Claude. En raison de la déclaration
+amont `multi_install_safe: false`, `integration status --json` peut retourner
+`"status": "error"` avec le constat `unsafe-multi-install`, même si Copilot, Codex et
+Claude sont listés et que les manifestes ne signalent aucun fichier manquant ou modifié.
+Ne pas présenter ce statut comme un succès sans réserve ; vérifier les manifestes et
+empreintes séparément. La présence des skills dans l’IDE ne prouve pas que le moteur
+de workflow peut les dispatcher.
+
+Le dispatch du moteur requiert Copilot CLI installé et authentifié. Pour lancer le
+workflow avec cette intégration, la sélectionner explicitement :
+
+~~~sh
+SPECKIT_COPILOT_ALLOW_ALL_TOOLS=0 specify workflow run .specify/workflows/speckit/workflow.yml --input integration=copilot --input spec="Description de la feature"
+~~~
+
+Le réglage `SPECKIT_COPILOT_ALLOW_ALL_TOOLS=0` empêche l’adaptateur Spec Kit d’ajouter
+`--yolo` à la commande Copilot. Sous PowerShell, définir d’abord
+`$env:SPECKIT_COPILOT_ALLOW_ALL_TOOLS = '0'`. Exécuter un parcours réel uniquement
+dans un checkout jetable, avec revue des artefacts générés et refus explicite à la porte
+avant implémentation pour vérifier l’arrêt du cycle.
 
 ## Parcours obligatoire pour tout changement
 1. `specify` crée les critères et scénarios ; revue explicite de la spec.
