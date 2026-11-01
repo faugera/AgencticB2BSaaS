@@ -1,10 +1,10 @@
 schema_version: "1.0"
 workflow:
   id: "speckit"
-  name: "Full SDD Cycle"
-  version: "1.0.1"
+  name: "Full Spec Kit Cycle"
+  version: "1.1.0"
   author: "GitHub"
-  description: "Runs specify → plan → tasks → implement with review gates"
+  description: "Runs the governed Spec Kit cycle through implementation and convergence with review gates"
 
 requires:
   # 0.8.5 is the first release with engine-side resolution of the
@@ -12,17 +12,15 @@ requires:
   # as a literal integration key and fail at dispatch.
   speckit_version: ">=0.8.5"
   integrations:
-    # The four commands below (specify, plan, tasks, implement) are core
-    # spec-kit commands provided by every integration. The list here is an
+    # The commands below are core Spec Kit commands. The list here is an
     # advisory, non-exhaustive compatibility hint following the documented
-    # ``any: [...]`` schema -- it is NOT a closed set. The workflow runs
-    # against any integration the project was initialized with, including
-    # ones not listed below, as long as that integration provides the four
-    # core commands referenced in ``steps``.
+    # ``any: [...]`` schema -- it is NOT a closed set. The workflow runs with
+    # Codex and Claude, the integrations installed by this repository.
     any:
       - "alquimia"
       - "claude"
       - "copilot"
+      - "codex"
       - "gemini"
       - "opencode"
 
@@ -49,6 +47,18 @@ steps:
     options: [approve, reject]
     on_reject: abort
 
+  - id: clarify
+    command: speckit.clarify
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: review-clarifications
+    type: gate
+    message: "Review the clarified specification before planning."
+    options: [approve, reject]
+    on_reject: abort
+
   - id: plan
     command: speckit.plan
     integration: "{{ inputs.integration }}"
@@ -61,14 +71,47 @@ steps:
     options: [approve, reject]
     on_reject: abort
 
+  # Manual optional action: run speckit.checklist here only when feature risk
+  # justifies a separate requirements-quality checklist. It is not an engine step.
+
   - id: tasks
     command: speckit.tasks
     integration: "{{ inputs.integration }}"
     input:
       args: "{{ inputs.spec }}"
 
+  - id: review-tasks
+    type: gate
+    message: "Review task coverage and dependencies before analyzing the feature."
+    options: [approve, reject]
+    on_reject: abort
+
+  - id: analyze
+    command: speckit.analyze
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: approve-implementation
+    type: gate
+    message: "Review the analysis and explicitly approve implementation."
+    options: [approve, reject]
+    on_reject: abort
+
   - id: implement
     command: speckit.implement
     integration: "{{ inputs.integration }}"
     input:
       args: "{{ inputs.spec }}"
+
+  - id: converge
+    command: speckit.converge
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "{{ inputs.spec }}"
+
+  - id: review-convergence
+    type: gate
+    message: "Review remaining tasks and verification limits before closing this cycle."
+    options: [approve, reject]
+    on_reject: abort

@@ -3,7 +3,8 @@
   "integration_state_schema": 1,
   "installed_integrations": [
     "codex",
-    "claude"
+    "claude",
+    "copilot"
   ],
   "integration_settings": {
     "codex": {
@@ -16,6 +17,14 @@
     },
     "claude": {
       "script": "sh",
+      "invoke_separator": "-"
+    },
+    "copilot": {
+      "script": "sh",
+      "raw_options": "--skills",
+      "parsed_options": {
+        "skills": true
+      },
       "invoke_separator": "-"
     }
   },
