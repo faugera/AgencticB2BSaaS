@@ -1,0 +1,19 @@
+{
+  "docs/architecture.md": "de4e790a8922c5d784bf6ec43cc5b9c4aae69f83ff421724b3fb059d4188e2e7",
+  "docs/data-model.md": "070f0616b222983da48b6fab8ec0397acb10e676cb4da2c1ea0d3cfd1990ecb1",
+  "apps/api/migrations/0001_identity.sql": "30348881f2f911da218b42467eacca79f12801ec8da549d871b9b78fdf88ab18",
+  "apps/api/migrations/0002_business.sql": "2b29d31b271c02fcdada79d2497c0b9a4f305e8f0072ef0e9d3fcf648371d73f",
+  "apps/api/migrations/0003_mfa_index.sql": "2dbdba5cabbdff0dc8ccbabdf60055d8e6ec259acc5709ca2fc6d8441ac7dece",
+  "apps/api/migrations/0004_workspace_administration.sql": "68657911f42c01fed2de738c6d6484ce6ba7a79544bbf7beae4456dbaa099452",
+  "apps/api/migrations/0005_invitation_delivery.sql": "874edfe506a17cd0c5bad3056d00ae096dabd071117443e2fe4e2bff3dc3c67a",
+  "apps/api/migrations/0006_workspace_scope.sql": "bfea07c7742a6bfdfe9691fd938902cd16fad3e513aec7985cbb2d33ff34da14",
+  "apps/api/migrations/0007_enabled_administrator.sql": "0c5bc9ab7cca96132dd3baedea5b5136922e1066ec4d0cfd2fdb98917fa9d666",
+  "apps/api/migrations/0008_access_requests.sql": "b2dcd58d2a5a2fbccd1aba5803760f6aac0a1dc4a9958f28f54f31cfe096420a",
+  "apps/api/migrations/0009_ui_preferences.sql": "71e33cf90f27f400fed4b855ef8da84eb14571532dd06d6f3095b37981ed57ba",
+  "apps/api/migrations/0010_audit_log.sql": "56b82920756cfd3b2b4b8dffb536f4cf79e4dc657312da8ebddc1cb5faf04e83",
+  "apps/api/migrations/0011_lifecycle.sql": "3ad5af17af153f64eea6f46f093462a3b3e4b4af626ae94d190075ba4ae0aee0",
+  "apps/api/migrations/0012_access_request_pagination.sql": "81cedcc936f1fcdc9d47c5ec41067a85417412fe27d93b47f664f002c7979f1b",
+  "apps/api/migrations/0013_profile_metadata.sql": "22db30dda1579bc269d4b5725dfcd2528c83bf91e1269d1df16df91308324545",
+  "apps/api/migrations/0014_organizations_rbac.sql": "2c126aadc1d6b35e9a74f9b65da9e6d6e38cb18b22da8006d2fba16f05111b72",
+  "apps/api/migrations/0015_unified_audit.sql": "169893ae35e0a16f6959a64f47934ae1ffb2e25cba6322e83a9f77d60f9b6086"
+}

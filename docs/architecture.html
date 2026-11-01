@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architecture et données · AgencticB2BSaaS</title>
+  <style>
+    :root { color-scheme:light; --paper:#f7f7fa; --surface:#fff; --ink:#292b38; --muted:#606474; --rule:#dcdde5; --accent:#4d46b7; --tint:#efeffb; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    main { max-width:1320px; margin:auto; padding:48px 32px 72px; }
+    header { max-width:860px; margin-bottom:38px; }
+    .eyebrow { color:var(--accent); font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { font-size:clamp(32px,5vw,48px); line-height:1.12; letter-spacing:-.035em; margin:12px 0; }
+    h2 { font-size:26px; line-height:1.2; margin:8px 0; }
+    h3 { font-size:16px; margin:0 0 6px; }
+    p { margin:0; } header p, .intro, .note { color:var(--muted); }
+    nav { display:flex; flex-wrap:wrap; gap:12px 24px; margin-top:24px; }
+    a { color:var(--accent); text-underline-offset:3px; }
+    a:focus-visible, .canvas:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+    section { margin-top:48px; } .intro { max-width:850px; margin:0 0 18px; }
+    .canvas { overflow:auto; background:var(--surface); border:1px solid var(--rule); border-radius:8px; }
+    svg { display:block; width:100%; min-width:1200px; height:auto; }
+    .box { fill:#fff; stroke:#d2d4de; } .focus { fill:var(--tint); stroke:#aaa7da; }
+    .zone { fill:#f9f9fc; stroke:#e2e3ea; } .line { fill:none; stroke:#888c9a; stroke-width:1.5; }
+    .name { fill:#292b38; font-size:17px; font-weight:650; } .small { fill:#555b69; font-size:13px; }
+    .label { fill:#555b69; font-size:12px; font-weight:650; letter-spacing:.06em; }
+    .note { border-left:3px solid #aaa7da; margin-top:16px; padding:2px 0 2px 16px; max-width:1000px; }
+    .details { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:20px; margin-top:24px; }
+    .details p { color:var(--muted); font-size:14px; }
+    details { margin-top:16px; } summary { cursor:pointer; color:var(--accent); } details p, details li { color:var(--muted); }
+    code { font: .9em ui-monospace,Consolas,monospace; overflow-wrap:anywhere; }
+    footer { border-top:1px solid var(--rule); margin-top:48px; padding-top:20px; color:var(--muted); font-size:13px; }
+    @media(max-width:600px) { main { padding:28px 16px 48px; } section { margin-top:36px; } }
+  </style>
+</head>
+<body><main>
+  <header>
+    <div class="eyebrow">AgencticB2BSaaS · architecture</div>
+    <h1>Une plateforme, des clients isolés.</h1>
+    <p>Vue du code de cette branche : architecture applicative, puis modèle de données B2B, selon les migrations 0001 à 0015. Sa fusion et l'application des migrations restent à vérifier. Aucune base déployée n'a été inspectée.</p>
+    <nav aria-label="Sections"><a href="#architecture">Architecture</a><a href="#donnees">Base de données</a><a href="#maintenance">Sources et maintenance</a></nav>
+  </header>
+  <section id="architecture">
+    <div class="eyebrow">01 / Vue d'ensemble</div>
+    <h2>Du navigateur aux données</h2>
+    <p class="intro">Le monolithe modulaire vérifie chaque opération côté serveur et établit un contexte transactionnel avant l'accès aux données.</p>
+    <div class="canvas" tabindex="0" role="region" aria-label="Architecture applicative, défilement horizontal possible">
+      <svg viewBox="0 0 1200 400" role="img" aria-labelledby="arch-title arch-desc">
+        <title id="arch-title">Architecture applicative</title><desc id="arch-desc">Navigateur React vers API Fastify, identité Better Auth et PostgreSQL. Les emails SMTP partent après la transaction.</desc>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#888c9a"/></marker></defs>
+        <rect class="zone" x="286" y="36" width="572" height="310" rx="8"/><text class="label" x="310" y="62">SERVEUR · MONOLITHE MODULAIRE</text>
+        <path class="line" d="M244 155H318" marker-end="url(#arrow)"/><path class="line" d="M558 155H594" marker-end="url(#arrow)"/>
+        <path class="line" d="M824 155H938" marker-end="url(#arrow)"/><path class="line" d="M706 222V253" marker-end="url(#arrow)"/>
+        <rect class="box" x="32" y="103" width="212" height="104" rx="6"/><text class="name" x="50" y="135">Navigateur</text><text class="small" x="50" y="160">React · Vite · Brume</text><text class="small" x="50" y="182">App / admin · FR / EN</text>
+        <rect class="focus" x="318" y="103" width="240" height="104" rx="6"/><text class="name" x="336" y="135">API Fastify</text><text class="small" x="336" y="160">Identité et autorisations</text><text class="small" x="336" y="182">Profil · rôles · audit</text>
+        <rect class="box" x="594" y="103" width="230" height="119" rx="6"/><text class="name" x="612" y="135">Transaction métier</text><text class="small" x="612" y="160">Contexte acteur / tenant</text><text class="small" x="612" y="182">Permissions · audit atomique</text><text class="small" x="612" y="204">SQL via pg · RLS</text>
+        <rect class="box" x="594" y="253" width="230" height="62" rx="6"/><text class="name" x="612" y="279">SMTP</text><text class="small" x="612" y="299">Envoi après commit</text>
+        <rect class="focus" x="938" y="103" width="230" height="104" rx="6"/><text class="name" x="956" y="135">PostgreSQL 17</text><text class="small" x="956" y="160">Identité · métier · audit</text><text class="small" x="956" y="182">Fonctions privées · RLS</text>
+        <text class="small" x="318" y="373">Better Auth : identité, sessions et MFA facultative · Pas de worker / outbox dans cette version.</text>
+      </svg>
+    </div>
+    <details><summary>Description textuelle de l'architecture</summary><p>Le navigateur React/Vite présente les portails app et admin, en français et en anglais. Il appelle l'API Fastify, qui contrôle identité et autorisations, profil, rôles et audit. L'API ouvre une transaction métier avec contexte acteur et tenant ; les permissions, l'audit atomique, les fonctions SQL et la RLS protègent l'accès à PostgreSQL 17. L'envoi SMTP intervient après le commit. Better Auth gère identité et sessions ; MFA facultative. Aucun worker ou outbox n'est représenté.</p></details>
+    <p class="note">Une session ne suffit pas à autoriser une opération : le serveur revalide la portée et les permissions. Le client ne constitue pas une frontière de sécurité.</p>
+  </section>
+  <section id="donnees">
+    <div class="eyebrow">02 / Modèle de données</div>
+    <h2>Client, tenants et espaces</h2>
+    <p class="intro">Relations principales du code, simplifiées pour la lecture. Les liaisons représentent les clés étrangères indiquées ; les tables techniques et certaines contraintes sont omises.</p>
+    <div class="canvas" tabindex="0" role="region" aria-label="Modèle de données, défilement horizontal possible">
+      <svg viewBox="0 0 1200 672" role="img" aria-labelledby="db-title db-desc">
+        <title id="db-title">Principales tables PostgreSQL</title><desc id="db-desc">Une organisation possède plusieurs tenants, chaque tenant plusieurs espaces. Les acteurs ont des adhésions aux tenants et des rôles attribués ; le journal actif conserve les identifiants historiques sans clé étrangère.</desc>
+        <path class="line" d="M240 130H320"/><path class="line" d="M544 130H624"/>
+        <path class="line" d="M432 192V272"/><path class="line" d="M736 192V272"/>
+        <path class="line" d="M240 333H320"/><path class="line" d="M544 333H624"/>
+        <rect class="focus" x="24" y="68" width="216" height="124" rx="6"/><text class="label" x="40" y="91">BUSINESS</text><text class="name" x="40" y="115">organizations</text><text class="small" x="40" y="140">id · name · slug</text><text class="small" x="40" y="162">1 organisation = 1 client</text>
+        <rect class="box" x="320" y="68" width="224" height="124" rx="6"/><text class="label" x="336" y="91">BUSINESS</text><text class="name" x="336" y="115">tenants</text><text class="small" x="336" y="140">id · organization_id</text><text class="small" x="336" y="162">name · slug · billing_email</text>
+        <rect class="box" x="624" y="68" width="224" height="124" rx="6"/><text class="label" x="640" y="91">BUSINESS</text><text class="name" x="640" y="115">workspaces</text><text class="small" x="640" y="140">id · tenant_id · name</text><text class="small" x="640" y="162">visibility · archived_at</text>
+        <rect class="box" x="24" y="272" width="216" height="124" rx="6"/><text class="label" x="40" y="295">AUTHORIZATION_PRIVATE</text><text class="name" x="40" y="319">actors</text><text class="small" x="40" y="344">id · identity_id</text><text class="small" x="40" y="366">organization_id · enabled</text>
+        <rect class="box" x="320" y="272" width="224" height="124" rx="6"/><text class="label" x="336" y="295">AUTHORIZATION_PRIVATE</text><text class="name" x="336" y="319">memberships</text><text class="small" x="336" y="344">tenant_id · actor_id</text><text class="small" x="336" y="366">status · poste · département</text>
+        <rect class="box" x="624" y="272" width="224" height="124" rx="6"/><text class="label" x="640" y="295">AUTHORIZATION_PRIVATE</text><text class="name" x="640" y="319">workspace_members</text><text class="small" x="640" y="344">workspace_id · actor_id</text><text class="small" x="640" y="366">tenant_id · rôle historique</text>
+        <rect class="box" x="928" y="272" width="248" height="124" rx="6"/><text class="label" x="944" y="295">AUTHORIZATION_PRIVATE</text><text class="name" x="944" y="319">role_assignments</text><text class="small" x="944" y="344">actor_id · role_id</text><text class="small" x="944" y="366">organization / tenant / workspace</text>
+        <path class="line" d="M1052 396V462"/>
+        <rect class="box" x="928" y="462" width="248" height="124" rx="6"/><text class="label" x="944" y="485">AUTHORIZATION_PRIVATE</text><text class="name" x="944" y="509">role_catalog</text><text class="small" x="944" y="534">scope · level · permissions</text><text class="small" x="944" y="556">builtin · delegable</text>
+        <rect class="focus" x="24" y="462" width="520" height="124" rx="6"/><text class="label" x="40" y="485">BUSINESS · JOURNAL ACTIF</text><text class="name" x="40" y="509">audit_logs</text><text class="small" x="40" y="534">actor_id · organization_id · tenant_id · action · target</text><text class="small" x="40" y="556">created_at · payload · legacy_id — identifiants sans FK</text>
+        <text class="small" x="24" y="635">Clés composites et portées vérifiées par PostgreSQL · Le journal privé historique est archivé depuis 0015.</text>
+      </svg>
+    </div>
+    <details><summary>Description textuelle des tables et relations</summary>
+      <ul>
+        <li><code>business.organizations</code> : identifiant, nom et slug du client ; chaque tenant référence une organisation.</li>
+        <li><code>business.tenants</code> : identifiant, organisation, nom, slug et email de facturation ; chaque workspace et chaque adhésion référencent un tenant.</li>
+        <li><code>business.workspaces</code> : identifiant, tenant, nom, visibilité et date d'archivage ; les membres du workspace le référencent.</li>
+        <li><code>authorization_private.actors</code> : identifiant, identité, organisation et état activé ; les adhésions référencent l'acteur.</li>
+        <li><code>authorization_private.memberships</code> : tenant, acteur, statut, poste et département ; les membres de workspace référencent l'adhésion.</li>
+        <li><code>authorization_private.workspace_members</code> : workspace, acteur, tenant et rôle historique.</li>
+        <li><code>authorization_private.role_assignments</code> : acteur, rôle et portée organisation, tenant ou workspace ; chaque attribution référence le catalogue.</li>
+        <li><code>authorization_private.role_catalog</code> : portée, niveau, permissions, caractère intégré et délégable.</li>
+        <li><code>business.audit_logs</code> : journal actif contenant identifiants d'acteur, organisation et tenant, action, cible, date, données et identifiant historique, sans clés étrangères vers ces identifiants.</li>
+      </ul>
+      <p>Le schéma simplifie les clés composites et les contraintes. Le journal privé historique est archivé depuis la migration 0015.</p>
+    </details>
+    <div class="details">
+      <div><h3>Organisation → tenants</h3><p>Un utilisateur ordinaire est rattaché à un seul client et peut être explicitement membre de plusieurs de ses tenants.</p></div>
+      <div><h3>Accès et rôles</h3><p>Une adhésion explicite doit être active. Les rôles se cumulent dans leur portée ; la hiérarchie et les droits sont contrôlés côté serveur.</p></div>
+      <div><h3>Identité et profil</h3><p><code>identity.user</code> conserve l'identité et les noms éventuellement absents ; une invitation email ne fabrique pas de prénom ni de nom.</p></div>
+    </div>
+    <p class="note">L'organisation-admin bénéficie d'un accès transversal contrôlé à sa seule organisation ; une adhésion explicitement inactive bloque le tenant concerné.</p>
+  </section>
+  <section id="maintenance">
+    <div class="eyebrow">03 / Références</div><h2>Sources et maintenance</h2>
+    <p>Références : <a href="architecture.md">architecture</a>, <a href="data-model.md">modèle de données</a>, <a href="../apps/api/migrations/">migrations SQL</a>. La procédure de revue et les limites du contrôle figurent dans <a href="setup/architecture-diagram.md">le guide de maintenance</a>.</p>
+  </section>
+  <footer>Vue du code versionné, pas une certification de sécurité ni un inventaire de production. MFA facultative en V0 ; aucun runtime IA ajouté.</footer>
+</main></body></html>
