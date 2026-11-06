@@ -12,7 +12,7 @@ for (const locale of ['fr', 'en'] as const) {
       return route.fulfill({ json: path === '/api/me'
         ? { user: { id: 'op', name: 'Operator', email: 'operator@example.test' }, access: { platformRole: 'super_admin', tenantRole: null } }
         : path === '/api/tenants' ? [{ id: tenant, name: tenantName }, { id: '10000000-0000-4000-8000-000000000003', name: tenantName }]
-          : path === '/api/workspaces' ? [space] : path === '/api/auth/get-session' ? null : [] });
+          : path === '/api/workspaces' ? { items: [space], nextCursor: null } : path === '/api/auth/get-session' ? null : [] });
     });
     await page.goto('/admin');
     await openSidebar(page);

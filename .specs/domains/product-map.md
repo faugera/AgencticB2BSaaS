@@ -9,7 +9,7 @@ UNKNOWN état non vérifié. Aucun statut ne certifie un déploiement ou une con
 | --- | --- | --- |
 | Identité sur invitation, vérification, récupération et sessions | IMPLEMENTED | apps/api/src/auth/service.ts ; Better Auth |
 | TOTP et récupération MFA facultative, y compris super-admin | IMPLEMENTED | Même service ; aucune obligation MFA V0 |
-| Tenants et invitations par administrateurs autorisés | IMPLEMENTED | apps/api/src/business/routes.ts ; plusieurs tenants explicitement attribués dans un seul client |
+| Tenants et invitations par administrateurs autorisés | IMPLEMENTED | apps/api/src/business/routes.ts ; outbox chiffrée des invitations métier et pages bornées ; validation PostgreSQL/SMTP non exécutée |
 | Organisations clients distinctes, tenants multiples et rôles cumulables | IMPLEMENTED | Migration0014, catalogue global et pyramide contrôlée |
 | Profil structuré et metadata tenant/workspace | IMPLEMENTED | Migration0013 ; pas de paiement ni nouvel onboarding |
 | Workspaces privés/visibles et accès des membres | IMPLEMENTED | Routes métier, RLS et migrations 0002 à 0007 |

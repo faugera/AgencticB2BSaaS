@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { DesignGallery } from '../ui/DesignGallery';
 import { Button } from '../ui/primitives';
 import { api } from '../http';
+import { guideSchema } from '../contracts/api';
 import { useLanguage } from '../i18n';
 
 type Guide = { fr: { title: string; text: string }[]; en: { title: string; text: string }[] };
@@ -12,7 +13,7 @@ export function Documentation() {
   const [tab, setTab] = useState<'guide' | 'components'>('guide');
   useEffect(() => {
     let active = true;
-    void api<Guide>('/api/platform/docs').then((value) => { if (active) setGuide(value); }).catch(() => { if (active) setError(true); });
+    void api('/api/platform/docs', guideSchema).then((value) => { if (active) setGuide(value); }).catch(() => { if (active) setError(true); });
     return () => { active = false; };
   }, []);
   return <section className="panel documentation-panel">

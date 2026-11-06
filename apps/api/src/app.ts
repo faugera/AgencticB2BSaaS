@@ -14,6 +14,11 @@ import {
   createBusinessPool,
 } from './business/store.js';
 import { registerBusinessRoutes } from './business/routes.js';
+import { createOutboxWorker } from './business/jobs/outbox-worker.js';
+import {
+  createRateLimitStore,
+  RateLimitStoreUnavailableError,
+} from './business/rate-limit-store.js';
 
 export function buildApp({
   logger = false,
@@ -49,6 +54,17 @@ export function buildApp({
   app.setErrorHandler<FastifyError>((error, request, reply) => {
     if (error instanceof AccessError)
       return reply.code(error.status).send({ code: error.code });
+    if (error instanceof RateLimitStoreUnavailableError) {
+      request.log.error(
+        {
+          event: 'rate_limit.store_unavailable',
+          requestId: request.id,
+          route: request.routeOptions.url,
+        },
+        'Shared rate limit store unavailable',
+      );
+      return reply.code(503).send({ code: 'RATE_LIMIT_UNAVAILABLE' });
+    }
     const sqlCode = typeof error.code === 'string' ? error.code : '';
     if (error.validation)
       return reply.code(400).send({ code: 'INVALID_REQUEST' });
@@ -62,7 +78,11 @@ export function buildApp({
       return reply.code(400).send({ code: 'INVALID_REQUEST' });
     // Neither SQL parameters nor Better Auth/SMTP errors belong in logs/responses.
     request.log.error(
-      { requestId: request.id, route: request.routeOptions.url },
+      {
+        event: 'api.request_failed',
+        requestId: request.id,
+        route: request.routeOptions.url,
+      },
       'Request failed',
     );
     return reply
@@ -84,13 +104,26 @@ export function buildApp({
     const business = authConfig.businessDatabaseURL
       ? createBusinessPool(authConfig.businessDatabaseURL)
       : undefined;
+    const outboxWorker =
+      business && authConfig.outboxEncryption
+        ? createOutboxWorker(business, authConfig, mailer.send, app.log)
+        : undefined;
     registerAuthRoutes(app, auth, !!business);
-    if (business) void app.register(async (scope) => {
-      // Await installation before route declaration: rate limiting uses onRoute.
-      // Encapsulation leaves Better Auth's SDK/database limits untouched.
-      await scope.register(rateLimit,{global:true,max:120,timeWindow:'1 minute',hook:'preHandler'});
-      registerBusinessRoutes(scope,auth,business,authConfig,mailer.send);
-    });
+    if (business)
+      void app.register(async (scope) => {
+        // Encapsulation leaves Better Auth's database-backed limits untouched.
+        await scope.register(rateLimit, {
+          global: true,
+          max: 120,
+          timeWindow: '1 minute',
+          hook: 'preHandler',
+          skipOnError: false,
+          keyGenerator: (request) =>
+            `${request.routeOptions.url}:${request.ip}`,
+          store: createRateLimitStore(business, authConfig.secret),
+        });
+        registerBusinessRoutes(scope, auth, business, authConfig);
+      });
     ready = async () => {
       await assertRuntimePrivileges(pool);
       await pool.query('SELECT 1 FROM identity."user" LIMIT 1');
@@ -101,8 +134,10 @@ export function buildApp({
     app.addHook('onReady', async () => {
       await assertRuntimePrivileges(pool);
       if (business) await assertRuntimePrivileges(business);
+      outboxWorker?.start();
     });
     app.addHook('onClose', async () => {
+      await outboxWorker?.stop();
       mailer.close();
       await Promise.all([pool.end(), business?.end()]);
     });

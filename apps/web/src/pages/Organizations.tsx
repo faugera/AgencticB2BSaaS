@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import type { OrganizationSummary, TenantSummary } from '@enterprise/shared';
 import { api } from '../http';
+import {
+  organizationSummaryListSchema,
+  tenantSummaryListSchema,
+} from '../contracts/api';
 import { useLanguage } from '../i18n';
 import { Alert, Button, EmptyState, Field, Input, Select } from '../ui/primitives';
 export function Organizations({ superAdmin }: { superAdmin: boolean }) {
  const { t } = useLanguage(); const [organizations, setOrganizations] = useState<OrganizationSummary[] | null>(null); const [tenants, setTenants] = useState<TenantSummary[]>([]);
  const [organizationId, setOrganizationId] = useState(''); const selectedOrganization = organizations?.find((organization) => organization.id === organizationId);
  const [error, setError] = useState(false); const [busy, setBusy] = useState(false); const [saved, setSaved] = useState(false); const [revision, setRevision] = useState(0);
- useEffect(() => { let active = true; void Promise.all([api<OrganizationSummary[]>('/api/organizations'), api<TenantSummary[]>('/api/tenants')]).then(([clients, directory]) => { if (active) { setOrganizations(clients); setTenants(directory); } }).catch(() => { if (active) setError(true); }); return () => { active = false; }; }, [revision]);
+ useEffect(() => { let active = true; void Promise.all([api('/api/organizations', organizationSummaryListSchema), api('/api/tenants', tenantSummaryListSchema)]).then(([clients, directory]) => { if (active) { setOrganizations(clients); setTenants(directory); } }).catch(() => { if (active) setError(true); }); return () => { active = false; }; }, [revision]);
  function submit(element: HTMLFormElement, path: string, body: object) { setBusy(true); setError(false); setSaved(false); void api(path, body).then(() => { element.reset(); if (element.elements.namedItem('organizationId')) setOrganizationId(''); setSaved(true); setRevision((value) => value + 1); }).catch(() => setError(true)).finally(() => setBusy(false)); }
  return <section className="panel" aria-busy={busy}><h2>{t('organizations')}</h2>
   {error && <Alert tone="danger">{t('unable_to_complete_this_request_try_again_later')}</Alert>}{saved && <Alert tone="success">{t('changes_saved')}</Alert>}

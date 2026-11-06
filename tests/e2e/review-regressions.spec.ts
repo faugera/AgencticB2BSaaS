@@ -20,7 +20,7 @@ async function fixture(page: Page, locale: string) {
     if (path === '/api/access-requests') return route.fulfill({ json: url.searchParams.has('before')
       ? [{ id: id(101), first_name: 'Older', last_name: 'Candidate', email: 'older@example.test', status: 'pending', created_at: '2026-01-01T00:00:00Z' }]
       : Array.from({ length: 100 }, (_, index) => ({ id: id(index + 1), first_name: 'Candidate', last_name: String(index + 1), email: `candidate${index + 1}@example.test`, status: approved && index === 0 ? 'approved' : 'pending', created_at: '2026-10-24T00:00:00Z' })) });
-    if (path === '/api/invitations') return route.fulfill({ json: approved ? [{ id: id(500), email: 'candidate1@example.test', role: 'member', delivery: 'failed', accepted_at: null, revoked_at: null }] : [] });
+    if (path === '/api/invitations') return route.fulfill({ json: { items: approved ? [{ id: id(500), email: 'candidate1@example.test', role: 'member', expires_at: '2026-11-06T00:00:00.000Z', delivery: 'failed', accepted_at: null, revoked_at: null }] : [], nextCursor: null } });
     return route.fulfill({ json: path === '/api/auth/get-session' ? null : [] });
   });
 }

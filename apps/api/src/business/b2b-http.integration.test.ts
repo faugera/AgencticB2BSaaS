@@ -14,7 +14,7 @@ const migrationURL = process.env.AUTH_TEST_MIGRATION_DATABASE_URL;
 if (!databaseURL || !migrationURL || !new URL(databaseURL).pathname.startsWith('/enterprise_auth_test'))
   throw new Error('Explicit disposable PostgreSQL database required');
 const businessURL = databaseURL.replace('identity_runtime:', 'business_runtime:');
-const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
+const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, outboxEncryption: { activeKeyId: 'test-v1', keys: { 'test-v1': randomBytes(32).toString('base64url') } }, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
 const operator = new Pool({ connectionString: migrationURL });
 const identity = createAuthPool(databaseURL);
 const business = createBusinessPool(businessURL);
@@ -66,7 +66,7 @@ describe('Contrats B2B HTTP avec sessions et PostgreSQL réels', () => {
     for (const [index, organizationIndex] of [0, 0, 1].entries()) {
       const created = await write('POST', '/api/organizations/' + at(organizations, organizationIndex) + '/tenants', { name: 'HTTP tenant ' + index, adminEmail: `http-admin-${randomBytes(8).toString('hex')}@example.test` });
       expect(created.statusCode).toBe(201);
-      expect(created.json().delivery).toBe('sent');
+      expect(created.json().delivery).toBe('pending');
       tenants.push(created.json<{ id: string }>().id);
     }
     await operator.query("INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'member'),($1,$3,'member'),($4,$2,'tenant_admin')", [account(1).actor, at(tenants, 0), at(tenants, 1), account(2).actor]);

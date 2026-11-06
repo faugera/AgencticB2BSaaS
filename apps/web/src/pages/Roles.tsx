@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react';
 import type { AccessContext, RoleDefinition, RolePerson, TenantSummary, OrganizationSummary, Workspace } from '@enterprise/shared';
 import { api } from '../http';
+import {
+  organizationSummaryListSchema,
+  roleDefinitionListSchema,
+  rolePersonListSchema,
+  tenantSummaryListSchema,
+  workspacePageSchema,
+} from '../contracts/api';
 import { useLanguage } from '../i18n';
 import { Alert, Badge, EmptyState, Field, Select } from '../ui/primitives';
+import { PageNavigation } from '../ui/PageNavigation';
 import { RoleEditor } from './RoleEditor';
 import { RoleAssignments } from './RoleAssignments';
 export function Roles({ access, query }: { access: AccessContext; query: string }) {
  const { t } = useLanguage(); const [roles, setRoles] = useState<RoleDefinition[] | null>(null); const [people, setPeople] = useState<RolePerson[]>([]);
  const [tenants, setTenants] = useState<TenantSummary[]>([]); const [organizations, setOrganizations] = useState<OrganizationSummary[]>([]); const [spaces, setSpaces] = useState<Workspace[]>([]);
+ const [workspaceCursor, setWorkspaceCursor] = useState<string | null>(null); const [spacesBusy, setSpacesBusy] = useState(false);
  const [error, setError] = useState(false); const [busy, setBusy] = useState(false); const [saved, setSaved] = useState(false); const [revision, setRevision] = useState(0);
  const [workspaceId, setWorkspaceId] = useState('');
  const superAdmin = access.platformRole === 'super_admin'; const generalAssignment = superAdmin || Boolean(access.permissions?.includes('roles.assign'));
@@ -17,16 +26,33 @@ export function Roles({ access, query }: { access: AccessContext; query: string 
  const tenantId = new URLSearchParams(query).get('tenantId') || access.tenantId;
  useEffect(() => {
   let active = true;
-  void Promise.all([api<RoleDefinition[]>('/api/roles'), api<TenantSummary[]>('/api/tenants'), api<OrganizationSummary[]>('/api/organizations'), api<Workspace[]>('/api/workspaces' + query)]).then(([catalog, directory, clients, workspaces]) => { if (active) { setRoles(catalog); setTenants(directory); setOrganizations(clients); setSpaces(workspaces); } }).catch(() => { if (active) setError(true); });
+  void Promise.all([api('/api/roles', roleDefinitionListSchema), api('/api/tenants', tenantSummaryListSchema), api('/api/organizations', organizationSummaryListSchema), api('/api/workspaces' + query, workspacePageSchema)]).then(([catalog, directory, clients, workspacePage]) => { if (active) { setRoles(catalog); setTenants(directory); setOrganizations(clients); setSpaces(workspacePage.items); setWorkspaceCursor(workspacePage.nextCursor); } }).catch(() => { if (active) setError(true); });
   return () => { active = false; };
  }, [query, revision]);
  useEffect(() => {
   if (!tenantId || (!generalAssignment && !workspaceId)) return;
   let active = true; const params = new URLSearchParams(query);
   if (!generalAssignment) params.set('workspaceId', workspaceId);
-  void api<RolePerson[]>('/api/role-assignments?' + params.toString()).then((members) => { if (active) setPeople(members); }).catch(() => { if (active) setError(true); });
+  void api('/api/role-assignments?' + params.toString(), rolePersonListSchema).then((members) => { if (active) setPeople(members); }).catch(() => { if (active) setError(true); });
   return () => { active = false; };
  }, [query, generalAssignment, workspaceId, revision, tenantId]);
+ async function loadMoreWorkspaces() {
+  if (!workspaceCursor) return { count: 0, hasMore: false };
+  const params = new URLSearchParams(query);
+  params.set('before', workspaceCursor);
+  setSpacesBusy(true);
+  try {
+   const page = await api('/api/workspaces?' + params.toString(), workspacePageSchema);
+   setSpaces((current) => [...current, ...page.items]);
+   setWorkspaceCursor(page.nextCursor);
+   return { count: page.items.length, hasMore: page.nextCursor !== null };
+  } catch (loadError) {
+   setError(true);
+   throw loadError;
+  } finally {
+   setSpacesBusy(false);
+  }
+ }
  function action(run: () => Promise<unknown>) { setBusy(true); setError(false); setSaved(false); void run().then(() => { setSaved(true); setRevision((value) => value + 1); }).catch(() => setError(true)).finally(() => setBusy(false)); }
  return <div aria-busy={busy}>
   {error && <Alert tone="danger">{t('unable_to_complete_this_request_try_again_later')}</Alert>}{saved && <Alert tone="success">{t('changes_saved')}</Alert>}
@@ -34,11 +60,8 @@ export function Roles({ access, query }: { access: AccessContext; query: string 
    <ul className="session-list">{roles.map((role) => <li key={role.id}><strong>{role.name}</strong> <span className="ui-help">({role.id})</span> <Badge>{t(role.builtin ? 'builtin_role' : 'custom_role')}</Badge> {role.archivedAt && <Badge>{t('archived_role')}</Badge>}<p>{t(({ organization: 'scope_organization', tenant: 'scope_tenant', workspace: 'scope_workspace' } as const)[role.scope])} · {role.level} · {role.delegable ? t('delegable') : '—'}</p><p>{role.permissions.map((permission) => t(permission)).join(', ') || '—'}</p>{superAdmin && !role.builtin && <details><summary>{t('edit_role')}</summary><RoleEditor key={role.updatedAt} role={role} busy={busy} action={action} /></details>}</li>)}</ul>
    {superAdmin && <details><summary>{t('create_role')}</summary><RoleEditor busy={busy} action={action} /></details>}
   </section>}
-  {!generalAssignment && canAssign && <Field label={t('context_workspace')} help={selectedSpace ? `${selectedSpace.name} (${selectedSpace.id})` : ''}>{(props) => <Select {...props} value={workspaceId} onChange={(event) => { setWorkspaceId(event.target.value); setPeople([]); }}><option value="">{t('select_workspace')}</option>{assignableSpaces.map((space) => <option key={space.id} value={space.id}>{space.name} ({space.id})</option>)}</Select>}</Field>}
+  {!generalAssignment && (canAssign || workspaceCursor !== null) && <><Field label={t('context_workspace')} help={selectedSpace ? `${selectedSpace.name} (${selectedSpace.id})` : ''}>{(props) => <Select {...props} value={workspaceId} onChange={(event) => { setWorkspaceId(event.target.value); setPeople([]); }}><option value="">{t('select_workspace')}</option>{assignableSpaces.map((space) => <option key={space.id} value={space.id}>{space.name} ({space.id})</option>)}</Select>}</Field><PageNavigation nextCursor={workspaceCursor} busy={spacesBusy} onLoadMore={loadMoreWorkspaces} /></>}
   {generalAssignment && !tenantId && <section className="panel"><h2>{t('role_assignments')}</h2><p>{t('tenant_scope_help')}</p></section>}
   {canAssign && roles && tenantId && (generalAssignment || workspaceId) && <RoleAssignments key={workspaceId} workspaceOnly={!generalAssignment} initialWorkspaceId={workspaceId} access={access} roles={roles} people={people} tenants={tenants} organizations={organizations} workspaces={spaces} query={query} busy={busy} action={action} />}
  </div>;
 }
-
-
-

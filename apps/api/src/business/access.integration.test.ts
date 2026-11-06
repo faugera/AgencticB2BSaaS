@@ -13,7 +13,7 @@ const migrationURL = process.env.AUTH_TEST_MIGRATION_DATABASE_URL;
 if (!databaseURL || !migrationURL || !new URL(databaseURL).pathname.startsWith('/enterprise_auth_test'))
   throw new Error('Explicit disposable PostgreSQL database required');
 const businessURL = databaseURL.replace('identity_runtime:', 'business_runtime:');
-const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
+const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, outboxEncryption: { activeKeyId: 'test-v1', keys: { 'test-v1': randomBytes(32).toString('base64url') } }, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
 const operator = new Pool({ connectionString: migrationURL });
 const identity = createAuthPool(databaseURL);
 const business = createBusinessPool(businessURL);

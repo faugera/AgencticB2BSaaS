@@ -62,10 +62,13 @@ SQL, fixed functions, least privilege and protection of the server remain requir
 Business invitations are independent from identity enrollment. Store only a
 SHA-256 token digest; 48-hour expiry, verified-email binding, row locks, replay
 and membership conflict rejection. Acceptance does not upgrade an existing role.
-Identity invitation grants no business privilege. SMTP occurs after commit;
-delivery state and administrator retry expose failures without keeping SQL locks
-while waiting on email. Retry rotates the invitation token. No outbox/retry worker
-in the single-instance pilot; a process interruption can leave `pending` delivery.
+Identity invitation grants no business privilege. In the pilot baseline, SMTP
+occurred after commit and a process interruption could leave `pending` delivery.
+Migration 0016 supersedes that delivery mechanism for business invitations with
+a transactionally queued, encrypted outbox and a retrying worker; its database
+application and PostgreSQL/Mailpit evidence remain unverified in this branch.
+Retry rotates the invitation token; stale queued payloads are invalidated by
+comparing their operation key with the persisted invitation token hash.
 
 Browser invitation secrets use URL fragments and memory only. Reloading during
 login/MFA requires reopening the invitation email. Reset tokens are removed from
@@ -97,7 +100,9 @@ upstream dependency ranges can replace the override.
 Hosting/proxy addresses, production SMTP sender, backup retention/storage,
 restore RTO/RPO, audit retention/export and incident ownership need an operator.
 Pilot business HTTP limiting is per-process; auth limiting is PostgreSQL-backed.
-Before horizontal scaling add a shared business limiter and reliable mail outbox.
+Before horizontal scaling add a shared business limiter. The invitation outbox
+is present in migration 0016 but still requires disposable PostgreSQL/Mailpit
+validation before it can be considered operational.
 SSO/SCIM, enforced tenant MFA, multi-organization membership, billing, agents,
 workflows and high availability remain outside this pilot. No deployment or
 external-provider deletion is authorized by this implementation.

@@ -88,7 +88,7 @@ test('workspace-only administration uses server capabilities and a scoped roster
   if (path === '/api/roles') return route.fulfill({ json: [role, { ...role, id: 'tenant-role', scope: 'tenant', name: 'Tenant reader' }] });
   if (path === '/api/tenants') return route.fulfill({ json: [{ id: 'tenant', name: 'Tenant', organization_id: 'org' }] });
   if (path === '/api/organizations') return route.fulfill({ json: [{ id: 'org', name: 'Client' }] });
-  if (path === '/api/workspaces') return route.fulfill({ json: [{ id: 'workspace', tenant_id: 'tenant', name: 'Espace géré', visibility: 'private', can_assign_roles: true, role_level: 1 }, { id: 'workspace2', tenant_id: 'tenant', name: 'Espace géré', visibility: 'private', can_assign_roles: true, role_level: 1 }, { id: 'readonly', tenant_id: 'tenant', name: 'Lecture seule', visibility: 'tenant', can_assign_roles: false, role_level: 0 }] });
+  if (path === '/api/workspaces') return route.fulfill({ json: { items: [{ id: 'workspace', tenant_id: 'tenant', name: 'Espace géré', visibility: 'private', can_assign_roles: true, role_level: 1 }, { id: 'workspace2', tenant_id: 'tenant', name: 'Espace géré', visibility: 'private', can_assign_roles: true, role_level: 1 }, { id: 'readonly', tenant_id: 'tenant', name: 'Lecture seule', visibility: 'tenant', can_assign_roles: false, role_level: 0 }], nextCursor: null } });
   if (path === '/api/role-assignments' && route.request().method() === 'POST') { writes.push(route.request().postDataJSON()); return route.fulfill({ json: { saved: true } }); }
   if (path === '/api/role-assignments') { queries.push(url.search); return route.fulfill({ json: [{ id: 'member', name: 'Member', email: 'member@example.test', status: 'active', roles: [] }] }); }
   if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'light' } });
@@ -127,7 +127,7 @@ test('role removal confirmation names each scope and preserves access on cancel'
   if (path === '/api/roles') return route.fulfill({ json: [{ ...role, scope: 'workspace' }, { ...role, id: 'custom2', scope: 'workspace' }] });
   if (path === '/api/tenants') return route.fulfill({ json: [{ id: 'tenant', name: 'Tenant A', organization_id: 'org' }] });
   if (path === '/api/organizations') return route.fulfill({ json: [{ id: 'org', name: 'Client A' }] });
-  if (path === '/api/workspaces') return route.fulfill({ json: [{ id: 'workspace', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }, { id: 'workspace2', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }, { id: 'workspace3', name: 'Espace A (workspace)', tenant_id: 'tenant', visibility: 'private' }] });
+  if (path === '/api/workspaces') return route.fulfill({ json: { items: [{ id: 'workspace', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }, { id: 'workspace2', name: 'Espace A', tenant_id: 'tenant', visibility: 'private' }, { id: 'workspace3', name: 'Espace A (workspace)', tenant_id: 'tenant', visibility: 'private' }], nextCursor: null } });
   if (path === '/api/role-assignments' && route.request().method() === 'POST') { writes.push(route.request().postDataJSON()); return route.fulfill({ json: { saved: true } }); }
   if (path === '/api/role-assignments') return route.fulfill({ json: [{ id: 'member', name: '', email: 'member@example.test', status: 'active', roles: [
    { ...role, scope: 'organization', organizationId: 'org', tenantId: null, workspaceId: null },
@@ -175,7 +175,7 @@ test('role navigation follows assignment capability rather than member managemen
  let canAssignWorkspace = false;
  await page.route('**/api/**', (route) => {
   const path = new URL(route.request().url()).pathname;
-  if (path === '/api/me') return route.fulfill({ json: { user: { id: 'actor', name: '', email: 'person@example.test' }, access: { actorId: 'actor', platformRole: null, tenantRole: 'tenant_admin', tenantId: 'tenant', permissions: ['members.manage'] }, workspaces: [{ id: 'space', tenant_id: 'tenant', name: 'Space', visibility: 'private', can_assign_roles: canAssignWorkspace, role_level: canAssignWorkspace ? 1 : 0 }] } });
+  if (path === '/api/me') return route.fulfill({ json: { user: { id: 'actor', name: '', email: 'person@example.test' }, access: { actorId: 'actor', platformRole: null, tenantRole: 'tenant_admin', tenantId: 'tenant', permissions: ['members.manage'] }, can_assign_workspace_roles: canAssignWorkspace } });
   if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'light' } });
   return route.fulfill({ json: [] });
  });
@@ -208,5 +208,4 @@ test('global catalog never loads a roster without a tenant selection', async ({ 
  await expect(page.getByRole('alert')).toHaveCount(0);
  await expect(page.getByText('Le tenant sélectionné détermine les espaces, membres et événements affichés.', { exact: true }).last()).toBeVisible();
 });
-
 

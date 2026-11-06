@@ -6,13 +6,13 @@ import { AccessError } from './store.js';
 import { documentation } from './documentation.js';
 
 type Transact = <T>(request: FastifyRequest, action: string, run: (client: PoolClient, context: AccessContext) => Promise<T>, tenant?: string) => Promise<T>;
-type Deliver = (request: FastifyRequest, tenant: string, id: string, email: string, token: string) => Promise<'sent' | 'failed'>;
+type Enqueue = (client: PoolClient, tenant: string, id: string, email: string, token: string) => Promise<void>;
 const uuid = { type: 'string', format: 'uuid' } as const;
 const tenantQuery = { type: 'object', additionalProperties: false, properties: { tenantId: uuid } } as const;
 type Scoped = { Querystring: { tenantId?: string } };
 
-export function registerAccessRoutes(app: FastifyInstance, dependencies: { pool: Pool; origin: string; transact: Transact; deliver: Deliver }) {
-  const { pool, origin, transact, deliver } = dependencies;
+export function registerAccessRoutes(app: FastifyInstance, dependencies: { pool: Pool; origin: string; transact: Transact; enqueue: Enqueue }) {
+  const { pool, origin, transact, enqueue } = dependencies;
   app.post<{ Body: { link: string; firstName: string; lastName: string; email: string } }>('/api/access-requests', {
     config: { rateLimit: { max: 3, timeWindow: '1 minute' } },
     schema: { body: { type: 'object', additionalProperties: false, required: ['link', 'firstName', 'lastName', 'email'], properties: {
@@ -54,10 +54,12 @@ export function registerAccessRoutes(app: FastifyInstance, dependencies: { pool:
         [request.params.id, request.body.operation, request.body.role, createHash('sha256').update(token).digest('hex')]);
       const row = response.rows[0];
       if (!row) throw new AccessError(403, 'ACCESS_DENIED');
-      return row;
+      if (row.invitation_id)
+        await enqueue(client, row.tenant_id, row.invitation_id, row.email, token);
+      return { invitationId: row.invitation_id, tenantId: row.tenant_id };
     }, request.query.tenantId);
-    return result.invitation_id
-      ? { delivery: await deliver(request, result.tenant_id, result.invitation_id, result.email, token) }
+    return result.invitationId
+      ? { delivery: 'pending' }
       : { ok: true };
   });
   app.get('/api/platform/docs', async (request) => transact(request, 'platform.docs.read', async (_client, context) => {

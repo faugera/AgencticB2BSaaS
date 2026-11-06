@@ -3,6 +3,10 @@ export type AuthConfig = {
   secret: string;
   databaseURL: string;
   businessDatabaseURL?: string;
+  outboxEncryption?: {
+    activeKeyId: string;
+    keys: Readonly<Record<string, string>>;
+  };
   smtp: {
     host: string;
     port: number;
@@ -77,6 +81,57 @@ export function readAuthConfig(
       );
     }
   }
+  const outboxEncryption = businessDatabaseURL
+    ? (() => {
+        const activeKeyId = required('OUTBOX_ENCRYPTION_ACTIVE_KEY_ID');
+        const serializedKeys = required('OUTBOX_ENCRYPTION_KEYS');
+        let keys: unknown;
+        try {
+          keys = JSON.parse(serializedKeys);
+        } catch {
+          throw new Error(
+            'OUTBOX_ENCRYPTION_KEYS must contain versioned 32-byte keys',
+          );
+        }
+        if (
+          !keys ||
+          typeof keys !== 'object' ||
+          Array.isArray(keys) ||
+          !Object.keys(keys).length
+        ) {
+          throw new Error(
+            'OUTBOX_ENCRYPTION_KEYS must contain versioned 32-byte keys',
+          );
+        }
+        const parsedKeys: Record<string, string> = {};
+        for (const [keyId, encodedKey] of Object.entries(keys)) {
+          if (
+            !/^[a-zA-Z0-9._-]{1,64}$/.test(keyId) ||
+            typeof encodedKey !== 'string'
+          ) {
+            throw new Error(
+              'OUTBOX_ENCRYPTION_KEYS must contain versioned 32-byte keys',
+            );
+          }
+          const bytes = Buffer.from(encodedKey, 'base64url');
+          if (
+            bytes.length !== 32 ||
+            bytes.toString('base64url') !== encodedKey
+          ) {
+            throw new Error(
+              'OUTBOX_ENCRYPTION_KEYS must contain versioned 32-byte keys',
+            );
+          }
+          parsedKeys[keyId] = encodedKey;
+        }
+        if (!Object.hasOwn(parsedKeys, activeKeyId)) {
+          throw new Error(
+            'OUTBOX_ENCRYPTION_ACTIVE_KEY_ID must match a configured key',
+          );
+        }
+        return { activeKeyId, keys: parsedKeys };
+      })()
+    : undefined;
   const port = Number(env.SMTP_PORT ?? '1025');
   if (!Number.isInteger(port) || port < 1 || port > 65535)
     throw new Error('Invalid SMTP_PORT');
@@ -87,6 +142,7 @@ export function readAuthConfig(
     secret,
     databaseURL,
     ...(businessDatabaseURL ? { businessDatabaseURL } : {}),
+    ...(outboxEncryption ? { outboxEncryption } : {}),
     smtp: {
       host: required('SMTP_HOST'),
       port,

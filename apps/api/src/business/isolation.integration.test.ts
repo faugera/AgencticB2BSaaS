@@ -29,6 +29,7 @@ const config: AuthConfig = {
   secret: randomBytes(48).toString('base64url'),
   databaseURL: identityURL,
   businessDatabaseURL: businessURL,
+  outboxEncryption: { activeKeyId: 'test-v1', keys: { 'test-v1': randomBytes(32).toString('base64url') } },
   smtp: {
     host: '127.0.0.1',
     port: 1025,

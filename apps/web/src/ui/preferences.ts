@@ -1,6 +1,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import type { UIPreferences } from '@enterprise/shared';
 import { api } from '../http';
+import { preferencesSchema } from '../contracts/api';
 
 const listeners = new Set<() => void>();
 export function localLocale(): 'fr' | 'en' { try { return localStorage.getItem('locale') === 'en' ? 'en' : 'fr'; } catch { return 'fr'; } }
@@ -37,7 +38,7 @@ export function useAccountPreferences(identity: string) {
   useEffect(() => {
     let active = true;
     setReady(false); setError(false);
-    void api<UIPreferences | null>('/api/preferences').then(async (value) => {
+    void api('/api/preferences', preferencesSchema).then(async (value) => {
       if (!active) return;
       if (value && ['fr', 'en'].includes(value.locale) && ['system', 'light', 'dark'].includes(value.theme)) { setLocalPreferences(value); setDetails({ timezone: value.timezone ?? 'Europe/Paris', date_format: value.date_format ?? 'DD/MM/YYYY' }); }
       else if (value === null) await api('/api/preferences', { locale, theme }, 'PUT');

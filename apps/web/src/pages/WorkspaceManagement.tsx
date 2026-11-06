@@ -4,14 +4,16 @@ import { Link } from 'react-router-dom';
 import { api } from '../http';
 import { useLanguage } from '../i18n';
 import type { Member } from './InvitationManagement';
+import { PageNavigation } from '../ui/PageNavigation';
 
 type Props = {
  selected: Workspace | null; workspaces: readonly Workspace[]; members: readonly Member[];
+ nextCursor: string | null; onLoadMore: () => Promise<{ count: number; hasMore: boolean }>;
  admin: boolean; superAdmin: boolean; scope: string; query: string; basePath: string; busy: boolean;
  submit: (event: FormEvent<HTMLFormElement>, run: (form: FormData) => Promise<unknown>) => void;
  action: (run: () => Promise<unknown>) => Promise<void>;
 };
-export function WorkspaceManagement({ selected, workspaces, members, admin, superAdmin, scope, query, basePath, busy, submit, action }: Props) {
+export function WorkspaceManagement({ selected, workspaces, members, nextCursor, onLoadMore, admin, superAdmin, scope, query, basePath, busy, submit, action }: Props) {
  const { t } = useLanguage();
  const text = (form: FormData, key: string) => String(form.get(key) ?? '');
  return (
@@ -43,6 +45,13 @@ export function WorkspaceManagement({ selected, workspaces, members, admin, supe
                         'no_accessible_workspace_ask_your_administrator_for_access',
                       )}
                     </p>
+                  )}
+                  {!selected && (
+                    <PageNavigation
+                      nextCursor={nextCursor}
+                      busy={busy}
+                      onLoadMore={onLoadMore}
+                    />
                   )}
                   {admin && (!superAdmin || scope) && (
                     <form
