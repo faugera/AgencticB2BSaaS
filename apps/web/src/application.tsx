@@ -155,7 +155,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     return () => {
       active = false;
     };
-  }, [me, query, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, docsPage, auditPage, rolesPage, organizationPage]);
+  }, [me, query, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, securityPage, docsPage, auditPage, rolesPage, organizationPage]);
   async function action(run: () => Promise<unknown>) {
     setBusy(true);
     setError('');

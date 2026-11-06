@@ -85,6 +85,7 @@ describe('Pagination PostgreSQL et portée tenant', () => {
       'fixture.read',
       async (...[, context]) => context.actorId,
     );
+    if (!actorId) throw new Error('Missing pagination actor');
     account = {
       identityId: created.user.id,
       actorId,

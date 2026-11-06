@@ -82,6 +82,7 @@ describe('PostgreSQL B2B adversarial isolation', () => {
         'test.read',
         async (_client, context) => context.actorId,
       );
+      if (!actor) throw new Error('Missing test actor');
       actors.push(actor);
     }
     // The first actor stays an ordinary user. Explicit operator bootstrap only.

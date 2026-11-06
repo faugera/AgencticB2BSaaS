@@ -97,13 +97,15 @@ describe('Outbox PostgreSQL et worker', () => {
       'UPDATE identity."user" SET "emailVerified"=true WHERE id=$1',
       [identityId],
     );
-    actorId = await businessTransaction(
+    const actor = await businessTransaction(
       business,
       identityId,
       undefined,
       'fixture.actor',
       async (_client, context) => context.actorId,
     );
+    if (!actor) throw new Error('Missing outbox actor');
+    actorId = actor;
     await operator.query(
       "UPDATE authorization_private.actors SET platform_role='super_admin' WHERE id=$1",
       [actorId],

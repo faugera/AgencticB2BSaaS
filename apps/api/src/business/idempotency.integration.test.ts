@@ -75,6 +75,7 @@ describe('Idempotence HTTP avec PostgreSQL jetable', () => {
       'fixture.read',
       async (_client, context) => context.actorId,
     );
+    if (!actor) throw new Error('Missing idempotency actor');
     const login = await app.inject({
       method: 'POST',
       url: '/api/auth/sign-in/email',
