@@ -18,8 +18,10 @@ Les fonctions privées et RLS protègent les portées ; le navigateur n'est pas 
 Les mutations ciblées acceptent `Idempotency-Key` : acteur, action, portée et empreinte
 de requête déterminent le rejeu, conservé au plus 24 h. L'invitation et sa charge
 AES-256-GCM chiffrée sont écrites dans la même transaction métier ; le worker PostgreSQL
-réserve par bail et reprend les échecs. L'état HTTP initial `pending` ne confirme pas
-la livraison. SMTP reste au moins une fois ; un accusé ambigu peut produire un doublon.
+réserve par bail et reprend les échecs. Avant SMTP, il verrouille les lignes de l'outbox
+et de l'invitation jusqu'à l'accusé, ce qui sérialise une révocation concurrente. L'état
+HTTP initial `pending` ne confirme pas la livraison. SMTP reste au moins une fois ; un
+accusé ambigu peut produire un doublon.
 
 | Module | Responsabilité |
 | --- | --- |
@@ -29,7 +31,7 @@ la livraison. SMTP reste au moins une fois ; un accusé ambigu peut produire un 
 | apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations, idempotence et composition des modules |
 | apps/api/src/business/jobs | Outbox chiffrée, réservation atomique, baux, reprises et worker |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013–0015 B2B, 0016 idempotence/outbox |
+| apps/api/migrations | SQL immuable et checksummé ; 0013–0015 B2B, 0016 idempotence/outbox, 0017 pagination, 0018 limites partagées |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP
@@ -48,7 +50,7 @@ la livraison. SMTP reste au moins une fois ; un accusé ambigu peut produire un 
 | PATCH /api/members/:id/status | Statut invited/active/suspended ; inférieur seulement, dernier admin protégé |
 | GET/PUT /api/profile?tenantId | Compte propre ; PUT prénom/nom valides, champs personnels et emploi du tenant sélectionné |
 | GET/PUT /api/preferences | Compte propre, locale/theme/timezone/date_format ; aucun sélecteur identité |
-| GET /api/workspaces?tenantId&before ; GET/POST /api/workspaces ; GET/PATCH /api/workspaces/:id | Pages bornées à 50, curseur date/UUID tenant-scopé, RLS et permissions |
+| GET /api/workspaces?tenantId&before ; GET/POST /api/workspaces ; GET/PATCH /api/workspaces/:id | Pages bornées à 50, curseur date/UUID tenant-scopé, accès privé vérifié explicitement par la fonction SQL et permissions |
 | GET/POST/DELETE membres workspace ; GET/DELETE membres tenant | Fonctions étroites, hiérarchie et dernier admin ; retrait tenant = suspension |
 | GET/POST /api/invitations ; POST accept/retry/revoke | Email vérifié, portée, expiration48h, hash et anti-rejeu ; rôle pair interdit |
 | POST /api/access-link ; GET/POST /api/access-requests ; POST /:id | Collecte publique sans identité ; revue autorisée, pagination100 et curseur UUID tenant-scopé |

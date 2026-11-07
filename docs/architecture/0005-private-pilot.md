@@ -50,6 +50,9 @@ Actors, memberships, invitations and audit live in `authorization_private` with
 Their non-login owner has no BYPASSRLS; private metadata does not use recursive
 RLS policies. This intentional distinction must not be mistaken for blanket RLS
 on every table. New tenant content must use the public business RLS boundary.
+Because `business.workspaces_page` is SECURITY DEFINER, it also applies the
+workspace visibility check explicitly through `business.workspace_access`;
+the function does not rely on RLS alone for private workspaces.
 No runtime UPDATE/DELETE/TRUNCATE on audit; operator database access remains a
 trusted recovery boundary, not a tamper-proof external ledger.
 
@@ -68,7 +71,9 @@ Migration 0016 supersedes that delivery mechanism for business invitations with
 a transactionally queued, encrypted outbox and a retrying worker; its database
 application and PostgreSQL/Mailpit evidence remain unverified in this branch.
 Retry rotates the invitation token; stale queued payloads are invalidated by
-comparing their operation key with the persisted invitation token hash.
+comparing their operation key with the persisted invitation token hash. Before
+SMTP delivery, the worker locks the outbox and invitation through the delivery
+acknowledgment, serializing a concurrent revocation with that attempt.
 
 Browser invitation secrets use URL fragments and memory only. Reloading during
 login/MFA requires reopening the invitation email. Reset tokens are removed from
