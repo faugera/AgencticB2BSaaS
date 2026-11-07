@@ -30,9 +30,8 @@ Les conventions Brume actuelles ci-dessous supplantent les observations historiq
 - Ne conserver ni credentials ni jetons en localStorage. Les invitations passent
   par fragment et mémoire, avec les limites décrites dans ADR-005.
 - Vérifier les parcours critiques fr/en, mobile/tablette/desktop et absence de
-  débordement horizontal ; réutiliser `tests/e2e/home.spec.ts`,
-  `tests/e2e/auth.spec.ts`, `tests/e2e/admin.spec.ts`, `tests/e2e/tenant-scope.spec.ts`.
-  Les sessions simulées des tests UI ne prouvent pas l'isolation serveur.
+  débordement horizontal ; ces parcours ne disposent plus de suite navigateur
+  automatisée. Les contrôles SQL/HTTP ne prouvent pas le rendu de l’interface.
 
 ## Brume — conventions actuelles
 

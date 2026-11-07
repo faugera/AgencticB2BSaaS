@@ -1,5 +1,8 @@
 # Couverture des tests
 
+Les tests navigateur ont été retirés le 7 novembre 2026 ; la section suivante
+décrit uniquement une réduction historique.
+
 ## Réduction demandée — 25 octobre 2026
 
 La suite Playwright générale passe de 182 à 72 cas (-110, soit 60 %).
@@ -28,21 +31,14 @@ imposer de couleur CSS calculée. Aucun code produit ni permission n'est modifi�
 
 ## Commandes et frontières
 
-- `pnpm verify` : types,lint,tests unitaires,build,smoke.
-- `pnpm test:e2e` : 72 scénarios navigateur sur frontend compilé ; fixtures HTTP.
-- `pnpm verify:security` : contrôles sécurité, audit dépendances et intégrations
-  PostgreSQL centrales, hors suite d'isolation dédiée.
-- `pnpm verify:tenant-isolation` : refus SQL/HTTP inter-tenant.
-- `pnpm test:auth:core` : intégrations PostgreSQL sauf
-  `isolation.integration.test.ts`, exécutée par la porte dédiée ci-dessus.
-- `pnpm test:auth` : suite complète, y compris isolation, pour une validation locale exhaustive.
-- `pnpm test:auth:e2e` : activation/MFA/session et collaboration avec PostgreSQL/SMTP réels.
+- `pnpm verify` : types, lint, tests unitaires, build et smoke HTTP.
+- `pnpm verify:security` : contrôles sécurité, audit de dépendances et intégrations PostgreSQL centrales.
+- `pnpm verify:tenant-isolation` : refus SQL/HTTP inter-tenant sur PostgreSQL jetable.
+- `pnpm test:auth` : suite complète des intégrations PostgreSQL.
 
-La CI lance `test:auth:core` via `verify:security`, puis l'isolation une fois via
-`verify:tenant-isolation`. La sélection évite de relancer 15 scénarios d'isolation ;
-aucune assertion ni suite distincte n'est supprimée. `pnpm test:auth` garde tous
-les fichiers d'intégration pour une validation exhaustive.
-Les tests UI simulés ne remplacent pas une preuve d'autorisation serveur.
+Les suites navigateur et le parcours SMTP réel ont été retirés à la demande du propriétaire.
+La CI ne vérifie plus automatiquement les parcours UI, le clavier, le responsive ni
+l’authentification par navigateur. Les résultats ci-dessous sont historiques.
 
 ## Fiabilisation des mutations et des listes
 
@@ -52,9 +48,6 @@ différée et de limite partagée exigent les deux URLs de base jetable indiqué
 dans le runbook privé ; les tests refusent de démarrer sans cette configuration.
 Ils ne doivent jamais cibler une base de développement ou de production.
 
-Le parcours Playwright ciblé de pagination vérifie workspace, membres et
-invitations au clavier, en français et en anglais, aux largeurs mobile,
-tablette et desktop. Il valide l'interface simulée, pas le comportement SQL.
 L'outbox métier porte actuellement les invitations ; les callbacks de
 vérification et d'activation Better Auth ne disposent pas encore d'événements
 autonomes dans cette outbox.
@@ -66,7 +59,7 @@ Le 25 octobre : `pnpm verify` passe (types, lint, 44 tests unitaires, build, smo
 La suite précédente de 182 cas avait pris 2,4 minutes avec deux workers ; ces durées
 sont des mesures locales, sans garantie de temps CI. Aucun test backend ou permission
 n'a été modifié. Les validations PostgreSQL et auth réelle ne sont pas relancées
-localement pour cette modification de tests navigateur ; la CI les conserve.
+localement pour cette modification historique de tests navigateur.
 
 ## Synchronisation documentaire
 

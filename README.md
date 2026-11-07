@@ -39,22 +39,15 @@ pnpm lint
 pnpm test
 pnpm build
 pnpm smoke
-pnpm exec playwright install --with-deps chromium
-pnpm test:e2e
 ```
 
 `pnpm verify` runs the first five gates. Smoke starts the compiled API, verifies
 real HTTP liveness and graceful shutdown, then stops it; no existing server is
 needed. It uses SIGTERM on POSIX and an IPC disconnect on Windows, both handled
 by the API's graceful shutdown path. Use `SMOKE_PORT=3100 pnpm smoke` if port 3099 is busy.
-Playwright starts the built frontend preview on port 4173 and checks navigation
-and overflow on desktop and mobile. Vitest tests run without Docker or secrets.
-
-The browser suite contains 72 behavioral checks. Cosmetic pixel/font/color tests
-and repeated theme/viewport matrices were removed; FR/EN, desktop/mobile, keyboard
-access, permissions and business regressions remain covered. See
-[test coverage and reduction](docs/testing.md). Database/security/live-auth gates
-are separate and unchanged.
+Vitest tests run without Docker or secrets. Les suites navigateur ont été retirées ;
+les parcours UI, le focus clavier et le responsive ne sont plus vérifiés automatiquement.
+Les contrôles PostgreSQL et d’isolation restent distincts.
 
 Production entrypoints after `pnpm build`:
 `pnpm --filter @enterprise/api start` and `apps/web/dist` for static hosting.
@@ -68,7 +61,6 @@ apps/
   web/                 React 19 + Vite + Tailwind v4
 packages/shared/       Type-only HTTP contracts
 scripts/smoke.mjs      Built API smoke check
-tests/e2e/             Playwright browser checks
 docs/architecture/     Decisions and unresolved questions
 docs/sdd/              Task specification
 .agents/skills/        Portable coding-agent guidance
@@ -120,8 +112,8 @@ puis renseignez `OUTBOX_ENCRYPTION_ACTIVE_KEY_ID` et
 objet JSON indexé par version ; conservez les anciennes clés jusqu’à expiration
 des messages chiffrés en attente et ne les stockez jamais dans PostgreSQL.
 
-CI additionally runs `pnpm verify:security`, `pnpm verify:tenant-isolation` and
-`pnpm test:auth:e2e` against disposable PostgreSQL/Mailpit. These gates fail rather
+CI additionally runs `pnpm verify:security` and `pnpm verify:tenant-isolation`
+against disposable PostgreSQL. These gates fail rather
 than skip when required test infrastructure is missing. See the runbook for variables.
 
 ## Documentation et Spec Kit

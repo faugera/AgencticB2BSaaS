@@ -24,14 +24,12 @@ Références factuelles : `package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml
 | Types / lint / unitaires | `pnpm typecheck`, `pnpm lint`, `pnpm test` | Vitest hors intégration DB |
 | Build / smoke | `pnpm build`, `pnpm smoke` | Smoke nécessite le build |
 | Vérification globale | `pnpm verify` | Types, lint, unitaires, build, smoke ; pas E2E/DB |
-| E2E | `pnpm test:e2e` | Build et Chromium disponibles |
 | Auth DB complète | `pnpm test:auth` | PostgreSQL jetable explicite |
 | Auth DB centrale | `pnpm test:auth:core` | PostgreSQL jetable ; exclut l'isolation lancée séparément en CI |
 | Sécurité | `pnpm verify:security` | Script sécurité, audit dépendances et auth DB centrale ; accès réseau |
 | Isolation | `pnpm verify:tenant-isolation` | PostgreSQL jetable explicite |
-| Auth navigateur | `pnpm test:auth:e2e` | Build, PostgreSQL et Mailpit configurés |
 
-`vitest.config.ts`, `vitest.auth.config.ts` et `playwright.config.ts` définissent
+`vitest.config.ts` et `vitest.auth.config.ts` définissent
 les périmètres. Les variables et commandes opérateur sont dans
 `docs/setup/private-pilot.md` et `docs/setup/better-auth.md` ; ne jamais migrer une DB
 pour une simple validation documentaire. Le contrôle documentaire est pnpm docs:check (structure et chemins, pas sémantique).
