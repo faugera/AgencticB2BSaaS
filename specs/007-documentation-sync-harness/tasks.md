@@ -112,3 +112,9 @@ lorsqu'elle appartient à une histoire et des chemins précis.
 - [x] T017 Exécuter `pnpm docs:test`, `pnpm docs:check` avec une base valide,
   `pnpm lint` et `git diff --check`, puis actualiser les preuves
   dans `specs/007-documentation-sync-harness/verification.md`
+- [x] T018 Collecter les chemins Git avec séparateur NUL pour préserver les noms
+  Unicode dans `scripts/docs-check.mjs`, avec une régression dans
+  `scripts/docs-check.test.mjs`
+- [x] T019 Documenter les chemins Unicode et actualiser les preuves ciblées dans
+  `specs/007-documentation-sync-harness/data-model.md`,
+  `docs/setup/spec-kit.md` et `specs/007-documentation-sync-harness/verification.md`

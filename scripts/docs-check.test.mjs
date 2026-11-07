@@ -515,6 +515,42 @@ test('compares a first push from an empty tree instead of accepting an empty dif
   assert.deepEqual(changedFilesSince(root, '0'.repeat(40)).sort(), ['tracked.md', 'untracked.md']);
 });
 
+test('preserves Unicode paths in tracked and untracked Git changes', async (t) => {
+  const root = await mkdtemp(path.join(tmpdir(), 'agenctic-unicode-paths-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  execFileSync('git', ['init', '-q'], { cwd: root });
+  execFileSync('git', ['config', 'user.email', 'test@example.test'], { cwd: root });
+  execFileSync('git', ['config', 'user.name', 'Docs Test'], { cwd: root });
+  await mkdir(path.join(root, 'apps/api/src/routes'), { recursive: true });
+  await mkdir(path.join(root, 'docs'), { recursive: true });
+  await mkdir(path.join(root, '.specs/standards'), { recursive: true });
+  await writeFile(path.join(root, 'apps/api/src/routes/Préférences.ts'), 'before\n');
+  await writeFile(path.join(root, 'docs/architecture.md'), '# Architecture\n');
+  await writeFile(path.join(root, '.specs/standards/doc-sync-map.yml'), `rules:
+  - id: api
+    sources: [apps/api/src/routes/**]
+    targets: [docs/architecture.md]
+    policy: required
+    reason: Décrire les contrats.
+`);
+  execFileSync('git', ['add', '.'], { cwd: root });
+  execFileSync('git', ['commit', '-q', '-m', 'base'], { cwd: root });
+  const base = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+
+  await writeFile(path.join(root, 'apps/api/src/routes/Préférences.ts'), 'changed\n');
+  await writeFile(path.join(root, 'apps/api/src/routes/新增.ts'), 'untracked\n');
+  await mkdir(path.join(root, 'specs/001-demo'), { recursive: true });
+  await writeFile(path.join(root, 'specs/001-demo/spec.md'), '# Demo\n');
+  await writeFile(path.join(root, 'specs/001-demo/documentation-impact.md'),
+    '| Règle | Cible | Statut | Motif |\n|---|---|---|---|\n');
+
+  const changed = changedFilesSince(root, base);
+  assert(changed.includes('apps/api/src/routes/Préférences.ts'));
+  assert(changed.includes('apps/api/src/routes/新增.ts'));
+  assert((await checkDocumentationSync(root, changed))
+    .some((error) => error.includes('décision absente pour api → docs/architecture.md')));
+});
+
 test('detects missing or divergent project skills across integrations', async (t) => {
   const { root, put } = await fixture(t);
   const source = '.agents/skills/tenant-boundary/SKILL.md';

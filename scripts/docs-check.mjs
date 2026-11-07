@@ -316,16 +316,16 @@ export function changedFilesSince(root, base) {
   const diffBase = comparisonBase(root, base);
   try {
     const output = execFileSync('git', [
-      'diff', '--name-only', '--no-renames', '--diff-filter=ACDMRT', diffBase,
+        'diff', '--name-only', '-z', '--no-renames', '--diff-filter=ACDMRT', diffBase,
     ], {
       cwd: root,
       encoding: 'utf8',
     });
-    const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard'], {
+    const untracked = execFileSync('git', ['ls-files', '-z', '--others', '--exclude-standard'], {
       cwd: root,
       encoding: 'utf8',
     });
-    return [...new Set(`${output}\n${untracked}`.split(/\r?\n/).filter(Boolean))];
+    return [...new Set(`${output}${untracked}`.split('\0').filter(Boolean))];
   } catch {
     throw new Error(`Base Git invalide ou indisponible : ${base}. Récupérer la référence puis définir DOCS_SYNC_BASE.`);
   }

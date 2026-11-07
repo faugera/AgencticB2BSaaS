@@ -30,6 +30,8 @@ committés depuis la divergence, staged et unstaged) et
 avec des séparateurs `/`. `merge-base` est l’ancêtre commun de la base et `HEAD`,
 ce qui exclut les changements ultérieurs de la branche de base. Sans détection de
 renommage, les chemins source et destination sont tous deux conservés.
+Les commandes Git utilisent le séparateur NUL (`-z`) afin de préserver les chemins
+Unicode et les caractères qui seraient autrement échappés.
 Le SHA nul d’un premier push est remplacé par l’arbre Git vide afin d’inspecter
 tout le contenu suivi. Les règles `required` de la carte au merge-base sont unies
 à celles de la carte courante pour qu’une suppression ou une rétrogradation ne

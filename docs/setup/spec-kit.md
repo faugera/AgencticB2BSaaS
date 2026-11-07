@@ -148,7 +148,8 @@ Il calcule aussi les fichiers du diff Git depuis l’ancêtre commun de
 `DOCS_SYNC_BASE` et `HEAD` (défaut local : `origin/main`) jusqu’au worktree,
 y compris les fichiers staged, unstaged et non suivis. La détection des renommages
 est désactivée pour conserver les chemins source et destination comme suppression
-et ajout. Un premier push avec le SHA nul GitHub est comparé à l’arbre vide.
+et ajout ; les chemins Git sont délimités par NUL pour préserver les noms Unicode.
+Un premier push avec le SHA nul GitHub est comparé à l’arbre vide.
 Le contrôle identifie ensuite les règles `required` dont les motifs sources correspondent,
 en conservant aussi les règles requises de la base si la carte courante réduit leur couverture.
 Pour ces règles, `specs/<feature>/documentation-impact.md` doit faire partie du diff

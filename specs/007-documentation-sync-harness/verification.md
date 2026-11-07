@@ -9,9 +9,9 @@ projet. Aucun code applicatif, IAM ou SQL n'est modifié.
 
 ## Résultats
 
-- `pnpm docs:test` : PASS, 35 tests, 0 échec. Inclut les décisions, cartes de
+- `pnpm docs:test` : PASS, 36 tests, 0 échec. Inclut les décisions, cartes de
   routage mal formées, `**/`, réductions de couverture, renommages, base divergente,
-  SHA nul initial et fichiers non suivis.
+  SHA nul initial, chemins Unicode et fichiers non suivis.
 - `DOCS_SYNC_BASE=origin/main pnpm docs:check` : PASS. Liens, structures,
   manifestes, route documentaire et empreintes d'architecture validés contre le
   diff depuis l’ancêtre commun, les chemins renommés et les décisions historiques.
