@@ -14,6 +14,10 @@ des règles `required` au diff Git et exige une décision par cible dans
 cible modifiée ; `REVIEWED_NO_CHANGE` et `NOT_APPLICABLE` exigent un motif et
 une cible non modifiée. Une base absente/invalide ou une décision manquante
 bloque la validation. Charger les standards applicables ; préserver code et preuves concurrents.
+Le diff part de l’ancêtre commun entre la base et `HEAD`; les renommages sont
+traités comme une suppression et un ajout. Un premier push identifié par le SHA nul
+est comparé à l’arbre vide. Les règles `required` de la base restent applicables
+lorsque la carte courante retire ou réduit leur couverture.
 Pour reprendre, lire spec/plan/tasks et checkpoint, comparer Git et les preuves réelles.
 La vérification est proportionnée selon le skill verify-change ; une preuve manque
 reste NOT_RUN et ne peut devenir PASS par une fusion. Après livraison, nouveau delta.

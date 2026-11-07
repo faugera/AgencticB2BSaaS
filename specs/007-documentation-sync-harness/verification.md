@@ -9,16 +9,18 @@ projet. Aucun code applicatif, IAM ou SQL n'est modifié.
 
 ## Résultats
 
-- `pnpm docs:test` : PASS, 31 tests, 0 échec. Inclut décisions valides et
-  invalides, correspondance des sources, base Git et fichiers non suivis.
+- `pnpm docs:test` : PASS, 35 tests, 0 échec. Inclut les décisions, cartes de
+  routage mal formées, `**/`, réductions de couverture, renommages, base divergente,
+  SHA nul initial et fichiers non suivis.
 - `DOCS_SYNC_BASE=origin/main pnpm docs:check` : PASS. Liens, structures,
   manifestes, route documentaire et empreintes d'architecture validés contre le
-  diff staged/unstaged/non suivi.
+  diff depuis l’ancêtre commun, les chemins renommés et les décisions historiques.
 - Base invalide : PASS du test négatif ; `docs:check` échoue avec un diagnostic
   explicite plutôt que de contourner le contrôle.
 - `pnpm lint` : PASS.
 - `git diff --check` : PASS.
-- CI : revue statique PASS ; checkout complet et base SHA configurés pour PR et push.
+- CI : le dernier check distant du commit précédent était PASS ; les corrections
+  locales doivent encore être poussées et revérifiées par la CI.
 - Tests PostgreSQL, auth réelle et navigateur : NOT_APPLICABLE, aucun comportement
   applicatif, auth, SQL ou UI n'a changé.
 

@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
-import { changedFilesSince, checkDocumentationSync, checkDocuments } from './docs-check.mjs';
+import { baselineRoutingText, changedFilesSince, checkDocumentationSync, checkDocuments } from './docs-check.mjs';
 
 const workflowSteps = [
   ['specify', 'command: speckit.specify'],
@@ -137,6 +137,21 @@ test('fails explicitly when routing syntax is unsupported rather than ignoring i
   const { root, put } = await fixture(t);
   await put('.specs/standards/doc-sync-map.yml', 'rules:\n  - id: docs\n    targets:\n      - docs/missing.md\n');
   assert((await checkDocuments(root)).some((e) => e.includes('format path/sources/targets')));
+});
+
+test('rejects malformed or empty routing rules instead of disabling the gate', async (t) => {
+  const { root, put } = await documentationSyncFixture(t, '');
+  await put('.specs/standards/doc-sync-map.yml', 'rules:\n  - i d: api\n    policy: required\n');
+  assert((await checkDocumentationSync(root, ['apps/api/src/routes/users.mjs']))
+    .some((error) => error.includes('routage invalide')));
+
+  await put('.specs/standards/doc-sync-map.yml', 'rules:\n  - id: api\n    policy: required\n    sources: [apps/api/**]\n    typo: true\n');
+  assert((await checkDocumentationSync(root, ['apps/api/src/routes/users.mjs']))
+    .some((error) => error.includes('routage invalide')));
+
+  await put('.specs/standards/doc-sync-map.yml', 'rules:\n');
+  assert((await checkDocumentationSync(root, ['apps/api/src/routes/users.mjs']))
+    .some((error) => error.includes('aucune règle reconnue')));
 });
 
 test('verifies managed files and detects content changes and version drift', async (t) => {
@@ -387,21 +402,117 @@ test('rejects invalid routing policy and unsafe source patterns', async (t) => {
   assert(errors.some((error) => error.includes('motif source invalide')));
 });
 
-test('includes tracked and untracked workspace changes and rejects invalid Git bases', async (t) => {
-  const root = await mkdtemp(path.join(tmpdir(), 'agenctic-git-diff-'));
+test('matches **/ with zero or more intermediate path segments', async (t) => {
+  const { root, put } = await documentationSyncFixture(t, '');
+  await put('.specs/standards/doc-sync-map.yml', `rules:
+  - id: api
+    sources: [apps/**/profile.ts]
+    targets: [docs/architecture.md]
+    policy: required
+    reason: Décrire les profils.
+`);
+  const errors = await checkDocumentationSync(root, [
+    'apps/profile.ts',
+    'specs/001-demo/spec.md',
+    'specs/001-demo/documentation-impact.md',
+  ]);
+  assert(errors.some((error) => error.includes('décision absente')));
+});
+
+test('retains required targets removed or downgraded from the current routing map', async (t) => {
+  const root = await mkdtemp(path.join(tmpdir(), 'agenctic-routing-history-'));
   t.after(() => rm(root, { recursive: true, force: true }));
   execFileSync('git', ['init', '-q'], { cwd: root });
   execFileSync('git', ['config', 'user.email', 'test@example.test'], { cwd: root });
   execFileSync('git', ['config', 'user.name', 'Docs Test'], { cwd: root });
-  await writeFile(path.join(root, 'tracked.md'), 'before\n');
-  execFileSync('git', ['add', 'tracked.md'], { cwd: root });
+  const baseline = `rules:
+  - id: api
+    sources: [apps/api/src/routes/**]
+    targets: [docs/architecture.md]
+    policy: required
+`;
+  await mkdir(path.join(root, '.specs/standards'), { recursive: true });
+  await mkdir(path.join(root, 'apps/api/src/routes'), { recursive: true });
+  await mkdir(path.join(root, 'docs'), { recursive: true });
+  await writeFile(path.join(root, '.specs/standards/doc-sync-map.yml'), baseline);
+  await writeFile(path.join(root, 'apps/api/src/routes/users.mjs'), 'before\n');
+  await writeFile(path.join(root, 'docs/architecture.md'), '# Architecture\n');
+  execFileSync('git', ['add', '.'], { cwd: root });
   execFileSync('git', ['commit', '-q', '-m', 'base'], { cwd: root });
-  await writeFile(path.join(root, 'tracked.md'), 'after\n');
-  await writeFile(path.join(root, 'new.md'), 'new\n');
-
   const base = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
-  assert.deepEqual(changedFilesSince(root, base).sort(), ['new.md', 'tracked.md']);
+
+  await mkdir(path.join(root, 'specs/001-demo'), { recursive: true });
+  await writeFile(path.join(root, 'specs/001-demo/spec.md'), '# Demo\n');
+  const impactFile = path.join(root, 'specs/001-demo/documentation-impact.md');
+  await writeFile(impactFile, '| Règle | Cible | Statut | Motif |\n|---|---|---|---|\n');
+  await writeFile(path.join(root, '.specs/standards/doc-sync-map.yml'), `rules:
+  - id: api
+    sources: []
+    targets: []
+    policy: review
+`);
+  await writeFile(path.join(root, 'apps/api/src/routes/users.mjs'), 'after\n');
+
+  const changed = changedFilesSince(root, base);
+  const previousMap = baselineRoutingText(root, base);
+  assert(previousMap.includes('policy: required'));
+  assert((await checkDocumentationSync(root, changed, previousMap))
+    .some((error) => error.includes('décision absente pour api → docs/architecture.md')));
+
+  await writeFile(impactFile, `| Règle | Cible | Statut | Motif |
+|---|---|---|---|
+| api | docs/architecture.md | REVIEWED_NO_CHANGE | Le contrat documenté reste valide. |
+`);
+  assert.deepEqual(await checkDocumentationSync(root, changedFilesSince(root, base), previousMap), []);
+});
+
+test('includes tracked and untracked workspace changes and rejects invalid Git bases', async (t) => {
+  const root = await mkdtemp(path.join(tmpdir(), 'agenctic-git-diff-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: root });
+  execFileSync('git', ['config', 'user.email', 'test@example.test'], { cwd: root });
+  execFileSync('git', ['config', 'user.name', 'Docs Test'], { cwd: root });
+  await mkdir(path.join(root, 'apps/api/src/routes'), { recursive: true });
+  await writeFile(path.join(root, 'apps/api/src/routes/original.mjs'), 'before\n');
+  execFileSync('git', ['add', '.'], { cwd: root });
+  execFileSync('git', ['commit', '-q', '-m', 'base'], { cwd: root });
+  execFileSync('git', ['checkout', '-q', '-b', 'feature'], { cwd: root });
+  await writeFile(path.join(root, 'feature.md'), 'feature\n');
+  execFileSync('git', ['add', 'feature.md'], { cwd: root });
+  execFileSync('git', ['commit', '-q', '-m', 'feature change'], { cwd: root });
+  execFileSync('git', ['checkout', '-q', 'main'], { cwd: root });
+  await writeFile(path.join(root, 'main-only.md'), 'upstream\n');
+  execFileSync('git', ['add', 'main-only.md'], { cwd: root });
+  execFileSync('git', ['commit', '-q', '-m', 'upstream change'], { cwd: root });
+  const base = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+  execFileSync('git', ['checkout', '-q', 'feature'], { cwd: root });
+
+  await writeFile(path.join(root, 'apps/api/src/routes/renamed.mjs'), 'before\n');
+  await rm(path.join(root, 'apps/api/src/routes/original.mjs'));
+  await writeFile(path.join(root, 'feature.md'), 'feature worktree update\n');
+  await writeFile(path.join(root, 'local-untracked.md'), 'local\n');
+  assert.deepEqual(changedFilesSince(root, base).sort(), [
+    'apps/api/src/routes/original.mjs',
+    'apps/api/src/routes/renamed.mjs',
+    'feature.md',
+    'local-untracked.md',
+  ]);
+  assert(!changedFilesSince(root, base).includes('main-only.md'));
   assert.throws(() => changedFilesSince(root, 'not-a-safe-ref'), /DOCS_SYNC_BASE invalide/);
+});
+
+test('compares a first push from an empty tree instead of accepting an empty diff', async (t) => {
+  const root = await mkdtemp(path.join(tmpdir(), 'agenctic-first-push-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  execFileSync('git', ['init', '-q'], { cwd: root });
+  execFileSync('git', ['config', 'user.email', 'test@example.test'], { cwd: root });
+  execFileSync('git', ['config', 'user.name', 'Docs Test'], { cwd: root });
+  await writeFile(path.join(root, 'tracked.md'), 'first commit\n');
+  execFileSync('git', ['add', 'tracked.md'], { cwd: root });
+  execFileSync('git', ['commit', '-q', '-m', 'initial'], { cwd: root });
+  await writeFile(path.join(root, 'untracked.md'), 'local\n');
+
+  assert.deepEqual(changedFilesSince(root, '0'.repeat(40)).sort(), ['tracked.md', 'untracked.md']);
 });
 
 test('detects missing or divergent project skills across integrations', async (t) => {

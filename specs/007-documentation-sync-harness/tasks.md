@@ -93,3 +93,22 @@ preuves ciblées (T011).
 
 Chaque tâche possède une case, un identifiant unique, une étiquette d'histoire
 lorsqu'elle appartient à une histoire et des chemins précis.
+
+## Phase 6 : Corrections de revue
+
+- [x] T012 Refuser les cartes de routage vides ou mal formées dans
+  `scripts/docs-check.mjs` et couvrir ces échecs dans `scripts/docs-check.test.mjs`
+- [x] T013 Faire correspondre `**/` à zéro ou plusieurs segments dans
+  `scripts/docs-check.mjs` et ajouter une régression dans `scripts/docs-check.test.mjs`
+- [x] T014 Conserver les obligations `required` de la carte à l’ancêtre commun
+  lorsqu’une PR réduit le routage, avec preuve dans
+  `scripts/docs-check.mjs` et `scripts/docs-check.test.mjs`
+- [x] T015 Comparer depuis l’ancêtre commun, conserver les deux chemins de renommage
+  et traiter le SHA nul initial dans `scripts/docs-check.mjs` et
+  `scripts/docs-check.test.mjs`
+- [x] T016 Documenter le comportement Git et l’union des règles historiques dans
+  `docs/setup/spec-kit.md`, `.specs/standards/workflow.md` et
+  `specs/007-documentation-sync-harness/data-model.md`
+- [x] T017 Exécuter `pnpm docs:test`, `pnpm docs:check` avec une base valide,
+  `pnpm lint` et `git diff --check`, puis actualiser les preuves
+  dans `specs/007-documentation-sync-harness/verification.md`

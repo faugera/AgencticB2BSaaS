@@ -67,18 +67,42 @@ function inlineList(value) {
 function parseDocSyncRules(text) {
   const rules = [];
   let current;
-  for (const line of text.split(/\r?\n/)) {
+  let currentFields;
+  const lines = text.split(/\r?\n/);
+  const header = lines.findIndex((line) => line.trim() && !line.trimStart().startsWith('#'));
+  if (header < 0 || lines[header].trim() !== 'rules:') {
+    throw new Error('section racine `rules:` absente ou invalide');
+  }
+  for (const [index, line] of lines.entries()) {
+    if (index <= header || !line.trim() || line.trimStart().startsWith('#')) continue;
     const start = line.match(/^ {2}- id:\s*([a-z0-9-]+)\s*$/);
     if (start) {
       current = { id: start[1], policy: undefined, sources: undefined, targets: undefined };
+      currentFields = new Set();
       rules.push(current);
       continue;
     }
-    if (!current) continue;
-    const field = line.match(/^ {4}(policy|sources|targets):\s*(.*?)\s*$/);
-    if (!field) continue;
-    if (field[1] === 'policy') current.policy = field[2];
-    else current[field[1]] = inlineList(field[2]);
+    if (/^ {2}-/.test(line)) {
+      throw new Error(`syntaxe de règle invalide ligne ${index + 1}`);
+    }
+    const field = line.match(/^ {4}([a-z][a-z0-9_-]*):\s*(.*?)\s*$/);
+    if (!current || !field || !['change_type', 'policy', 'reason', 'sources', 'targets'].includes(field[1])) {
+      throw new Error(`structure non prise en charge ligne ${index + 1}`);
+    }
+    const [, name, value] = field;
+    if (currentFields.has(name)) throw new Error(`champ dupliqué ligne ${index + 1} : ${name}`);
+    currentFields.add(name);
+    if (name === 'sources' || name === 'targets') {
+      current[name] = inlineList(value);
+      if (current[name] === null) throw new Error(`liste ${name} invalide ligne ${index + 1}`);
+    } else {
+      if (!value) throw new Error(`champ vide ligne ${index + 1} : ${name}`);
+      if (name === 'policy') current.policy = value;
+    }
+  }
+  if (!rules.length) throw new Error('aucune règle reconnue');
+  for (const rule of rules) {
+    if (!rule.policy) throw new Error(`politique absente pour ${rule.id}`);
   }
   return rules;
 }
@@ -100,8 +124,13 @@ function globRegex(pattern) {
   for (let index = 0; index < pattern.length; index += 1) {
     const char = pattern[index];
     if (char === '*' && pattern[index + 1] === '*') {
-      source += '.*';
-      index += 1;
+      if (pattern[index + 2] === '/') {
+        source += '(?:[^/]+/)*';
+        index += 2;
+      } else {
+        source += '.*';
+        index += 1;
+      }
     } else if (char === '*') source += '[^/]*';
     else source += char.replace(/[|\\{}()[\]^$+?.]/g, '\\$&');
   }
@@ -126,7 +155,7 @@ function parseDocumentationDecisions(text, errors, file) {
   return decisions;
 }
 
-export async function checkDocumentationSync(root, changedFiles) {
+export async function checkDocumentationSync(root, changedFiles, baselineRoutingText = '') {
   root = path.resolve(root);
   const errors = [];
   const routingFile = '.specs/standards/doc-sync-map.yml';
@@ -135,27 +164,52 @@ export async function checkDocumentationSync(root, changedFiles) {
     rules = parseDocSyncRules(await readFile(path.join(root, routingFile), 'utf8'));
   } catch (error) {
     if (error.code === 'ENOENT') return [`${routingFile}: fichier de routage absent`];
-    throw error;
+    return [`${routingFile}: routage invalide : ${error.message}`];
+  }
+  let baselineRules;
+  try {
+    baselineRules = baselineRoutingText ? parseDocSyncRules(baselineRoutingText) : [];
+  } catch (error) {
+    return [`${routingFile}: routage de base invalide : ${error.message}`];
   }
 
   const normalizedFiles = new Set(changedFiles.map((file) => file.replace(/\\/g, '/')));
-  const requiredRules = rules.filter((rule) => rule.policy === 'required');
-  const ruleIds = new Set();
-  for (const rule of rules) {
-    if (ruleIds.has(rule.id)) errors.push(`${routingFile}: identifiant de règle dupliqué : ${rule.id}`);
-    ruleIds.add(rule.id);
-    if (!['required', 'review', 'none'].includes(rule.policy)) {
-      errors.push(`${routingFile}: politique absente ou inconnue pour ${rule.id} : ${rule.policy ?? 'absente'}`);
+  const requiredRulesById = new Map();
+  const knownTargets = new Map();
+  for (const rule of [...baselineRules, ...rules]) {
+    if (!knownTargets.has(rule.id)) knownTargets.set(rule.id, new Set());
+    for (const target of rule.targets ?? []) knownTargets.get(rule.id).add(target);
+    if (rule.policy !== 'required') continue;
+    if (!requiredRulesById.has(rule.id)) {
+      requiredRulesById.set(rule.id, { id: rule.id, sources: new Set(), targets: new Set() });
     }
-    for (const pattern of rule.sources ?? []) {
-      if (!validRepoPattern(pattern)) errors.push(`${routingFile}: motif source invalide : ${pattern}`);
-    }
+    const required = requiredRulesById.get(rule.id);
+    for (const source of rule.sources ?? []) required.sources.add(source);
+    for (const target of rule.targets ?? []) required.targets.add(target);
   }
-  for (const rule of requiredRules) {
-    if (!rule.sources?.length) errors.push(`${routingFile}: règle required sans sources : ${rule.id}`);
-    if (!rule.targets?.length) errors.push(`${routingFile}: règle required sans targets : ${rule.id}`);
-    if (new Set(rule.targets ?? []).size !== (rule.targets ?? []).length) {
-      errors.push(`${routingFile}: cible dupliquée dans la règle ${rule.id}`);
+  const requiredRules = [...requiredRulesById.values()].map((rule) => ({
+    ...rule,
+    sources: [...rule.sources],
+    targets: [...rule.targets],
+  }));
+  for (const [index, ruleSet] of [baselineRules, rules].entries()) {
+    const ruleIds = new Set();
+    for (const rule of ruleSet) {
+      if (ruleIds.has(rule.id)) errors.push(`${routingFile}: identifiant de règle dupliqué : ${rule.id}`);
+      ruleIds.add(rule.id);
+      if (!['required', 'review', 'none'].includes(rule.policy)) {
+        errors.push(`${routingFile}: politique absente ou inconnue pour ${rule.id} : ${rule.policy ?? 'absente'}`);
+      }
+      for (const pattern of rule.sources ?? []) {
+        if (!validRepoPattern(pattern)) errors.push(`${routingFile}: motif source invalide : ${pattern}`);
+      }
+      if (index === 1 && rule.policy === 'required') {
+        if (!rule.sources?.length) errors.push(`${routingFile}: règle required sans sources : ${rule.id}`);
+        if (!rule.targets?.length) errors.push(`${routingFile}: règle required sans targets : ${rule.id}`);
+        if (new Set(rule.targets ?? []).size !== (rule.targets ?? []).length) {
+          errors.push(`${routingFile}: cible dupliquée dans la règle ${rule.id}`);
+        }
+      }
     }
   }
   if (errors.length) return errors;
@@ -183,15 +237,14 @@ export async function checkDocumentationSync(root, changedFiles) {
     else throw error;
   }
 
-  const ruleMap = new Map(rules.map((rule) => [rule.id, rule]));
   const decisionMap = new Map();
   for (const decision of decisions) {
     const key = `${decision.rule}\0${decision.target}`;
     if (decisionMap.has(key)) errors.push(`${impactFile}: décision dupliquée pour ${decision.rule} → ${decision.target}`);
     decisionMap.set(key, decision);
-    const rule = ruleMap.get(decision.rule);
-    if (!rule) errors.push(`${impactFile}: règle inconnue : ${decision.rule}`);
-    else if (!rule.targets?.includes(decision.target)) {
+    const targets = knownTargets.get(decision.rule);
+    if (!targets) errors.push(`${impactFile}: règle inconnue : ${decision.rule}`);
+    else if (!targets.has(decision.target)) {
       errors.push(`${impactFile}: cible inconnue pour ${decision.rule} : ${decision.target}`);
     }
   }
@@ -221,14 +274,50 @@ export async function checkDocumentationSync(root, changedFiles) {
   return errors;
 }
 
-export function changedFilesSince(root, base) {
+function comparisonBase(root, base) {
   if (!base) throw new Error('DOCS_SYNC_BASE absent : fournir une référence Git de base (par ex. origin/main).');
   if (!/^(?:[0-9a-f]{7,40}|origin\/[A-Za-z0-9._/-]+)$/.test(base) || base.includes('..')) {
     throw new Error(`DOCS_SYNC_BASE invalide : ${base}. Utiliser un SHA ou une référence origin/<branche>.`);
   }
   try {
+    if (/^0{40}$/.test(base)) {
+      return execFileSync('git', ['hash-object', '-t', 'tree', '-w', '--stdin'], {
+        cwd: root,
+        encoding: 'utf8',
+        input: '',
+      }).trim();
+    }
     execFileSync('git', ['rev-parse', '--verify', '--end-of-options', `${base}^{commit}`], { cwd: root, stdio: 'ignore' });
-    const output = execFileSync('git', ['diff', '--name-only', '--diff-filter=ACDMRT', base], {
+    return execFileSync('git', ['merge-base', base, 'HEAD'], {
+      cwd: root,
+      encoding: 'utf8',
+    }).trim();
+  } catch {
+    throw new Error(`Base Git invalide ou indisponible : ${base}. Récupérer la référence puis définir DOCS_SYNC_BASE.`);
+  }
+}
+
+export function baselineRoutingText(root, base) {
+  const resolvedBase = comparisonBase(root, base);
+  if (/^0{40}$/.test(base)) return '';
+  const file = '.specs/standards/doc-sync-map.yml';
+  const trackedFiles = execFileSync('git', ['ls-tree', '-r', '--name-only', resolvedBase, '--', file], {
+    cwd: root,
+    encoding: 'utf8',
+  }).split(/\r?\n/);
+  if (!trackedFiles.includes(file)) return '';
+  return execFileSync('git', ['show', `${resolvedBase}:${file}`], {
+    cwd: root,
+    encoding: 'utf8',
+  });
+}
+
+export function changedFilesSince(root, base) {
+  const diffBase = comparisonBase(root, base);
+  try {
+    const output = execFileSync('git', [
+      'diff', '--name-only', '--no-renames', '--diff-filter=ACDMRT', diffBase,
+    ], {
       cwd: root,
       encoding: 'utf8',
     });
@@ -476,7 +565,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     } else {
       const base = process.env.DOCS_SYNC_BASE || 'origin/main';
       const changed = changedFilesSince(root, base);
-      const syncErrors = await checkDocumentationSync(root, changed);
+      const baseRouting = baselineRoutingText(root, base);
+      const syncErrors = await checkDocumentationSync(root, changed, baseRouting);
       if (syncErrors.length) {
         console.error(syncErrors.join('\n'));
         process.exitCode = 1;

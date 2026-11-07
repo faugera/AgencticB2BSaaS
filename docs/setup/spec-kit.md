@@ -144,14 +144,18 @@ Docs seules : contrôles docs. Outillage : tests ciblés et lint. Produit : pnpm
 UI et SQL/IAM ajoutent leurs gates selon verify-change. Aucun gate obligatoire absent
 ne devient PASS ; une raison explicite est requise pour NOT_APPLICABLE.
 
-Il calcule aussi les fichiers du diff Git depuis `DOCS_SYNC_BASE` (défaut local :
-`origin/main`), y compris les fichiers staged, unstaged et non suivis, puis identifie
-les règles `required` dont les motifs sources correspondent.
+Il calcule aussi les fichiers du diff Git depuis l’ancêtre commun de
+`DOCS_SYNC_BASE` et `HEAD` (défaut local : `origin/main`) jusqu’au worktree,
+y compris les fichiers staged, unstaged et non suivis. La détection des renommages
+est désactivée pour conserver les chemins source et destination comme suppression
+et ajout. Un premier push avec le SHA nul GitHub est comparé à l’arbre vide.
+Le contrôle identifie ensuite les règles `required` dont les motifs sources correspondent,
+en conservant aussi les règles requises de la base si la carte courante réduit leur couverture.
 Pour ces règles, `specs/<feature>/documentation-impact.md` doit faire partie du diff
 et contenir une décision par cible : `UPDATED` si la cible est modifiée,
 `REVIEWED_NO_CHANGE` ou `NOT_APPLICABLE` avec motif si elle ne l'est pas. La CI
 fournit le SHA de base du PR/push et récupère l'historique complet ; une référence
-absente ou invalide fait échouer le contrôle.
+absente ou invalide, une carte non reconnue ou une décision manquante fait échouer le contrôle.
 
 Format exact de la table :
 

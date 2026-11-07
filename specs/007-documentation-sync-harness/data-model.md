@@ -24,8 +24,14 @@ description concise du contenu synchronisé. `REVIEWED_NO_CHANGE` et
 ## Résolution du diff
 
 `DOCS_SYNC_BASE` contient une révision Git valide. Les chemins comparés incluent
-`git diff --name-only --diff-filter=ACDMRT <base>` (changements staged et
-unstaged) et `git ls-files --others --exclude-standard` (nouveaux fichiers
-locaux), normalisés avec des séparateurs `/`. En CI, le workspace checkouté
-contient le commit testé ; le même contrôle compare la base PR/push à ces fichiers.
-Un seul répertoire `specs/<feature>` peut être actif dans un même contrôle.
+`git diff --name-only --no-renames --diff-filter=ACDMRT <merge-base>` (changements
+committés depuis la divergence, staged et unstaged) et
+`git ls-files --others --exclude-standard` (nouveaux fichiers locaux), normalisés
+avec des séparateurs `/`. `merge-base` est l’ancêtre commun de la base et `HEAD`,
+ce qui exclut les changements ultérieurs de la branche de base. Sans détection de
+renommage, les chemins source et destination sont tous deux conservés.
+Le SHA nul d’un premier push est remplacé par l’arbre Git vide afin d’inspecter
+tout le contenu suivi. Les règles `required` de la carte au merge-base sont unies
+à celles de la carte courante pour qu’une suppression ou une rétrogradation ne
+contourne pas les décisions documentaires. Un seul répertoire `specs/<feature>`
+peut être actif dans un même contrôle.
