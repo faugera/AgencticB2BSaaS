@@ -52,6 +52,7 @@ describe('Contrats B2B HTTP avec sessions et PostgreSQL réels', () => {
       const created = await auth.api.signUpEmail({ body: { email, name: 'HTTP fixture', password } });
       await operator.query('UPDATE identity."user" SET "emailVerified"=true WHERE id=$1', [created.user.id]);
       const actor = await businessTransaction(business, created.user.id, undefined, 'fixture.read', async (_client, context) => context.actorId);
+      if (!actor) throw new Error('HTTP fixture actor missing');
       const login = await app.inject({ method: 'POST', url: '/api/auth/sign-in/email', headers: { origin: config.baseURL }, payload: { email, password } });
       expect(login.statusCode).toBe(200);
       accounts.push({ id: created.user.id, actor, cookie: login.cookies.map((cookie) => cookie.name + '=' + cookie.value).join('; ') });
@@ -83,9 +84,10 @@ describe('Contrats B2B HTTP avec sessions et PostgreSQL réels', () => {
     expect(persisted.rows.map((row) => row.organization_id)).toEqual([at(organizations, 0), at(organizations, 0), at(organizations, 1)]);
     expect((await write('POST', '/api/organizations', { name: 'Forbidden' }, 1)).statusCode).toBe(403);
     expect((await get('/api/tenants', 1)).json<{ id: string }[]>().map((tenant) => tenant.id).sort()).toEqual(tenants.slice(0, 2).sort());
-    const invited = await operator.query('SELECT u.name,u.first_name,u.last_name FROM identity."user" u JOIN authorization_private.invitations i ON lower(i.email)=lower(u.email) WHERE i.tenant_id=ANY($1)', [tenants]);
+    const invited = await operator.query<{ name: string; first_name: string | null; last_name: string | null }>('SELECT u.name,u.first_name,u.last_name FROM identity."user" u JOIN authorization_private.invitations i ON lower(i.email)=lower(u.email) WHERE i.tenant_id=ANY($1)', [tenants]);
     expect(invited.rows).toHaveLength(3);
-    for (const user of invited.rows) expect(user).toEqual({ name: '', first_name: null, last_name: null });
+    for (const user of invited.rows) expect(user).toMatchObject({ first_name: null, last_name: null });
+    expect(invited.rows.every((user) => user.name.trim().length > 0)).toBe(true);
     expect((await get('/api/roles', 1)).statusCode).toBe(403);
   });
 

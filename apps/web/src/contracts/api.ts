@@ -139,7 +139,7 @@ export const memberSchema = z
     id: uuid,
     name: z.string(),
     email: z.string().email(),
-    role: z.enum(['tenant_admin', 'member']).nullable(),
+    role: z.enum(['tenant_admin', 'workspace_admin', 'member']).nullable(),
   })
   .strict();
 export const memberListSchema = z.array(memberSchema);

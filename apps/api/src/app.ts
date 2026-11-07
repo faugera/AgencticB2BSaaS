@@ -119,7 +119,7 @@ export function buildApp({
           hook: 'preHandler',
           skipOnError: false,
           keyGenerator: (request) =>
-            `${request.routeOptions.url}:${request.ip}`,
+            `${request.method}:${request.routeOptions.url}:${request.ip}`,
           store: createRateLimitStore(business, authConfig.secret),
         });
         registerBusinessRoutes(scope, auth, business, authConfig);

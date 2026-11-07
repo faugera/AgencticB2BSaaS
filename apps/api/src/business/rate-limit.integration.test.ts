@@ -2,11 +2,11 @@ import { createHash, randomBytes } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Pool } from 'pg';
 import { buildApp } from '../app.js';
-import { createAuthPool } from '../auth/service.js';
+import { createAuth, createAuthPool } from '../auth/service.js';
 import { provisionRoles } from '../auth/provision.js';
 import { migrateAuth } from '../auth/migrate.js';
 import type { AuthConfig } from '../auth/config.js';
-import { createBusinessPool } from './store.js';
+import { businessTransaction, createBusinessPool } from './store.js';
 
 const databaseURL = process.env.AUTH_TEST_DATABASE_URL;
 const migrationURL = process.env.AUTH_TEST_MIGRATION_DATABASE_URL;
@@ -41,13 +41,16 @@ const operator = new Pool({ connectionString: migrationURL });
 const business = createBusinessPool(businessURL);
 const identity = createAuthPool(databaseURL);
 const apps: ReturnType<typeof buildApp>[] = [];
+let rateActor = '';
+let rateIdentity = '';
+let rateTenant = '';
 const request = {
   method: 'POST',
   url: '/api/access-requests',
   remoteAddress: '198.51.100.191',
   headers: { origin: config.baseURL },
   payload: {
-    link: '21c7d7a8-c64c-4bd0-9c70-35ae1b2b1d6b',
+    link: '',
     firstName: 'Rate',
     lastName: 'Limit',
     email: 'rate-limit@example.test',
@@ -65,11 +68,74 @@ describe('Limitation partagée PostgreSQL', () => {
   beforeAll(async () => {
     await provisionRoles(migrationURL, databaseURL, businessURL);
     await migrateAuth(config, migrationURL);
+    const auth = createAuth(config, identity, async () => {}, true);
+    const created = await auth.api.signUpEmail({
+      body: {
+        email: `rate-limit-${randomBytes(8).toString('hex')}@example.test`,
+        name: 'Rate limit fixture',
+        password: randomBytes(24).toString('base64url'),
+      },
+    });
+    rateIdentity = created.user.id;
+    await operator.query(
+      'UPDATE identity."user" SET "emailVerified"=true WHERE id=$1',
+      [rateIdentity],
+    );
+    const actor = await businessTransaction(
+      business,
+      rateIdentity,
+      undefined,
+      'fixture.rate_limit',
+      async (_client, context) => context.actorId,
+    );
+    if (!actor) throw new Error('Rate-limit actor fixture missing');
+    rateActor = actor;
+    await operator.query(
+      "UPDATE authorization_private.actors SET platform_role='super_admin' WHERE id=$1",
+      [rateActor],
+    );
+    rateTenant = await businessTransaction(
+      business,
+      rateIdentity,
+      undefined,
+      'fixture.rate_limit_tenant',
+      async (client) => {
+        const organization = await client.query<{ id: string }>(
+          "SELECT business.create_organization('Rate-limit test organization') id",
+        );
+        const organizationId = organization.rows[0]?.id;
+        if (!organizationId) throw new Error('Rate-limit organization fixture missing');
+        const tenant = await client.query<{ id: string }>(
+          "SELECT business.create_tenant($1,'Rate-limit test tenant',$2) id",
+          [organizationId, 'rate-limit@example.test'],
+        );
+        const tenantId = tenant.rows[0]?.id;
+        if (!tenantId) throw new Error('Rate-limit tenant fixture missing');
+        return tenantId;
+      },
+    );
+    const link = await businessTransaction(
+      business,
+      rateIdentity,
+      rateTenant,
+      'fixture.rate_limit_link',
+      async (client) =>
+        (await client.query<{ token: string }>(
+          'SELECT business.access_link() token',
+        )).rows[0]?.token ?? '',
+    );
+    if (!link) throw new Error('Rate-limit access link fixture missing');
+    request.payload.link = link;
     await Promise.all([createApp(), createApp(), createApp()]);
   });
 
   afterAll(async () => {
     await Promise.all(apps.map((app) => app.close()));
+    if (rateActor)
+      await operator.query(
+        'UPDATE authorization_private.actors SET platform_role=NULL WHERE id=$1',
+        [rateActor],
+      );
     await Promise.all([operator.end(), identity.end(), business.end()]);
   });
 
@@ -78,7 +144,7 @@ describe('Limitation partagée PostgreSQL', () => {
       apps.map((app) => app.inject(request)),
     );
     expect(responses.map((response) => response.statusCode)).toEqual([
-      403, 403, 403,
+      202, 202, 202,
     ]);
 
     const exceeded = await apps[0]!.inject(request);

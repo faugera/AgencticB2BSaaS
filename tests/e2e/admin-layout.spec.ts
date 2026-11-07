@@ -11,7 +11,7 @@ for (const locale of ['fr', 'en'] as const) {
       const path = new URL(route.request().url()).pathname;
       return route.fulfill({ json: path === '/api/me'
         ? { user: { id: 'op', name: 'Operator', email: 'operator@example.test' }, access: { platformRole: 'super_admin', tenantRole: null } }
-        : path === '/api/tenants' ? [{ id: tenant, name: tenantName }, { id: '10000000-0000-4000-8000-000000000003', name: tenantName }]
+        : path === '/api/tenants' ? [{ id: tenant, name: tenantName, organization_id: '10000000-0000-4000-8000-000000000010' }, { id: '10000000-0000-4000-8000-000000000003', name: tenantName, organization_id: '10000000-0000-4000-8000-000000000010' }]
           : path === '/api/workspaces' ? { items: [space], nextCursor: null } : path === '/api/auth/get-session' ? null : [] });
     });
     await page.goto('/admin');

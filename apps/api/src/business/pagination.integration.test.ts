@@ -211,7 +211,7 @@ describe('Pagination PostgreSQL et portée tenant', () => {
       ...second.items,
       ...third.items,
     ].map((item) => item.id);
-    expect(allIds).toHaveLength(110);
+    expect(allIds).toHaveLength(109);
     expect(new Set(allIds).size).toBe(allIds.length);
     expect(allIds).not.toContain(deletedId);
   });

@@ -174,18 +174,42 @@ BEGIN
     RETURNING o.id,o.tenant_id,o.invitation_id,o.key_id,o.iv,o.ciphertext,o.tag,o.lease_id;
 END $$;
 
+CREATE FUNCTION business.invitation_outbox_active(target uuid,claim uuid)
+RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
+DECLARE message authorization_private.outbox_messages; invitation authorization_private.invitations;
+BEGIN
+  SELECT * INTO message FROM authorization_private.outbox_messages WHERE id=target FOR UPDATE;
+  IF NOT FOUND THEN RETURN false; END IF;
+  SELECT * INTO invitation FROM authorization_private.invitations WHERE id=message.invitation_id FOR UPDATE;
+  IF NOT FOUND THEN RETURN false; END IF;
+  RETURN message.state='leased' AND message.lease_id=claim
+    AND message.leased_until>clock_timestamp() AND message.expires_at>clock_timestamp()
+    AND invitation.accepted_at IS NULL AND invitation.revoked_at IS NULL
+    AND invitation.expires_at>clock_timestamp()
+    AND message.operation_key='invitation:'||invitation.id::text||':'||invitation.token_hash;
+END
+$$;
+
 CREATE FUNCTION business.finish_invitation_outbox(target uuid,claim uuid,succeeded boolean,error_code text DEFAULT NULL)
 RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog AS $$
-DECLARE message authorization_private.outbox_messages;
+DECLARE message authorization_private.outbox_messages; changed_tenant uuid; organization uuid;
 BEGIN
   SELECT * INTO message FROM authorization_private.outbox_messages WHERE id=target AND state='leased'
-    AND lease_id=claim AND leased_until>clock_timestamp() FOR UPDATE;
+    AND lease_id=claim FOR UPDATE;
   IF NOT FOUND THEN RETURN false; END IF;
   IF succeeded THEN
     UPDATE authorization_private.outbox_messages SET state='sent',delivered_at=clock_timestamp(),
       ciphertext='',iv='',tag='',lease_id=NULL,leased_until=NULL,last_error=NULL WHERE id=target;
     UPDATE authorization_private.invitations SET delivery='sent'
-      WHERE id=message.invitation_id AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at>clock_timestamp();
+      WHERE id=message.invitation_id AND accepted_at IS NULL AND revoked_at IS NULL
+        AND expires_at>clock_timestamp() AND delivery IS DISTINCT FROM 'sent'
+      RETURNING tenant_id INTO changed_tenant;
+    IF FOUND THEN
+      SELECT organization_id INTO organization FROM authorization_private.tenant_organizations
+        WHERE tenant_id=changed_tenant;
+      PERFORM business.append_audit('invitation.sent','invitation',
+        message.invitation_id::text,changed_tenant,organization,'{}');
+    END IF;
   ELSE
     UPDATE authorization_private.outbox_messages SET
       state=CASE WHEN attempts>=8 OR expires_at<=clock_timestamp() THEN 'failed' ELSE 'retryable' END,
@@ -196,7 +220,16 @@ BEGIN
       lease_id=NULL,leased_until=NULL,last_error=left(coalesce(error_code,'delivery_failed'),64)
       WHERE id=target;
     UPDATE authorization_private.invitations SET delivery='failed'
-      WHERE id=message.invitation_id AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at>clock_timestamp();
+      WHERE id=message.invitation_id AND accepted_at IS NULL AND revoked_at IS NULL
+        AND expires_at>clock_timestamp() AND delivery IS DISTINCT FROM 'failed'
+      RETURNING tenant_id INTO changed_tenant;
+    IF FOUND THEN
+      SELECT organization_id INTO organization FROM authorization_private.tenant_organizations
+        WHERE tenant_id=changed_tenant;
+      PERFORM business.append_audit('invitation.failed','invitation',
+        message.invitation_id::text,changed_tenant,organization,
+        jsonb_build_object('error_code',left(coalesce(error_code,'delivery_failed'),64)));
+    END IF;
   END IF;
   RETURN true;
 END $$;
@@ -205,10 +238,12 @@ REVOKE ALL ON FUNCTION business.begin_idempotency(text,text,text,text),
   business.complete_idempotency(text,text,text,text,jsonb),
   business.enqueue_invitation_outbox(uuid,uuid,text,text,text,text,text),
   business.claim_invitation_outbox(integer,integer),
+  business.invitation_outbox_active(uuid,uuid),
   business.finish_invitation_outbox(uuid,uuid,boolean,text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION business.begin_idempotency(text,text,text,text),
   business.complete_idempotency(text,text,text,text,jsonb),
   business.enqueue_invitation_outbox(uuid,uuid,text,text,text,text,text),
   business.claim_invitation_outbox(integer,integer),
+  business.invitation_outbox_active(uuid,uuid),
   business.finish_invitation_outbox(uuid,uuid,boolean,text) TO business_runtime;
 RESET ROLE;

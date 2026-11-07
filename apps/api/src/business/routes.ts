@@ -274,7 +274,7 @@ export function registerBusinessRoutes(
             can_assign_roles: boolean;
             role_level: number;
             color: string | null;
-            created_at: Date;
+            created_at: string;
           }>(
             'SELECT * FROM business.workspaces_page($1,$2,$3)',
             [cursor?.createdAt ?? null, cursor?.id ?? null, pageSize + 1],
@@ -362,7 +362,7 @@ export function registerBusinessRoutes(
             name: string;
             email: string;
             role: string | null;
-            created_at: Date;
+            created_at: string;
           }>(
             'SELECT * FROM business.members_page($1,$2,$3)',
             [cursor?.createdAt ?? null, cursor?.id ?? null, pageSize + 1],
@@ -394,7 +394,7 @@ export function registerBusinessRoutes(
             accepted_at: Date | null;
             revoked_at: Date | null;
             delivery: string;
-            created_at: Date;
+            created_at: string;
           }>(
             'SELECT * FROM business.invitations_page($1,$2,$3)',
             [cursor?.createdAt ?? null, cursor?.id ?? null, pageSize + 1],

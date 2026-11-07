@@ -43,6 +43,7 @@ describe('access requests, protected documentation and own-account profile', () 
       const created = await auth.api.signUpEmail({ body: { email, name: 'Profile fixture', password } });
       await operator.query('UPDATE identity."user" SET "emailVerified"=true WHERE id=$1', [created.user.id]);
       const actor = await businessTransaction(business, created.user.id, undefined, 'fixture.read', async (_client, context) => context.actorId);
+      if (!actor) throw new Error('Access fixture actor missing');
       const response = await post('/api/auth/sign-in/email', { email, password });
       expect(response.statusCode).toBe(200);
       accounts.push({ id: created.user.id, actor, email, cookie: response.cookies.map((cookie) => cookie.name + '=' + cookie.value).join('; ') });

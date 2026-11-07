@@ -31,7 +31,11 @@ export async function enqueueInvitation(
   const operationKey = `invitation:${invitation.id}:${digest(invitation.token)}`;
   const encrypted = encryptOutboxPayload(
     keyring,
-    JSON.stringify({ email: invitation.email, token: invitation.token }),
+    JSON.stringify({
+      email: invitation.email,
+      name: invitation.email.slice(0, invitation.email.indexOf('@')),
+      token: invitation.token,
+    }),
   );
   await client.query(
     'SELECT business.enqueue_invitation_outbox($1,$2,$3,$4,$5,$6,$7)',

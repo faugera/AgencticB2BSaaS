@@ -16,7 +16,7 @@ test('logged-in recovery stays accessible; login refuses an external destination
     route.fulfill({ json: session }),
   );
   await page.route('**/api/me', (route) =>
-    route.fulfill({ json: { user: session.user } }),
+    route.fulfill({ json: { user: { id: session.user.id, name: session.user.name, email: session.user.email }, access: {} } }),
   );
   await page.route('**/api/preferences', (route) => route.fulfill({ json: null }));
   await page.route('**/api/workspaces', (route) => route.fulfill({ json: [] }));

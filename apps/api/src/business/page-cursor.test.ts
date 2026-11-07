@@ -4,7 +4,7 @@ import { AccessError } from './store.js';
 
 const tenantId = '10000000-0000-4000-8000-000000000001';
 const id = '10000000-0000-4000-8000-000000000002';
-const createdAt = '2026-11-06T12:30:45.123Z';
+const createdAt = '2026-11-06T12:30:45.123456Z';
 
 describe('curseur de pagination', () => {
   it('encode et décode une position canonique liée au tenant', () => {
@@ -12,6 +12,18 @@ describe('curseur de pagination', () => {
 
     expect(decodePageCursor(cursor)).toEqual({ tenantId, createdAt, id });
     expect(decodePageCursor(undefined)).toBeNull();
+  });
+
+  it('conserve les microsecondes SQL de la position', () => {
+    const cursor = encodePageCursor(
+      tenantId,
+      '2026-11-06T12:30:45.123456Z',
+      id,
+    );
+
+    expect(decodePageCursor(cursor)?.createdAt).toBe(
+      '2026-11-06T12:30:45.123456Z',
+    );
   });
 
   it.each([

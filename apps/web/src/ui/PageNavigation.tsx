@@ -12,7 +12,6 @@ export function PageNavigation({
   onLoadMore: () => Promise<{ count: number; hasMore: boolean }>;
 }) {
   const { t } = useLanguage();
-  const [hasPages, setHasPages] = useState(nextCursor !== null);
   const [status, setStatus] = useState('');
   const statusRef = useRef<HTMLParagraphElement>(null);
   const focusStatus = useRef(false);
@@ -22,7 +21,7 @@ export function PageNavigation({
       statusRef.current?.focus();
     }
   }, [status]);
-  if (!hasPages) return null;
+  if (nextCursor === null && status === '') return null;
   return (
     <div aria-busy={busy}>
       <Button
@@ -30,7 +29,6 @@ export function PageNavigation({
         variant="secondary"
         disabled={!nextCursor || busy}
         onClick={() => {
-          setHasPages(true);
           setStatus(t('loading'));
           void onLoadMore()
             .then(({ count, hasMore }) => {

@@ -41,6 +41,7 @@ describe('persistent unified audit and scoped administrator consultation', () =>
       const created = await auth.api.signUpEmail({ body: { email, name: 'Audit fixture', password } });
       await operator.query('UPDATE identity."user" SET "emailVerified"=true WHERE id=$1', [created.user.id]);
       const actor = await businessTransaction(business, created.user.id, undefined, 'fixture.read', async (_client, context) => context.actorId);
+      if (!actor) throw new Error('Audit fixture actor missing');
       const response = await app.inject({ method: 'POST', url: '/api/auth/sign-in/email', headers: { origin: config.baseURL }, payload: { email, password } });
       expect(response.statusCode).toBe(200);
       accounts.push({ id: created.user.id, actor, cookie: response.cookies.map((cookie) => cookie.name + '=' + cookie.value).join('; ') });

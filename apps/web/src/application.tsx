@@ -1,6 +1,6 @@
 import { Roles } from './pages/Roles';
 import { Organizations } from './pages/Organizations';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { authClient } from './auth/client';
@@ -46,6 +46,8 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
   const superAdmin = me?.access?.platformRole === 'super_admin';
   const admin = superAdmin || me?.access?.tenantRole === 'tenant_admin' || me?.access?.organizationRole === 'organization_admin' || Boolean(me?.access?.permissions?.includes('members.manage'));
   const query = scope ? `?tenantId=${encodeURIComponent(scope)}` : '';
+  const queryRef = useRef(query);
+  queryRef.current = query;
   const adminPage = location.pathname.replace(/\/$/, '');
   const overview = adminPage === '/admin';
   const organizationPage = adminPage === basePath + '/organizations';
@@ -109,6 +111,17 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
       setLoadedPath(location.pathname + query);
       return;
     }
+    if (!scope && !me.access?.tenantId) {
+      setWorkspaces([]);
+      setWorkspaceCursor(null);
+      setSelected(null);
+      setMembers([]);
+      setMemberCursor(null);
+      setInvitations([]);
+      setInvitationCursor(null);
+      setLoadedPath(location.pathname + query);
+      return;
+    }
     let active = true;
     void (async () => {
       const workspaceId = location.pathname.match(
@@ -155,7 +168,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     return () => {
       active = false;
     };
-  }, [me, query, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, securityPage, docsPage, auditPage, rolesPage, organizationPage]);
+  }, [me, query, scope, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, securityPage, docsPage, auditPage, rolesPage, organizationPage]);
   async function action(run: () => Promise<unknown>) {
     setBusy(true);
     setError('');
@@ -180,6 +193,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
           ? memberCursor
           : invitationCursor;
     if (!cursor) return { count: 0, hasMore: false };
+    const requestedQuery = query;
     const params = new URLSearchParams(query.slice(1));
     params.set('before', cursor);
     setBusy(true);
@@ -190,6 +204,8 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
           '/api/workspaces?' + params.toString(),
           workspacePageSchema,
         );
+        if (queryRef.current !== requestedQuery)
+          return { count: 0, hasMore: false };
         setWorkspaces((current) => [...current, ...page.items]);
         setWorkspaceCursor(page.nextCursor);
         return { count: page.items.length, hasMore: page.nextCursor !== null };
@@ -199,6 +215,8 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
           '/api/members?' + params.toString(),
           memberPageSchema,
         );
+        if (queryRef.current !== requestedQuery)
+          return { count: 0, hasMore: false };
         setMembers((current) => [...current, ...page.items]);
         setMemberCursor(page.nextCursor);
         return { count: page.items.length, hasMore: page.nextCursor !== null };
@@ -207,6 +225,8 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
         '/api/invitations?' + params.toString(),
         invitationPageSchema,
       );
+      if (queryRef.current !== requestedQuery)
+        return { count: 0, hasMore: false };
       setInvitations((current) => [...current, ...page.items]);
       setInvitationCursor(page.nextCursor);
       return { count: page.items.length, hasMore: page.nextCursor !== null };

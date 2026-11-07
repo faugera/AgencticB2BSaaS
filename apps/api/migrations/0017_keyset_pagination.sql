@@ -21,7 +21,7 @@ RETURNS TABLE(
   can_assign_roles boolean,
   role_level integer,
   color text,
-  created_at timestamptz
+  created_at text
 )
 LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=pg_catalog AS $$
 DECLARE tenant uuid := nullif(current_setting('app.tenant_id',true),'')::uuid;
@@ -37,9 +37,10 @@ BEGIN
       business.can('roles.assign',w.id),
       business.workspace_level(w.id),
       business.workspace_color(w.id),
-      w.created_at
+      to_char(w.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')
     FROM business.workspaces w
     WHERE w.tenant_id=tenant
+      AND business.workspace_access(w.id,w.tenant_id,w.visibility)
       AND (cursor_created_at IS NULL OR (w.created_at,w.id)<(cursor_created_at,cursor_id))
     ORDER BY w.created_at DESC,w.id DESC
     LIMIT page_size;
@@ -50,7 +51,7 @@ CREATE FUNCTION business.members_page(
   cursor_id uuid,
   page_size integer
 )
-RETURNS TABLE(id uuid,name text,email text,role text,created_at timestamptz)
+RETURNS TABLE(id uuid,name text,email text,role text,created_at text)
 LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=pg_catalog AS $$
 DECLARE tenant uuid := nullif(current_setting('app.tenant_id',true),'')::uuid;
 BEGIN
@@ -60,7 +61,8 @@ BEGIN
     RAISE EXCEPTION 'ACCESS_DENIED' USING ERRCODE='42501';
   END IF;
   RETURN QUERY
-    SELECT a.id,u.name,u.email,m.role,u."createdAt"
+    SELECT a.id,u.name,u.email,m.role,
+      to_char(u."createdAt" AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')
     FROM authorization_private.memberships m
       JOIN authorization_private.actors a ON a.id=m.actor_id
       JOIN identity."user" u ON u.id=a.identity_id
@@ -83,7 +85,7 @@ RETURNS TABLE(
   accepted_at timestamptz,
   revoked_at timestamptz,
   delivery text,
-  created_at timestamptz
+  created_at text
 )
 LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=pg_catalog AS $$
 DECLARE tenant uuid := nullif(current_setting('app.tenant_id',true),'')::uuid;
@@ -94,7 +96,8 @@ BEGIN
     RAISE EXCEPTION 'ACCESS_DENIED' USING ERRCODE='42501';
   END IF;
   RETURN QUERY
-    SELECT i.id,i.email,i.role,i.expires_at,i.accepted_at,i.revoked_at,i.delivery,i.created_at
+    SELECT i.id,i.email,i.role,i.expires_at,i.accepted_at,i.revoked_at,i.delivery,
+      to_char(i.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')
     FROM authorization_private.invitations i
     WHERE i.tenant_id=tenant
       AND (cursor_created_at IS NULL OR (i.created_at,i.id)<(cursor_created_at,cursor_id))

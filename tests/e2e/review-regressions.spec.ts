@@ -11,7 +11,7 @@ async function fixture(page: Page, locale: string) {
     const url = new URL(route.request().url());
     const path = url.pathname;
     if (path === '/api/me') return route.fulfill({ json: { user: { id: 'op', name: 'Operator', email: 'op@example.test' }, access: { platformRole: 'super_admin', tenantRole: null } } });
-    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization A' }] });
+    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization A', organization_id: '10000000-0000-4000-8000-000000000002' }] });
     if (path === '/api/audit-logs') return route.fulfill({ json: { events: [], nextCursor: null } });
     if (path.startsWith('/api/access-requests/')) {
       approved = true;

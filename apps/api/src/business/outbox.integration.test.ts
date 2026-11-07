@@ -235,6 +235,43 @@ describe('Outbox PostgreSQL et worker', () => {
     expect(serializedLogs).not.toContain(token);
     expect(serializedLogs).not.toContain(secret);
     expect(serializedLogs).not.toContain(smtpBody);
+    const deliveryAudit = await operator.query<{ action: string }>(
+      `SELECT action FROM business.audit_logs
+       WHERE target_id=$1 AND action IN ('invitation.failed','invitation.sent')
+       ORDER BY created_at`,
+      [id],
+    );
+    expect(deliveryAudit.rows.map((row) => row.action)).toEqual([
+      'invitation.failed',
+      'invitation.sent',
+    ]);
+  });
+
+  it('combine l’activation et l’invitation en un seul message pour une nouvelle identité', async () => {
+    const email = `new-${randomBytes(8).toString('hex')}@example.test`;
+    const token = randomBytes(32).toString('base64url');
+    await enqueue(email, token);
+    const messages: { to: string; subject: string; text: string }[] = [];
+    const worker = createOutboxWorker(
+      business,
+      config,
+      async (message) => {
+        messages.push(message);
+      },
+      { error: () => {} },
+    );
+
+    await expect(worker.runOnce()).resolves.toBe(true);
+    expect(messages).toHaveLength(1);
+    expect(messages[0]?.text).toContain('/invite#' + token);
+    expect(messages[0]?.text).toContain('/auth/verify-email');
+    const created = await operator.query<{ name: string; emailVerified: boolean }>(
+      'SELECT name,"emailVerified" FROM identity."user" WHERE lower(email)=lower($1)',
+      [email],
+    );
+    expect(created.rows).toEqual([
+      { name: email.slice(0, email.indexOf('@')), emailVerified: false },
+    ]);
   });
 
   it('n’envoie pas une invitation révoquée ou expirée et efface ses charges', async () => {
@@ -268,6 +305,95 @@ describe('Outbox PostgreSQL et worker', () => {
       [expiredId],
     );
     expect(expired.rows).toHaveLength(0);
+  });
+
+  it('réévalue l’invitation après la prise du bail', async () => {
+    const id = await enqueue(
+      `raced-${randomBytes(8).toString('hex')}@example.test`,
+    );
+    const claim = await business.query<{ id: string; lease_id: string }>(
+      'SELECT * FROM business.claim_invitation_outbox($1,$2)',
+      [1, 120],
+    );
+    const job = claim.rows.find((row) => row.id === id);
+    expect(job).toBeDefined();
+    await operator.query(
+      'UPDATE authorization_private.invitations SET revoked_at=clock_timestamp() WHERE id=$1',
+      [id],
+    );
+    const active = await business.query<{ active: boolean }>(
+      'SELECT business.invitation_outbox_active($1,$2) active',
+      [id, job?.lease_id],
+    );
+    expect(active.rows[0]?.active).toBe(false);
+  });
+
+  it('sérialise une révocation pendant l’envoi SMTP', async () => {
+    const id = await enqueue(
+      `serialized-${randomBytes(8).toString('hex')}@example.test`,
+    );
+    let startSending = () => {};
+    let releaseSending = () => {};
+    const sending = new Promise<void>((resolve) => {
+      startSending = resolve;
+    });
+    const sendGate = new Promise<void>((resolve) => {
+      releaseSending = resolve;
+    });
+    const worker = createOutboxWorker(
+      business,
+      config,
+      async () => {
+        startSending();
+        await sendGate;
+      },
+      { error: () => {} },
+    );
+    const processing = worker.runOnce();
+    await sending;
+
+    let startRevoking = () => {};
+    const revoking = new Promise<void>((resolve) => {
+      startRevoking = resolve;
+    });
+    let revokeFinished = false;
+    const revoke = businessTransaction(
+      business,
+      identityId,
+      tenantId,
+      'fixture.revoke_during_delivery',
+      async (client) => {
+        startRevoking();
+        await client.query(
+          'SELECT business.update_invitation($1,$2)',
+          [id, 'revoke'],
+        );
+      },
+    ).then(() => {
+      revokeFinished = true;
+    });
+    await revoking;
+    await delay(50);
+    const revokeWasBlocked = !revokeFinished;
+    releaseSending();
+    await processing;
+    await revoke;
+
+    expect(revokeWasBlocked).toBe(true);
+    const finalState = await operator.query<{
+      state: string;
+      delivery: string;
+      revoked_at: Date | null;
+    }>(
+      `SELECT o.state,i.delivery,i.revoked_at
+       FROM authorization_private.outbox_messages o
+       JOIN authorization_private.invitations i ON i.id=o.invitation_id
+       WHERE o.id=$1`,
+      [id],
+    );
+    expect(finalState.rows[0]?.state).toBe('sent');
+    expect(finalState.rows[0]?.delivery).toBe('sent');
+    expect(finalState.rows[0]?.revoked_at).not.toBeNull();
   });
 
   it('efface et n’envoie pas un message dont le jeton a été remplacé', async () => {
