@@ -179,3 +179,4 @@ ne peut être qualifiée de réussite.
 ## Phase 8: Convergence
 
 - [ ] T037 Diagnostiquer et corriger les parcours Playwright échoués, puis relancer `pnpm test:e2e` jusqu’à validation de SC-008 (partial).
+- [X] T038 Corriger par migration additive `apps/api/migrations/0020_shared_rate_limit_timestamp_fix.sql` le type de timestamp utilisé par `business.consume_rate_limit` ; le scénario d’expiration de T023 couvre le reset. L’exécution PostgreSQL reste suivie dans T035.

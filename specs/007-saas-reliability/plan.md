@@ -155,7 +155,9 @@ page conserve la réautorisation tenant côté serveur.
 Remplacer le store métier local par un compteur atomique PostgreSQL à clés
 opaques et fenêtres expirables. Le limiteur auth Better Auth reste séparé.
 Vérifier sur au moins trois instances et ne jamais basculer silencieusement
-vers un compteur en mémoire.
+vers un compteur en mémoire. Les migrations appliquées restent immuables ;
+toute correction de la fonction partagée passe par une migration additive et
+le test d’expiration vérifie le reset atomique du compteur.
 
 ### Phase D — Pagination tenant-scopée
 

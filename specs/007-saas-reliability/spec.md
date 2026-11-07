@@ -78,6 +78,9 @@ redémarrer l’une d’elles ; vérifier que la même limite globale s’appliq
 2. **Étant donné** que le mécanisme de comptage partagé est indisponible,
    **quand** une requête protégée arrive, **alors** la limite n’est pas
    silencieusement contournée et l’incident est observable.
+3. **Étant donné** une fenêtre de limite expirée, **quand** une nouvelle
+   requête arrive, **alors** le compteur repart à un et une nouvelle fenêtre
+   est définie.
 
 ### User Story 4 — Exploiter et restaurer le service avec des preuves (Priority: P2)
 

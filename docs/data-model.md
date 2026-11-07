@@ -21,7 +21,7 @@ atomique, verrou transactionnel et checksums opérateur.
 | authorization_private.invitations | Hash de jeton, email vérifié à acceptation, rôle, tenant, expiration et livraison ; invited_by conservé si connu |
 | authorization_private.idempotency_records | Clé et empreinte de requête hachées par acteur/action/portée ; résultat sûr sans jeton, expiration 24 h |
 | authorization_private.outbox_messages | Intention d'invitation chiffrée, clé versionnée, bail, tentatives, prochain essai, échéance et erreur classifiée ; livraison auditée, payload effacé après livraison/expiration/échec terminal |
-| authorization_private.business_rate_limits | Compteurs à fenêtre expirante et clé HMAC opaque, accessibles uniquement via une fonction atomique à droits limités |
+| authorization_private.business_rate_limits | Compteurs à fenêtre expirante (`window_ends_at timestamptz`) et clé HMAC opaque, accessibles uniquement via une fonction atomique à droits limités |
 | authorization_private.ui_preferences | Acteur courant ; locale fr/en, theme system/light/dark, timezone Europe/Paris et date_format DD/MM/YYYY par défaut |
 | authorization_private.workspace_appearance | Couleur nullable #RRGGBB, référence composite au workspace |
 | authorization_private.access_links/access_requests | Lien opaque de collecte ; demandes uniques tenant+email ; aucune identité créée à la collecte |
