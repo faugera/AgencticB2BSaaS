@@ -27,10 +27,10 @@ pnpm auth:migrate      # Versioned SQL, no credential rotation
 pnpm dev
 ```
 
-Open http://127.0.0.1:5173/login. `/health` is liveness; `/ready` is 200 only
+Open the [local login page](http://127.0.0.1:5173/login). `/health` is liveness; `/ready` is 200 only
 when both configured runtime databases have safe privileges and reachable schemas.
 An unconfigured development server keeps liveness but is not a usable pilot.
-Mailpit is private on http://127.0.0.1:8025; it never sends real external mail.
+Mailpit is private at the [private Mailpit interface](http://127.0.0.1:8025); it never sends real external mail.
 
 ## Establish the operator, then invite users
 
