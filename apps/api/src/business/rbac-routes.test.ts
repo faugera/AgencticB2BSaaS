@@ -31,4 +31,18 @@ describe('frontière des nouveaux contrats RBAC', () => {
       expect(transact).toHaveBeenCalledOnce();
     } finally { await app.close(); }
   });
+  it('transmet la portée tenant validée au catalogue de rôles', async () => {
+    const app = Fastify();
+    let scopedTenant: string | undefined;
+    const transact = vi.fn(async (_request: unknown, _action: string, _run: unknown, tenant?: string) => {
+      scopedTenant = tenant;
+      throw new Error('Authorization required');
+    }) as Parameters<typeof registerRbacRoutes>[1];
+    const tenantId = '00000000-0000-4000-8000-000000000001';
+    registerRbacRoutes(app, transact);
+    try {
+      await app.inject('/api/roles?tenantId=' + tenantId);
+      expect(scopedTenant).toBe(tenantId);
+    } finally { await app.close(); }
+  });
 });

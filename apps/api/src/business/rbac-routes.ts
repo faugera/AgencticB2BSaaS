@@ -31,8 +31,12 @@ export function registerRbacRoutes(app: FastifyInstance, transact: Transact) {
     return reply.code(201).send(await transact(request, 'organization.created', async (client) =>
       (await client.query<{ id: string }>('SELECT business.create_organization($1) id', [input.data.name])).rows[0]));
   });
-  app.get('/api/roles', async (request) => transact(request, 'roles.read', async (client) =>
-    (await client.query<{ roles: readonly RoleDefinition[] }>('SELECT business.role_catalog() roles')).rows[0]?.roles ?? []));
+  app.get('/api/roles', async (request) => {
+    const query = scopeQuery.safeParse(request.query);
+    if (!query.success) throw new AccessError(400, 'INVALID_REQUEST');
+    return transact(request, 'roles.read', async (client) =>
+      (await client.query<{ roles: readonly RoleDefinition[] }>('SELECT business.role_catalog() roles')).rows[0]?.roles ?? [], query.data.tenantId);
+  });
   app.post('/api/roles', async (request, reply) => {
     const input = roleInput.safeParse(request.body);
     if (!input.success) throw new AccessError(400, 'INVALID_REQUEST');

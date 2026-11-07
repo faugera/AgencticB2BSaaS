@@ -3,7 +3,7 @@ import { HouseSimpleIcon, BuildingsIcon, SquaresFourIcon, UsersIcon, ShieldCheck
 import type { UIMessage } from '../i18n';
 import { Select } from '../ui/primitives';
 
-export function FeatureNavigation({ admin, manager, canAudit, canRoles, organizationAdmin, query, t, onNavigate }: { admin: boolean; manager: boolean; canAudit: boolean; canRoles: boolean; organizationAdmin: boolean; query: string; t: (key: UIMessage) => string; onNavigate: () => void }) {
+export function FeatureNavigation({ admin, manager, canAudit, canRoles, canInvite, organizationAdmin, query, t, onNavigate }: { admin: boolean; manager: boolean; canAudit: boolean; canRoles: boolean; canInvite: boolean; organizationAdmin: boolean; query: string; t: (key: UIMessage) => string; onNavigate: () => void }) {
  const links = admin ? [
   { path: '/admin', label: 'overview', icon: HouseSimpleIcon },
   { path: '/admin/organizations', label: 'organizations', icon: BuildingsIcon },
@@ -16,14 +16,15 @@ export function FeatureNavigation({ admin, manager, canAudit, canRoles, organiza
   { path: '/docs', label: 'docs', icon: BookOpenIcon },
  ] as const : [
   { path: '/app', label: 'workspaces', icon: SquaresFourIcon },
-  ...(manager ? [{ path: '/app/members', label: 'members_page', icon: UsersIcon }, { path: '/app/invitations', label: 'invitations_page', icon: EnvelopeSimpleIcon }] as const : []),
+  ...(manager ? [{ path: '/app/members', label: 'members_page', icon: UsersIcon }] as const : []),
+  ...(canInvite ? [{ path: '/app/invitations', label: 'invitations_page', icon: EnvelopeSimpleIcon }] as const : []),
   ...(canRoles ? [{ path: '/app/roles', label: 'roles_page', icon: ShieldCheckIcon }] as const : []),
   ...(canAudit ? [{ path: '/app/audit', label: 'audit_log', icon: BookOpenIcon }] as const : []),
   ...(organizationAdmin ? [{ path: '/app/organizations', label: 'organizations', icon: BuildingsIcon }] as const : []),
   { path: '/app/security', label: 'account_security', icon: ShieldCheckIcon },
   { path: '/app/profile', label: 'profile', icon: UserCircleIcon },
  ] as const;
- return <nav aria-label={t('main_navigation')}>{links.map(({ path, label, icon: Icon }) => <NavLink key={path} to={path + (path === '/docs' || path.endsWith('/profile') ? '' : query)} end={path === '/admin' || path === '/app'} onClick={onNavigate} title={t(label)}><Icon size={16} weight="regular" aria-hidden="true" /><span>{t(label)}</span></NavLink>)}</nav>;
+ return <nav aria-label={t('main_navigation')}>{links.map(({ path, label, icon: Icon }) => <NavLink key={path} to={path + (path === '/docs' ? '' : query)} end={path === '/admin' || path === '/app'} onClick={onNavigate} title={t(label)}><Icon size={16} weight="regular" aria-hidden="true" /><span>{t(label)}</span></NavLink>)}</nav>;
 }
 export function AdminSidebar({ scope, tenants, onScopeChange, t }: { scope: string; tenants: readonly { id: string; name: string }[]; onScopeChange: (value: string) => void; t: (key: UIMessage) => string }) {
  const selected = tenants.find((tenant) => tenant.id === scope);

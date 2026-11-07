@@ -24,7 +24,7 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 | apps/api/src/business/store.ts | Transaction locale et identité, audit privilégié, vérification rôles SQL runtime |
 | apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations et composition des modules |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013 profil, 0014 organisations/RBAC, 0015 journal |
+| apps/api/migrations | SQL immuable et checksummé ; 0013 profil, 0014 organisations/RBAC, 0015 journal, 0016 annuaire organisation-scopé, 0017 frontières et reprise d’audit, 0018 préférences partielles |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP
@@ -35,14 +35,14 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 | GET/POST /api/auth/* | Contrats Better Auth ; origine POST et email vérifié |
 | GET /api/me?tenantId | Contexte serveur, tenants accessibles, workspaces RLS |
 | GET /api/tenants | Annuaire des tenants accessibles au contexte |
-| GET/POST /api/organizations | Lecture client-scopée ; création super-admin |
+| GET/POST /api/organizations | Lecture limitée aux organisations accessibles (supprimées exclues) ; création super-admin |
 | POST /api/organizations/:id/tenants | Super-admin ou organisation-admin du client ; adminEmail fournit billing et invitation initiale |
 | GET/POST /api/platform/tenants | Compatibilité super-admin ; POST crée client + premier tenant |
 | GET/POST /api/roles ; PUT /api/roles/:id | Lecture avec roles.assign autorisé ; édition super-admin, impact/confirmation si modification affectante |
 | GET/POST /api/role-assignments | Portée et pyramide SQL ; grant/revoke explicites |
 | PATCH /api/members/:id/status | Statut invited/active/suspended ; inférieur seulement, dernier admin protégé |
 | GET/PUT /api/profile?tenantId | Compte propre ; PUT prénom/nom valides, champs personnels et emploi du tenant sélectionné |
-| GET/PUT /api/preferences | Compte propre, locale/theme/timezone/date_format ; aucun sélecteur identité |
+| GET/POST/PUT /api/preferences | Compte propre ; POST initialise sans écraser, PUT fusionne les champs transmis ; aucun sélecteur identité |
 | GET/POST /api/workspaces ; GET/PATCH /api/workspaces/:id | RLS et permissions de création/modification |
 | GET/POST/DELETE membres workspace ; GET/DELETE membres tenant | Fonctions étroites, hiérarchie et dernier admin ; retrait tenant = suspension |
 | GET/POST /api/invitations ; POST accept/retry/revoke | Email vérifié, portée, expiration48h, hash et anti-rejeu ; rôle pair interdit |
