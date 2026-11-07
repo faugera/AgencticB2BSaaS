@@ -8,22 +8,23 @@ async function fixture(page: Page, locale: 'fr' | 'en') {
  let color = '#b5a2df';
  let preferences: { locale: 'fr' | 'en'; theme: 'light' | 'dark' | 'system' } = { locale, theme: 'light' };
  const writes: { path: string; body: unknown }[] = [];
- const invitations = [{ id: 'invite-a', email: 'lea.bernard@example.test', role: 'member', delivery: 'sent', accepted_at: null as string | null, revoked_at: null as string | null }, { id: 'invite-b', email: 'sophie.durand@example.test', role: 'member', delivery: 'sent', accepted_at: '2026-10-02', revoked_at: null }];
+ const invitations = [{ id: '10000000-0000-4000-8000-000000000003', email: 'lea.bernard@example.test', role: 'member', expires_at: '2026-11-08T00:00:00.000Z', delivery: 'sent', accepted_at: null as string | null, revoked_at: null as string | null }, { id: '10000000-0000-4000-8000-000000000004', email: 'sophie.durand@example.test', role: 'member', expires_at: '2026-11-08T00:00:00.000Z', delivery: 'sent', accepted_at: '2026-10-02', revoked_at: null }];
  const requests = [{ id: 'request-a', first_name: 'Thomas', last_name: 'Lefèvre', email: 'thomas.lefevre@example.test', status: 'pending', created_at: '2026-10-22T10:00:00Z' }];
  await page.addInitScript((value) => { localStorage.setItem('locale', value); localStorage.setItem('theme', 'light'); }, locale);
  await page.route('**/api/**', async (route) => {
   const request = route.request(); const path = new URL(request.url()).pathname;
   const space = { id: workspace, tenant_id: tenant, name: 'Opérations', visibility: 'tenant', can_manage: true, color };
   if (['POST', 'PUT'].includes(request.method())) writes.push({ path, body: request.postDataJSON() });
-  if (path === '/api/me') return route.fulfill({ json: { user: { id: 'fixture', name: 'Camille Martin', email: 'camille@example.test' }, access: { actorId: 'fixture', platformRole: null, tenantRole: 'tenant_admin', tenantId: tenant }, workspaces: [space] } });
+  if (path === '/api/me') return route.fulfill({ json: { user: { id: 'fixture', name: 'Camille Martin', email: 'camille@example.test' }, access: { actorId: '10000000-0000-4000-8000-000000000010', platformRole: null, tenantRole: 'tenant_admin', tenantId: tenant } } });
   if (path === '/api/preferences') { if (request.method() === 'PUT') preferences = request.postDataJSON(); return route.fulfill({ json: preferences }); }
-  if (path === '/api/workspaces') return route.fulfill({ json: [space] });
+  if (path === '/api/workspaces') return route.fulfill({ json: { items: [space], nextCursor: null } });
   if (path === '/api/workspaces/' + workspace) return route.fulfill({ json: space });
   if (path.endsWith('/appearance')) { color = request.postDataJSON().color; return route.fulfill({ json: { color } }); }
-  if (path === '/api/members' || path.endsWith('/members')) return route.fulfill({ json: [] });
+  if (path === '/api/members') return route.fulfill({ json: { items: [], nextCursor: null } });
+  if (path.endsWith('/members')) return route.fulfill({ json: [] });
   if (path === '/api/invitations') {
-   if (request.method() === 'POST') { const body = request.postDataJSON(); invitations.push({ ...invitations[0], id: 'invite-c', email: body.email, role: body.role, delivery: 'sent', accepted_at: null, revoked_at: null }); }
-   return route.fulfill({ json: invitations });
+   if (request.method() === 'POST') { const body = request.postDataJSON(); invitations.push({ ...invitations[0]!, id: '10000000-0000-4000-8000-000000000005', email: body.email, role: body.role, expires_at: '2026-11-08T00:00:00.000Z', delivery: 'sent', accepted_at: null, revoked_at: null }); }
+   return route.fulfill({ json: { items: invitations, nextCursor: null } });
   }
   if (path === '/api/access-requests') return route.fulfill({ json: requests });
   if (path === '/api/access-requests/request-a') { requests[0]!.status = request.postDataJSON().operation === 'approve' ? 'approved' : 'rejected'; return route.fulfill({ json: { ok: true } }); }

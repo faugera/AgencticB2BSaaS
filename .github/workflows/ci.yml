@@ -67,6 +67,11 @@ jobs:
           AUTH_TEST_DATABASE_URL: postgres://identity_runtime:ci-auth-runtime@127.0.0.1:5432/enterprise_auth_test_ci
           AUTH_TEST_MIGRATION_DATABASE_URL: postgres://enterprise:ci-ephemeral-password@127.0.0.1:5432/enterprise_auth_test_ci
         run: pnpm verify:tenant-isolation
+      - name: Configure disposable outbox encryption key
+        run: |
+          key="$(node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('base64url'))")"
+          echo "OUTBOX_ENCRYPTION_ACTIVE_KEY_ID=ci-v1" >> "$GITHUB_ENV"
+          echo "OUTBOX_ENCRYPTION_KEYS={\"ci-v1\":\"$key\"}" >> "$GITHUB_ENV"
       - name: Live authentication browser and SMTP
         env:
           AUTH_ENABLED: "true"

@@ -4,12 +4,13 @@ import { useLanguage } from '../i18n';
 import { Badge, Button, EmptyState, Field, Input, Select } from '../ui/primitives';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { DataTable } from '../ui/DataTable';
+import { PageNavigation } from '../ui/PageNavigation';
 
 export type Invitation = { id: string; email: string; role: string; delivery: string; accepted_at: string | null; revoked_at: string | null };
 export type Member = { id: string; name: string; email: string; role: string | null };
 type Action = (run: () => Promise<unknown>) => Promise<void>;
 const status = (invitation: Invitation) => invitation.accepted_at ? 'accepted' : invitation.revoked_at ? 'revoked' : invitation.delivery === 'failed' ? 'delivery_failed' : 'pending';
-export function InvitationManagement({ invitations, query, busy, action }: { invitations: readonly Invitation[]; query: string; busy: boolean; action: Action }) {
+export function InvitationManagement({ invitations, nextCursor, onLoadMore, query, busy, action }: { invitations: readonly Invitation[]; nextCursor: string | null; onLoadMore: () => Promise<{ count: number; hasMore: boolean }>; query: string; busy: boolean; action: Action }) {
  const { t } = useLanguage();
  const [search, setSearch] = useState('');
  const [filter, setFilter] = useState('all');
@@ -23,6 +24,7 @@ export function InvitationManagement({ invitations, query, busy, action }: { inv
     { key: 'status', heading: t('status'), cell: (row) => <Badge tone={status(row) === 'accepted' ? 'success' : status(row) === 'pending' ? 'warning' : 'neutral'}>{t(status(row))}</Badge> },
     { key: 'actions', heading: t('actions'), cell: (row) => !row.accepted_at && !row.revoked_at && <div className="ui-cluster"><Button type="button" variant="quiet" disabled={busy} onClick={() => { void action(() => api('/api/invitations/' + row.id + query, { operation: 'retry' })); }}>{t('resend')}</Button><ConfirmDialog title={t('revoke') + ' — ' + row.email} trigger={t('revoke')} disabled={busy} onConfirm={() => { void action(() => api('/api/invitations/' + row.id + query, { operation: 'revoke' })); }} /></div> },
    ]} />}
+   <PageNavigation nextCursor={nextCursor} busy={busy} onLoadMore={onLoadMore} />
   </section>
   <section className="ui-invitation-form"><h2>{t('invite_member')}</h2><p className="ui-help">{t('access_description')}</p><form onSubmit={(event) => {
    event.preventDefault(); const element = event.currentTarget; const form = new FormData(element);
@@ -34,7 +36,7 @@ export function InvitationManagement({ invitations, query, busy, action }: { inv
   </form></section>
  </div>;
 }
-export function MemberManagement({ members, query, busy, action }: { members: readonly Member[]; query: string; busy: boolean; action: Action }) {
+export function MemberManagement({ members, nextCursor, onLoadMore, query, busy, action }: { members: readonly Member[]; nextCursor: string | null; onLoadMore: () => Promise<{ count: number; hasMore: boolean }>; query: string; busy: boolean; action: Action }) {
  const { t } = useLanguage();
  const [search, setSearch] = useState('');
  const rows = members.filter((member) => (member.name + ' ' + member.email).toLowerCase().includes(search.toLowerCase()));
@@ -42,5 +44,5 @@ export function MemberManagement({ members, query, busy, action }: { members: re
  <DataTable label={t('members_page')} rows={rows} rowKey={(row) => row.id} empty={t(members.length ? 'no_results' : 'no_members')} columns={[
   { key: 'name', heading: t('display_name'), cell: (row) => row.name }, { key: 'email', heading: t('email_address'), cell: (row) => row.email },
   { key: 'actions', heading: t('actions'), cell: (row) => <ConfirmDialog title={t('remove_access') + ' — ' + row.name} trigger={t('remove_access')} disabled={busy} onConfirm={() => { void action(() => api('/api/members/' + row.id + query, undefined, 'DELETE')); }} /> },
- ]} /></section>;
+ ]} /><PageNavigation nextCursor={nextCursor} busy={busy} onLoadMore={onLoadMore} /></section>;
 }

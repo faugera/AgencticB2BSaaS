@@ -7,6 +7,10 @@ const valid = {
   BETTER_AUTH_SECRET: 'unit-test-only-secret-with-at-least-32-characters',
   DATABASE_URL: 'postgres://identity_runtime:test@127.0.0.1/db',
   BUSINESS_DATABASE_URL: 'postgres://business_runtime:test@127.0.0.1/db',
+  OUTBOX_ENCRYPTION_ACTIVE_KEY_ID: 'v1',
+  OUTBOX_ENCRYPTION_KEYS: JSON.stringify({
+    v1: Buffer.alloc(32, 1).toString('base64url'),
+  }),
   SMTP_HOST: '127.0.0.1',
   MAIL_FROM: 'test@example.test',
 };
@@ -36,6 +40,26 @@ describe('authentication configuration', () => {
   ])('rejects unsafe origin %s', (BETTER_AUTH_URL) => {
     expect(() => readAuthConfig({ ...valid, BETTER_AUTH_URL })).toThrow();
   });
+  it('requires a valid outbox keyring when business storage is enabled', () => {
+    expect(() =>
+      readAuthConfig({ ...valid, OUTBOX_ENCRYPTION_KEYS: '' }),
+    ).toThrow(
+      'Missing OUTBOX_ENCRYPTION_KEYS',
+    );
+    expect(() =>
+      readAuthConfig({
+        ...valid,
+        OUTBOX_ENCRYPTION_KEYS: '{"v1":"not-a-key"}',
+      }),
+    ).toThrow('OUTBOX_ENCRYPTION_KEYS must contain versioned 32-byte keys');
+    expect(() =>
+      readAuthConfig({
+        ...valid,
+        OUTBOX_ENCRYPTION_ACTIVE_KEY_ID: 'v2',
+      }),
+    ).toThrow('OUTBOX_ENCRYPTION_ACTIVE_KEY_ID must match a configured key');
+  });
+
   it('rejects short secrets, missing mail and malformed database configuration', () => {
     expect(() =>
       readAuthConfig({ ...valid, BETTER_AUTH_SECRET: 'short' }),

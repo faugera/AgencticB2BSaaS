@@ -1,6 +1,6 @@
 import { Roles } from './pages/Roles';
 import { Organizations } from './pages/Organizations';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { authClient } from './auth/client';
@@ -34,6 +34,9 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
   const scope = new URLSearchParams(location.search).get('tenantId') ?? '';
   const [members, setMembers] = useState<Member[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [workspaceCursor, setWorkspaceCursor] = useState<string | null>(null);
+  const [memberCursor, setMemberCursor] = useState<string | null>(null);
+  const [invitationCursor, setInvitationCursor] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
@@ -43,6 +46,8 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
   const superAdmin = me?.access?.platformRole === 'super_admin';
   const admin = superAdmin || me?.access?.tenantRole === 'tenant_admin' || me?.access?.organizationRole === 'organization_admin' || Boolean(me?.access?.permissions?.includes('members.manage'));
   const query = scope ? `?tenantId=${encodeURIComponent(scope)}` : '';
+  const queryRef = useRef(query);
+  queryRef.current = query;
   const adminPage = location.pathname.replace(/\/$/, '');
   const overview = adminPage === '/admin';
   const organizationPage = adminPage === basePath + '/organizations';
@@ -52,15 +57,16 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
   const showMembers = adminOnly ? overview || adminPage === '/admin/members' : adminPage === '/app/members';
   const showInvitations = adminOnly ? showMembers : adminPage === '/app/invitations';
   const profilePage = adminPage === basePath + '/profile';
+  const securityPage = adminPage === basePath + '/security';
   const docsPage = adminPage === '/docs';
   const auditPage = adminPage === basePath + '/audit';
   const adminHeading: UIMessage = overview ? 'overview'
     : adminPage === '/admin/organizations' ? 'organizations'
       : adminPage === '/admin/members' ? 'invitations_and_members'
-        : rolesPage ? 'roles_page' : auditPage ? 'audit_log' : docsPage ? 'docs' : profilePage ? 'profile' : adminPage === '/admin/security' ? 'account_security' : 'workspaces';
+        : rolesPage ? 'roles_page' : auditPage ? 'audit_log' : docsPage ? 'docs' : profilePage ? 'profile' : securityPage ? 'account_security' : 'workspaces';
   useEffect(() => {
     let active = true;
-    void api<Me>('/api/me' + query)
+    void api('/api/me' + query, meSchema)
       .then(async (data) => {
         if (!active) return;
         if (adminOnly && data.access?.platformRole !== 'super_admin') {
@@ -79,7 +85,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
         if (!adminOnly && auditPage && !data.access?.permissions?.includes('audit.read')) { void navigate('/403', { replace: true }); return; }
         setMe(data);
         if (data.access?.platformRole === 'super_admin' || data.access?.tenants) {
-          const directory = data.access?.platformRole === 'super_admin' ? await api<Tenant[]>('/api/tenants') : [...(data.access?.tenants ?? [])];
+          const directory = data.access?.platformRole === 'super_admin' ? await api('/api/tenants', tenantSummaryListSchema) : [...(data.access?.tenants ?? [])];
           if (active) setTenants(directory);
         }
       })
@@ -101,35 +107,54 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
   }, [navigate, location.pathname, location.search, revision, adminOnly, loginPath, adminPage, auditPage, query]);
   useEffect(() => {
     if (!me || (adminOnly && !superAdmin)) return;
-    if (profilePage || docsPage || auditPage || rolesPage || organizationPage) return;
+    if (profilePage || securityPage || docsPage || auditPage || rolesPage || organizationPage) {
+      setLoadedPath(location.pathname + query);
+      return;
+    }
+    if (!scope && !me.access?.tenantId) {
+      setWorkspaces([]);
+      setWorkspaceCursor(null);
+      setSelected(null);
+      setMembers([]);
+      setMemberCursor(null);
+      setInvitations([]);
+      setInvitationCursor(null);
+      setLoadedPath(location.pathname + query);
+      return;
+    }
     let active = true;
     void (async () => {
       const workspaceId = location.pathname.match(
         /^\/(?:app|admin)\/workspaces\/([^/]+)$/,
       )?.[1];
-      const [spaces, current, invites] = await Promise.all([
-        api<Workspace[]>('/api/workspaces' + query),
+      const [spaces, current, invitePage] = await Promise.all([
+        api('/api/workspaces' + query, workspacePageSchema),
         workspaceId
-          ? api<Workspace>(
+          ? api(
               '/api/workspaces/' + encodeURIComponent(workspaceId) + query,
+              workspaceSchema,
             )
           : Promise.resolve(null),
         admin
-          ? api<Invitation[]>('/api/invitations' + query)
-          : Promise.resolve([]),
+        ? api('/api/invitations' + query, invitationPageSchema)
+        : Promise.resolve({ items: [], nextCursor: null }),
       ]);
       const people = current?.can_manage
-        ? await api<Member[]>(
+        ? await api(
             '/api/workspaces/' + current.id + '/members' + query,
+            memberListSchema,
           )
         : admin
-          ? await api<Member[]>('/api/members' + query)
-          : [];
+        ? await api('/api/members' + query, memberPageSchema)
+        : { items: [], nextCursor: null };
       if (active) {
-        setWorkspaces(spaces);
+        setWorkspaces(spaces.items);
+        setWorkspaceCursor(spaces.nextCursor);
         setSelected(current);
-        setMembers(people);
-        setInvitations(invites);
+        setMembers(Array.isArray(people) ? people : people.items);
+        setMemberCursor(Array.isArray(people) ? null : people.nextCursor);
+        setInvitations(invitePage.items);
+        setInvitationCursor(invitePage.nextCursor);
         setLoadedPath(location.pathname + query);
       }
     })().catch((error: unknown) => {
@@ -143,7 +168,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     return () => {
       active = false;
     };
-  }, [me, query, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, docsPage, auditPage, rolesPage, organizationPage]);
+  }, [me, query, scope, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, securityPage, docsPage, auditPage, rolesPage, organizationPage]);
   async function action(run: () => Promise<unknown>) {
     setBusy(true);
     setError('');
@@ -154,6 +179,60 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
       setRevision((value) => value + 1);
     } catch {
       setError('failure');
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function loadMore(
+    list: 'workspaces' | 'members' | 'invitations',
+  ): Promise<{ count: number; hasMore: boolean }> {
+    const cursor =
+      list === 'workspaces'
+        ? workspaceCursor
+        : list === 'members'
+          ? memberCursor
+          : invitationCursor;
+    if (!cursor) return { count: 0, hasMore: false };
+    const requestedQuery = query;
+    const params = new URLSearchParams(query.slice(1));
+    params.set('before', cursor);
+    setBusy(true);
+    setError('');
+    try {
+      if (list === 'workspaces') {
+        const page = await api(
+          '/api/workspaces?' + params.toString(),
+          workspacePageSchema,
+        );
+        if (queryRef.current !== requestedQuery)
+          return { count: 0, hasMore: false };
+        setWorkspaces((current) => [...current, ...page.items]);
+        setWorkspaceCursor(page.nextCursor);
+        return { count: page.items.length, hasMore: page.nextCursor !== null };
+      }
+      if (list === 'members') {
+        const page = await api(
+          '/api/members?' + params.toString(),
+          memberPageSchema,
+        );
+        if (queryRef.current !== requestedQuery)
+          return { count: 0, hasMore: false };
+        setMembers((current) => [...current, ...page.items]);
+        setMemberCursor(page.nextCursor);
+        return { count: page.items.length, hasMore: page.nextCursor !== null };
+      }
+      const page = await api(
+        '/api/invitations?' + params.toString(),
+        invitationPageSchema,
+      );
+      if (queryRef.current !== requestedQuery)
+        return { count: 0, hasMore: false };
+      setInvitations((current) => [...current, ...page.items]);
+      setInvitationCursor(page.nextCursor);
+      return { count: page.items.length, hasMore: page.nextCursor !== null };
+    } catch {
+      setError('failure');
+      throw new Error('Unable to load the next page');
     } finally {
       setBusy(false);
     }
@@ -176,7 +255,9 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     <AppShell me={me} admin={adminOnly} scope={scope} tenants={tenants} workspaces={workspaces} selected={selected} busy={busy} onSignOut={() => {
       void action(async () => { const result = await authClient.signOut(); if (result.error) throw new Error(); void navigate(loginPath); });
     }} onScopeChange={(value) => {
-      setSelected(null); setWorkspaces([]); setMembers([]); setInvitations([]); setError('');
+      setSelected(null); setWorkspaces([]); setMembers([]); setInvitations([]);
+      setWorkspaceCursor(null); setMemberCursor(null); setInvitationCursor(null);
+      setError('');
       const path = adminPage.includes('/workspaces/') ? basePath : adminPage;
       void navigate(path + (value ? '?tenantId=' + encodeURIComponent(value) : ''));
     }}>
@@ -198,7 +279,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
         <p role="status">{t('loading')}</p>
       ) : (
         me && (!adminOnly || superAdmin) && (
-          <main id="app-main" aria-busy={busy}>
+          <main id="app-main" aria-busy={busy} tabIndex={-1}>
             <header className="ui-page-header"><h1>{adminOnly ? t(adminHeading) : t(rolesPage ? 'roles_page' : auditPage ? 'audit_log' : organizationPage ? 'organizations' : profilePage ? 'profile' : adminPage.endsWith('/security') ? 'account_security' : showMembers ? 'members_page' : showInvitations ? 'invitations_page' : 'workspaces')}</h1>{showInvitations && <p>{t('access_description')}</p>}</header>
             {rolesPage && me.access ? <Roles key={query} access={me.access} query={query} /> : organizationPage ? <Organizations superAdmin={superAdmin} /> : auditPage ? <AuditLog key={scope} query={query} global={superAdmin} /> : profilePage ? <Profile me={me} onSaved={() => setRevision((value) => value + 1)} /> : docsPage ? <Documentation /> : loadedPath !== location.pathname + query ? (
               <p role="status">{t('loading')}</p>
@@ -207,7 +288,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
             ) : (
               <>
                 {superAdmin && showOrganizations && <Organizations superAdmin />}
-                {showWorkspaces && <WorkspaceManagement selected={selected} workspaces={workspaces} members={members} admin={admin} superAdmin={superAdmin} scope={scope} query={query} basePath={basePath} busy={busy} submit={submit} action={action} />}
+                {showWorkspaces && <WorkspaceManagement selected={selected} workspaces={workspaces} members={members} nextCursor={workspaceCursor} onLoadMore={() => loadMore('workspaces')} admin={admin} superAdmin={superAdmin} scope={scope} query={query} basePath={basePath} busy={busy} submit={submit} action={action} />}
                 {selected?.can_manage && showWorkspaces && <WorkspaceAppearance key={selected.id} workspace={selected} query={query} onSaved={() => setRevision((value) => value + 1)} />}
                 {(showMembers || showInvitations) && adminOnly && !scope && (
                   <section className="panel">
@@ -215,8 +296,8 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
                     <p>{t('organization_scope_help')}</p>
                   </section>
                 )}
-                {showInvitations && admin && (!superAdmin || scope) && <InvitationManagement invitations={invitations} query={query} busy={busy} action={action} />}
-                {showMembers && admin && (!superAdmin || scope) && <MemberManagement members={members} query={query} busy={busy} action={action} />}
+                {showInvitations && admin && (!superAdmin || scope) && <InvitationManagement invitations={invitations} nextCursor={invitationCursor} onLoadMore={() => loadMore('invitations')} query={query} busy={busy} action={action} />}
+                {showMembers && admin && (!superAdmin || scope) && <MemberManagement members={members} nextCursor={memberCursor} onLoadMore={() => loadMore('members')} query={query} busy={busy} action={action} />}
                 {showInvitations && admin && (!superAdmin || scope) && <AccessRequests key={query} query={query} onApproved={() => setRevision((value) => value + 1)} />}
               </>
             )}
@@ -226,3 +307,12 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     </AppShell>
   );
 }
+import {
+  invitationPageSchema,
+  meSchema,
+  memberListSchema,
+  memberPageSchema,
+  tenantSummaryListSchema,
+  workspacePageSchema,
+  workspaceSchema,
+} from './contracts/api';

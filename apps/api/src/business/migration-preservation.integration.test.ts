@@ -13,7 +13,7 @@ describe.skipIf(process.env.AUTH_TEST_MIGRATION_PRESERVATION !== 'true')('repris
     if (!databaseURL || !migrationURL || !/^\/enterprise_auth_test_b2b_migration\d*$/.test(new URL(databaseURL).pathname))
       throw new Error('Explicit empty disposable migration-preservation database required');
     const businessURL = databaseURL.replace('identity_runtime:', 'business_runtime:');
-    const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
+    const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, outboxEncryption: { activeKeyId: 'test-v1', keys: { 'test-v1': randomBytes(32).toString('base64url') } }, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
     const operator = new Pool({ connectionString: migrationURL, max: 1 });
     const tenant = randomUUID();
     const invitedTenant = randomUUID();

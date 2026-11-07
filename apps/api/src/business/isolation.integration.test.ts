@@ -29,6 +29,7 @@ const config: AuthConfig = {
   secret: randomBytes(48).toString('base64url'),
   databaseURL: identityURL,
   businessDatabaseURL: businessURL,
+  outboxEncryption: { activeKeyId: 'test-v1', keys: { 'test-v1': randomBytes(32).toString('base64url') } },
   smtp: {
     host: '127.0.0.1',
     port: 1025,
@@ -81,6 +82,7 @@ describe('PostgreSQL B2B adversarial isolation', () => {
         'test.read',
         async (_client, context) => context.actorId,
       );
+      if (!actor) throw new Error('Missing test actor');
       actors.push(actor);
     }
     // The first actor stays an ordinary user. Explicit operator bootstrap only.

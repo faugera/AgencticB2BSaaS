@@ -50,6 +50,9 @@ Actors, memberships, invitations and audit live in `authorization_private` with
 Their non-login owner has no BYPASSRLS; private metadata does not use recursive
 RLS policies. This intentional distinction must not be mistaken for blanket RLS
 on every table. New tenant content must use the public business RLS boundary.
+Because `business.workspaces_page` is SECURITY DEFINER, it also applies the
+workspace visibility check explicitly through `business.workspace_access`;
+the function does not rely on RLS alone for private workspaces.
 No runtime UPDATE/DELETE/TRUNCATE on audit; operator database access remains a
 trusted recovery boundary, not a tamper-proof external ledger.
 
@@ -62,10 +65,22 @@ SQL, fixed functions, least privilege and protection of the server remain requir
 Business invitations are independent from identity enrollment. Store only a
 SHA-256 token digest; 48-hour expiry, verified-email binding, row locks, replay
 and membership conflict rejection. Acceptance does not upgrade an existing role.
-Identity invitation grants no business privilege. SMTP occurs after commit;
-delivery state and administrator retry expose failures without keeping SQL locks
-while waiting on email. Retry rotates the invitation token. No outbox/retry worker
-in the single-instance pilot; a process interruption can leave `pending` delivery.
+Identity invitation grants no business privilege. In the pilot baseline, SMTP
+occurred after commit and a process interruption could leave `pending` delivery.
+Migration 0016 supersedes that delivery mechanism for business invitations with
+a transactionally queued, encrypted outbox and a retrying worker; its database
+application and PostgreSQL/Mailpit evidence remain unverified in this branch.
+Retry rotates the invitation token; stale queued payloads are invalidated by
+comparing their operation key with the persisted invitation token hash. Before
+SMTP delivery, the worker locks the outbox and invitation through the delivery
+acknowledgment, serializing a concurrent revocation with that attempt. The worker
+sets a transaction-local 60-second idle timeout for this delivery transaction;
+the invitation's delivery state is updated only by the outbox message matching
+the current token hash, so a superseded retry cannot fail its replacement. Migration
+0019 also guards the failure acknowledgement after SMTP/provisioning has released its
+transaction locks. Each worker claims at most two messages in parallel and reuses the
+application identity pool; with a five-connection business pool, this leaves up to three
+connections for HTTP requests and the shared rate limiter.
 
 Browser invitation secrets use URL fragments and memory only. Reloading during
 login/MFA requires reopening the invitation email. Reset tokens are removed from
@@ -97,7 +112,9 @@ upstream dependency ranges can replace the override.
 Hosting/proxy addresses, production SMTP sender, backup retention/storage,
 restore RTO/RPO, audit retention/export and incident ownership need an operator.
 Pilot business HTTP limiting is per-process; auth limiting is PostgreSQL-backed.
-Before horizontal scaling add a shared business limiter and reliable mail outbox.
+Before horizontal scaling add a shared business limiter. The invitation outbox
+is present in migration 0016 but still requires disposable PostgreSQL/Mailpit
+validation before it can be considered operational.
 SSO/SCIM, enforced tenant MFA, multi-organization membership, billing, agents,
 workflows and high availability remain outside this pilot. No deployment or
 external-provider deletion is authorized by this implementation.

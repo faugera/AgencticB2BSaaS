@@ -13,13 +13,13 @@ async function fixture(page: Page, role: 'super_admin' | 'tenant_admin' | 'membe
     const path = new URL(request.url()).pathname;
     if (['POST', 'PUT'].includes(request.method())) writes.push({ path, body: request.postDataJSON() });
     const user = { id: 'fixture', name, email: 'fixture@example.test' };
-    if (path === '/api/me') return route.fulfill({ status: role === 'anonymous' ? 401 : 200, json: { user, access: { actorId: 'fixture', platformRole: role === 'super_admin' ? role : null, tenantRole: role === 'super_admin' ? null : role, tenantId: role === 'super_admin' ? null : tenant, handle: null } } });
+    if (path === '/api/me') return route.fulfill({ status: role === 'anonymous' ? 401 : 200, json: { user, access: { actorId: '10000000-0000-4000-8000-000000000010', platformRole: role === 'super_admin' ? role : null, tenantRole: role === 'super_admin' ? null : role, tenantId: role === 'super_admin' ? null : tenant, handle: null } } });
     if (path === '/api/profile') { if (request.method() === 'PUT') name = request.postDataJSON().first_name + ' ' + request.postDataJSON().last_name; return route.fulfill({ json: { first_name: name.split(' ')[0], last_name: 'Person', avatar_url: null, phone_number: null, job_title: null, department: null, email: user.email, is_email_verified: true, created_at: '2026-10-24T08:00:00Z', updated_at: '2026-10-24T08:00:00Z' } }); }
     if (path === '/api/auth/get-session') return route.fulfill({ json: role === 'anonymous' ? null : { user, session } });
     if (path === '/api/auth/list-sessions') return route.fulfill({ json: others ? [session, { ...session, id: 'other', token: 'synthetic-other', userAgent: 'Other browser' }] : [session] });
     if (path === '/api/auth/update-user') { name = request.postDataJSON().name; return route.fulfill({ json: { status: true } }); }
     if (path === '/api/auth/revoke-other-sessions') { others = false; return route.fulfill({ json: { status: true } }); }
-    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization' }] });
+    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenant, name: 'Organization', organization_id: '10000000-0000-4000-8000-000000000011' }] });
     if (path === '/api/platform/docs') return route.fulfill({ status: role === 'super_admin' ? 200 : 403, json: { fr: [{ title: 'Guide des organisations', text: 'Contenu réservé aux super-admins.' }], en: [{ title: 'Organization guide', text: 'Content restricted to super-admins.' }] } });
     if (path === '/api/access-link') return route.fulfill({ json: { url: 'http://127.0.0.1:4173/signup?link=' + link } });
     if (path === '/api/access-requests') return route.fulfill({ status: ['POST', 'PUT'].includes(request.method()) ? 202 : 200, json: ['POST', 'PUT'].includes(request.method()) ? { received: true } : [] });
@@ -111,9 +111,9 @@ test('switching tenants never keeps the previous profile form active', async ({ 
     const path = url.pathname;
     if (path === '/api/me') {
       const tenantId = url.searchParams.get('tenantId') ?? tenantA;
-      return route.fulfill({ json: { user: { id: 'fixture', name: 'Fixture', email: 'fixture@example.test' }, access: { actorId: 'fixture', platformRole: null, tenantRole: 'tenant_admin', tenantId, handle: null, tenants: [{ id: tenantA, name: 'Tenant A' }, { id: tenantB, name: 'Tenant B' }] } } });
+      return route.fulfill({ json: { user: { id: 'fixture', name: 'Fixture', email: 'fixture@example.test' }, access: { actorId: '10000000-0000-4000-8000-000000000010', platformRole: null, tenantRole: 'tenant_admin', tenantId, handle: null, tenants: [{ id: tenantA, name: 'Tenant A', organization_id: '10000000-0000-4000-8000-000000000011' }, { id: tenantB, name: 'Tenant B', organization_id: '10000000-0000-4000-8000-000000000011' }] } } });
     }
-    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenantA, name: 'Tenant A' }, { id: tenantB, name: 'Tenant B' }] });
+    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenantA, name: 'Tenant A', organization_id: '10000000-0000-4000-8000-000000000011' }, { id: tenantB, name: 'Tenant B', organization_id: '10000000-0000-4000-8000-000000000011' }] });
     if (path === '/api/profile') {
       const tenantId = url.searchParams.get('tenantId') ?? tenantA;
       if (request.method() === 'GET' && tenantId === tenantA && ++tenantAReads === 2) {

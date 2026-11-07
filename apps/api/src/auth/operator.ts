@@ -1,11 +1,19 @@
 import { randomBytes } from 'node:crypto';
+import type { Pool } from 'pg';
 import type { AuthConfig } from './config.js';
 import type { SendAuthMail } from './mail.js';
 import { createAuth, createAuthPool } from './service.js';
 
-export async function inviteIdentity(config: AuthConfig, send: SendAuthMail, email: string, name: string, recoverExisting = true) {
+export async function inviteIdentity(
+  config: AuthConfig,
+  send: SendAuthMail,
+  email: string,
+  name: string,
+  recoverExisting = true,
+  identityPool?: Pool,
+) {
   if (!email.includes('@') || /[\r\n]/.test(email + name)) throw new Error('Invalid invitation identity');
-  const pool = createAuthPool(config.databaseURL);
+  const pool = identityPool ?? createAuthPool(config.databaseURL);
   try {
     let delivered = false;
     const checkedSend: SendAuthMail = async (message) => {
@@ -30,5 +38,7 @@ export async function inviteIdentity(config: AuthConfig, send: SendAuthMail, ema
       await auth.api.requestPasswordReset({ body: { email, redirectTo: config.baseURL + '/auth/reset' } });
     }
     if (!delivered) throw new Error('Invitation email was not delivered; retry the operator invitation');
-  } finally { await pool.end(); }
+  } finally {
+    if (!identityPool) await pool.end();
+  }
 }

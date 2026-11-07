@@ -30,10 +30,22 @@ test('ordinary members cannot open the admin panel', async ({ page }) => {
 test('super-admin navigation and sign-out stay in the admin portal', async ({ page }) => {
   await page.route('**/api/**', (route) => {
     const path = new URL(route.request().url()).pathname;
-    return route.fulfill({ json: path === '/api/me'
-      ? { user: { id: 'operator', name: 'Operator', email: 'operator@example.test' }, access: { platformRole: 'super_admin', tenantRole: null } }
-      : path === '/api/auth/get-session' ? null
-        : path === '/api/auth/sign-out' ? { success: true } : [] });
+    if (path === '/api/me') {
+      return route.fulfill({
+        json: {
+          user: { id: 'operator', name: 'Operator', email: 'operator@example.test' },
+          access: { platformRole: 'super_admin', tenantRole: null },
+        },
+      });
+    }
+    if (path === '/api/auth/get-session') return route.fulfill({ json: null });
+    if (path === '/api/auth/sign-out') return route.fulfill({ json: { success: true } });
+    if (path === '/api/tenants') return route.fulfill({ json: [] });
+    if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'system' } });
+    if (path === '/api/workspaces' || path === '/api/invitations' || path === '/api/members') {
+      return route.fulfill({ json: { items: [], nextCursor: null } });
+    }
+    return route.fulfill({ json: [] });
   });
   await page.goto('/app');
   await expect(page).toHaveURL(/\/admin$/);

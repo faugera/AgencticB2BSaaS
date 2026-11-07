@@ -35,7 +35,9 @@ describe('Organisation et RBAC persistés', () => {
       smtp: { host: 'localhost', port: 1025, secure: false, from: 'test@example.test' } }, migrationURL);
     for (const id of ids) {
       await operator.query('INSERT INTO identity."user"(id,name,email,"emailVerified") VALUES($1,$2,$3,true)', [id, 'RBAC fixture', `${id}@example.test`]);
-      actors.push(await tx(id, undefined, async (_client, context) => context.actorId));
+      const actor = await tx(id, undefined, async (_client, context) => context.actorId);
+      if (!actor) throw new Error('Missing RBAC fixture actor');
+      actors.push(actor);
     }
     const existing = await operator.query<{ identity_id: string }>("SELECT identity_id FROM authorization_private.actors WHERE platform_role='super_admin'");
     superIdentity = existing.rows[0]?.identity_id ?? at(ids, 5);

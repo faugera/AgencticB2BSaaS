@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AuditPage } from '@enterprise/shared';
 import { api } from '../http';
+import { auditPageSchema } from '../contracts/api';
 import { useLanguage } from '../i18n';
 import { Alert, Button, EmptyState } from '../ui/primitives';
 
@@ -14,7 +15,7 @@ export function AuditLog({ query, global = false }: { query: string; global?: bo
     let active = true;
     const params = new URLSearchParams(query);
     if (before) params.set('before', before);
-    void api<AuditPage>('/api/audit-logs?' + params.toString())
+    void api('/api/audit-logs?' + params.toString(), auditPageSchema)
       .then((value) => { if (active) setResult(value); })
       .catch(() => { if (active) setError(true); });
     return () => { active = false; };

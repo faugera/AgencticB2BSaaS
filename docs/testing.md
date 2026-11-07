@@ -44,6 +44,21 @@ aucune assertion ni suite distincte n'est supprimée. `pnpm test:auth` garde tou
 les fichiers d'intégration pour une validation exhaustive.
 Les tests UI simulés ne remplacent pas une preuve d'autorisation serveur.
 
+## Fiabilisation des mutations et des listes
+
+Les tests unitaires couvrent les contrats HTTP côté web, les curseurs et le
+chiffrement de l'outbox. Les scénarios PostgreSQL de pagination, de livraison
+différée et de limite partagée exigent les deux URLs de base jetable indiquées
+dans le runbook privé ; les tests refusent de démarrer sans cette configuration.
+Ils ne doivent jamais cibler une base de développement ou de production.
+
+Le parcours Playwright ciblé de pagination vérifie workspace, membres et
+invitations au clavier, en français et en anglais, aux largeurs mobile,
+tablette et desktop. Il valide l'interface simulée, pas le comportement SQL.
+L'outbox métier porte actuellement les invitations ; les callbacks de
+vérification et d'activation Better Auth ne disposent pas encore d'événements
+autonomes dans cette outbox.
+
 ## Vérification exécutée
 
 Le 25 octobre : `pnpm verify` passe (types, lint, 44 tests unitaires, build, smoke).

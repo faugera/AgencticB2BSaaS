@@ -1,11 +1,9 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import { fromNodeHeaders } from 'better-auth/node';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type { Pool, PoolClient } from 'pg';
 import type { Auth } from '../auth/service.js';
 import type { AuthConfig } from '../auth/config.js';
-import type { SendAuthMail } from '../auth/mail.js';
-import { inviteIdentity } from '../auth/operator.js';
 import { AccessError, businessTransaction } from './store.js';
 import type { AccessContext } from './store.js';
 import { registerUIRoutes } from './ui-routes.js';
@@ -13,6 +11,8 @@ import { registerAuditRoutes } from './audit-routes.js';
 import { registerAccessRoutes } from './access-routes.js';
 import { registerProfileRoutes } from './profile-routes.js';
 import { registerRbacRoutes } from './rbac-routes.js';
+import { enqueueInvitation, digest, requestDigest } from './jobs/outbox-store.js';
+import { decodePageCursor, encodePageCursor } from './page-cursor.js';
 
 const uuid = { type: 'string', format: 'uuid' } as const;
 const shortName = { type: 'string', minLength: 1, maxLength: 100 } as const;
@@ -30,17 +30,29 @@ const tenantQuery = {
   additionalProperties: false,
   properties: { tenantId: uuid },
 } as const;
-const hash = (token: string) =>
-  createHash('sha256').update(token).digest('hex');
+const hash = digest;
 type Scoped = { Querystring: { tenantId?: string } };
+type PageScoped = {
+  Querystring: { tenantId?: string; before?: string };
+};
+const pageSize = 50;
+const pageQuery = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    tenantId: uuid,
+    before: { type: 'string', maxLength: 512 },
+  },
+} as const;
 
 export function registerBusinessRoutes(
   app: FastifyInstance,
   auth: Auth,
   pool: Pool,
   config: AuthConfig,
-  send: SendAuthMail,
 ) {
+  const keyring = config.outboxEncryption;
+  if (!keyring) throw new Error('Outbox encryption is not configured');
   const transact = async <T>(
     request: FastifyRequest,
     action: string,
@@ -57,12 +69,74 @@ export function registerBusinessRoutes(
     });
     if (!session?.user.emailVerified)
       throw new AccessError(401, 'UNAUTHENTICATED');
+    const rawKey = request.headers['idempotency-key'];
+    const idempotentAction = [
+      'tenant.created',
+      'invitation.created',
+      'invitation.updated',
+      'access_request.reviewed',
+    ].includes(action);
+    const idempotencyKey =
+      typeof rawKey === 'string' &&
+      idempotentAction &&
+      !['GET', 'HEAD'].includes(request.method)
+        ? rawKey
+        : undefined;
+    if (
+      rawKey !== undefined &&
+      idempotentAction &&
+      (typeof rawKey !== 'string' ||
+        rawKey.length > 200 ||
+        !rawKey.trim() ||
+        /[\r\n]/.test(rawKey))
+    )
+      throw new AccessError(400, 'INVALID_REQUEST');
     return businessTransaction(
       pool,
       session.user.id,
       tenant,
       action,
-      async (client, context) => run(client, context),
+      async (client, context) => {
+        if (!idempotencyKey) return run(client, context);
+        const keyHash = hash(idempotencyKey);
+        const params = request.params;
+        const resourceScope =
+          params &&
+          typeof params === 'object' &&
+          'id' in params &&
+          typeof params.id === 'string'
+            ? params.id
+            : undefined;
+        const scope = tenant ?? context.tenantId ?? resourceScope ?? 'platform';
+        const bodyHash = requestDigest({
+          method: request.method,
+          route: request.routeOptions.url,
+          params,
+          query: request.query,
+          body: request.body ?? null,
+        });
+        const reservation = await client.query<{
+          result: { replay: boolean; response?: T };
+        }>('SELECT business.begin_idempotency($1,$2,$3,$4) result', [
+          action,
+          scope,
+          keyHash,
+          bodyHash,
+        ]);
+        const decision = reservation.rows[0]?.result;
+        if (!decision) throw new Error('Idempotency reservation was not returned');
+        if (decision.replay) {
+          if (decision.response === undefined)
+            throw new Error('Completed idempotency result is missing');
+          return decision.response;
+        }
+        const response = await run(client, context);
+        await client.query(
+          'SELECT business.complete_idempotency($1,$2,$3,$4,$5::jsonb)',
+          [action, scope, keyHash, bodyHash, JSON.stringify(response)],
+        );
+        return response;
+      },
       { ip: request.ip, userAgent: request.headers['user-agent'] ?? null },
     );
   };
@@ -70,47 +144,53 @@ export function registerBusinessRoutes(
     if (context.platformRole !== 'super_admin')
       throw new AccessError(403, 'ACCESS_DENIED');
   };
-  const deliver = async (
-    request: FastifyRequest,
-    tenant: string,
+  const enqueue = (
+    client: PoolClient,
+    tenantId: string,
     invitationId: string,
     email: string,
     token: string,
+  ) => enqueueInvitation(client, keyring, {
+    id: invitationId,
+    tenantId,
+    email,
+    token,
+  });
+  const pageResult = <T extends { id: string; created_at: Date | string }>(
+    rows: readonly T[],
+    tenantId: string | null,
   ) => {
-    let delivery: 'sent' | 'failed' = 'sent';
-    try {
-      await inviteIdentity(
-        config,
-        send,
-        email,
-        '',
-        false,
-      );
-      await send({
-        to: email,
-        subject: 'Votre invitation / Your invitation',
-        text: `Rejoindre votre organisation / Join your organization:\n${config.baseURL}/invite#${token}\n\n48 heures / 48 hours. Connectez-vous avec cette adresse vérifiée / Sign in with this verified email.`,
-      });
-    } catch {
-      delivery = 'failed';
-    }
-    await transact(
-      request,
-      'invitation.delivery',
-      (client) =>
-        client.query('SELECT business.update_invitation($1,$2)', [
-          invitationId,
-          delivery,
-        ]),
-      tenant,
-    );
-    return delivery;
+    const hasMore = rows.length > pageSize;
+    const items = rows.slice(0, pageSize);
+    const last = items.at(-1);
+    const nextCursor =
+      hasMore && last && tenantId
+        ? encodePageCursor(tenantId, last.created_at, last.id)
+        : null;
+    return {
+      items: items.map((row) => {
+        const { created_at: createdAt, ...item } = row;
+        void createdAt;
+        return item;
+      }),
+      nextCursor,
+    };
+  };
+  const validateCursorScope = (
+    cursor: ReturnType<typeof decodePageCursor>,
+    requestedTenant: string | undefined,
+    context: AccessContext,
+  ) => {
+    const tenantId = requestedTenant ?? context.tenantId;
+    if (cursor && cursor.tenantId !== tenantId)
+      throw new AccessError(400, 'INVALID_CURSOR');
+    return tenantId;
   };
   registerUIRoutes(app, transact);
   registerProfileRoutes(app, transact);
   registerRbacRoutes(app, transact);
   registerAuditRoutes(app, transact);
-  registerAccessRoutes(app, { pool, origin: config.baseURL, transact, deliver });
+  registerAccessRoutes(app, { pool, origin: config.baseURL, transact, enqueue });
   app.get<Scoped>('/api/me', { schema: { querystring: tenantQuery } }, async (request) =>
     transact(request, 'context.read', async (client, context) => {
       const session = await auth.api.getSession({
@@ -123,11 +203,11 @@ export function registerBusinessRoutes(
           email: session!.user.email,
         },
         access: context,
-        workspaces: (
-          await client.query(
-            'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.can($$roles.assign$$,id) can_assign_roles,business.workspace_level(id) role_level,business.workspace_color(id) color FROM business.workspaces ORDER BY name',
+        can_assign_workspace_roles: (
+          await client.query<{ allowed: boolean }>(
+            "SELECT EXISTS(SELECT 1 FROM business.workspaces w WHERE business.can('roles.assign',w.id)) allowed",
           )
-        ).rows,
+        ).rows[0]?.allowed ?? false,
       };
     }, request.query.tenantId),
   );
@@ -162,34 +242,45 @@ export function registerBusinessRoutes(
             "INSERT INTO business.workspaces(tenant_id,name) VALUES($1,'General')",
             [tenant.id],
           );
+          await enqueue(client, tenant.id, invitation.id, request.body.adminEmail, token);
           return { id: tenant.id, invitationId: invitation.id };
         },
       );
-      const delivery = await deliver(
-        request,
-        result.id,
-        result.invitationId,
-        request.body.adminEmail,
-        token,
-      );
-      return reply.code(201).send({ ...result, delivery });
+      return reply.code(201).send({ ...result, delivery: 'pending' });
   };
   const tenantBody = { type: 'object', additionalProperties: false, required: ['name', 'adminEmail'], properties: { name: shortName, adminEmail: emailSchema } } as const;
   app.post<{ Body: { name: string; adminEmail: string } }>('/api/platform/tenants', { config: { rateLimit: { max: 3, timeWindow: '1 minute' } }, schema: { body: tenantBody } }, (request, reply) => createTenant(request, reply));
   app.post<{ Params: { id: string }; Body: { name: string; adminEmail: string } }>('/api/organizations/:id/tenants', { config: { rateLimit: { max: 3, timeWindow: '1 minute' } }, schema: { params: { type: 'object', required: ['id'], additionalProperties: false, properties: { id: uuid } }, body: tenantBody } }, (request, reply) => createTenant(request, reply, request.params.id));
-  app.get<Scoped>(
+  app.get<PageScoped>(
     '/api/workspaces',
-    { schema: { querystring: tenantQuery } },
+    { schema: { querystring: pageQuery } },
     async (request) =>
       transact(
         request,
         'workspaces.read',
-        async (client) =>
-          (
-            await client.query(
-              'SELECT id,tenant_id,name,visibility,business.workspace_admin(id,tenant_id) can_manage,business.can($$roles.assign$$,id) can_assign_roles,business.workspace_level(id) role_level,business.workspace_color(id) color FROM business.workspaces ORDER BY name',
-            )
-          ).rows,
+        async (client, context) => {
+          const cursor = decodePageCursor(request.query.before);
+          const tenantId = validateCursorScope(
+            cursor,
+            request.query.tenantId,
+            context,
+          );
+          const rows = await client.query<{
+            id: string;
+            tenant_id: string;
+            name: string;
+            visibility: 'private' | 'tenant';
+            can_manage: boolean;
+            can_assign_roles: boolean;
+            role_level: number;
+            color: string | null;
+            created_at: string;
+          }>(
+            'SELECT * FROM business.workspaces_page($1,$2,$3)',
+            [cursor?.createdAt ?? null, cursor?.id ?? null, pageSize + 1],
+          );
+          return pageResult(rows.rows, tenantId);
+        },
         request.query.tenantId,
       ),
   );
@@ -252,27 +343,64 @@ export function registerBusinessRoutes(
         request.query.tenantId,
       ),
   );
-  app.get<Scoped>(
+  app.get<PageScoped>(
     '/api/members',
-    { schema: { querystring: tenantQuery } },
+    { schema: { querystring: pageQuery } },
     async (request) =>
       transact(
         request,
         'members.read',
-        async (client) =>
-          (await client.query('SELECT * FROM business.members()')).rows,
+        async (client, context) => {
+          const cursor = decodePageCursor(request.query.before);
+          const tenantId = validateCursorScope(
+            cursor,
+            request.query.tenantId,
+            context,
+          );
+          const rows = await client.query<{
+            id: string;
+            name: string;
+            email: string;
+            role: string | null;
+            created_at: string;
+          }>(
+            'SELECT * FROM business.members_page($1,$2,$3)',
+            [cursor?.createdAt ?? null, cursor?.id ?? null, pageSize + 1],
+          );
+          return pageResult(rows.rows, tenantId);
+        },
         request.query.tenantId,
       ),
   );
-  app.get<Scoped>(
+  app.get<PageScoped>(
     '/api/invitations',
-    { schema: { querystring: tenantQuery } },
+    { schema: { querystring: pageQuery } },
     async (request) =>
       transact(
         request,
         'invitations.read',
-        async (client) =>
-          (await client.query('SELECT * FROM business.invitations()')).rows,
+        async (client, context) => {
+          const cursor = decodePageCursor(request.query.before);
+          const tenantId = validateCursorScope(
+            cursor,
+            request.query.tenantId,
+            context,
+          );
+          const rows = await client.query<{
+            id: string;
+            email: string;
+            role: string;
+            expires_at: Date;
+            accepted_at: Date | null;
+            revoked_at: Date | null;
+            delivery: string;
+            created_at: string;
+          }>(
+            'SELECT * FROM business.invitations_page($1,$2,$3)',
+            [cursor?.createdAt ?? null, cursor?.id ?? null, pageSize + 1],
+          );
+          return pageResult(rows.rows, tenantId);
+        },
         request.query.tenantId,
       ),
   );
@@ -309,19 +437,14 @@ export function registerBusinessRoutes(
               "SELECT current_setting('app.tenant_id') tenant",
             )
           ).rows[0]!.tenant;
+          await enqueue(client, tenant, row.id, request.body.email, token);
           return { id: row.id, tenant };
         },
         request.query.tenantId,
       );
       return reply.code(201).send({
         id: result.id,
-        delivery: await deliver(
-          request,
-          result.tenant,
-          result.id,
-          request.body.email,
-          token,
-        ),
+        delivery: 'pending',
       });
     },
   );
@@ -373,7 +496,7 @@ export function registerBusinessRoutes(
     },
     async (request) => {
       const token = randomBytes(32).toString('base64url');
-      const result = await transact(
+      await transact(
         request,
         'invitation.updated',
         async (client) => {
@@ -383,27 +506,20 @@ export function registerBusinessRoutes(
               [request.params.id, request.body.operation, hash(token)],
             )
           ).rows[0]!;
-          return {
-            ...row,
-            tenant: (
+          if (request.body.operation === 'retry') {
+            const tenant = (
               await client.query<{ tenant: string }>(
                 "SELECT current_setting('app.tenant_id') tenant",
               )
-            ).rows[0]!.tenant,
-          };
+            ).rows[0]!.tenant;
+            await enqueue(client, tenant, request.params.id, row.email, token);
+          }
+          return { ok: true };
         },
         request.query.tenantId,
       );
       return request.body.operation === 'retry'
-        ? {
-            delivery: await deliver(
-              request,
-              result.tenant,
-              request.params.id,
-              result.email,
-              token,
-            ),
-          }
+        ? { delivery: 'pending' }
         : { ok: true };
     },
   );

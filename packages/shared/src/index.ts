@@ -2,7 +2,7 @@
 export type HealthResponse = { status: 'ok' };
 
 export type AccessContext = {
-  actorId: string;
+  actorId: string | null;
   platformRole: 'super_admin' | null;
   tenantId: string | null;
   tenantRole: 'tenant_admin' | 'member' | null;
@@ -27,7 +27,7 @@ export type Workspace = {
 export type MeResponse = {
   user: { id: string; name: string; email: string };
   access?: AccessContext;
-  workspaces?: Workspace[];
+  can_assign_workspace_roles?: boolean | undefined;
 };
 
 export type UIPreferences = { locale: 'fr' | 'en'; theme: 'system' | 'light' | 'dark'; readonly timezone?: string; readonly date_format?: 'DD/MM/YYYY' | 'MM/DD/YYYY' | 'YYYY-MM-DD' };
