@@ -6,7 +6,7 @@ et leurs preuves ne sont pas modifiés ; leurs statuts implementing sont histori
 Le code et les assertions correspondantes ont été lus. Le résultat GitHub CI verify de
 8d37dd8 a été consulté le 25 octobre : completed/success,
 [run 40179417858](https://github.com/faugera/AgencticB2BSaaS/actions/runs/40179417858/job/121127054987).
-La CI comprend verify, UI, sécurité PostgreSQL, isolation et auth navigateur/SMTP.
+La CI comprend verify, sécurité PostgreSQL et isolation ; les tests navigateur ont été retirés.
 Ce résultat borne la preuve à cette révision ; aucun de ces tests n'est relancé localement
 pour la migration documentaire. Une fusion ne constitue pas à elle seule cette preuve.
 

@@ -36,10 +36,8 @@ Utiliser Node 24 et pnpm 11.25.0. Depuis la racine :
 | Démarrer web et API | `pnpm dev` | Configuration locale ; les fonctions métier exigent les services privés |
 | Démarrer / arrêter PostgreSQL | `pnpm db:up` / `pnpm db:down` | Docker Compose ; l’arrêt conserve le volume nommé |
 | Vérifier le socle | `pnpm verify` | Types, lint, tests unitaires, build et smoke ; sans E2E ni base SQL |
-| Tester le navigateur | `pnpm test:e2e` | Après `pnpm build`, Chromium installé |
 | Vérifier la documentation | `pnpm docs:test` puis `pnpm docs:check` | Tests du vérificateur puis liens, structure et synchronisation |
 | Vérifier sécurité et isolation | `pnpm verify:security` puis `pnpm verify:tenant-isolation` | PostgreSQL jetable et configuration dédiée ; accès réseau pour audit dépendances |
-| Tester les parcours auth réels | `pnpm test:auth:e2e` | Après `pnpm build`, Chromium installé, PostgreSQL et Mailpit jetables configurés |
 | Provisionner / migrer | `pnpm db:provision` puis `pnpm auth:migrate` | Opérateur uniquement ; suivre le runbook, jamais pour une vérification documentaire |
 
 Les contrôles nécessitant des services qui ne sont pas explicitement configurés sont
