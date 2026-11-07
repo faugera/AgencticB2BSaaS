@@ -1,0 +1,27 @@
+{
+  "skill": "markdown-scanner",
+  "scope": [
+    "docs\\sdd\\001-bootstrap.md"
+  ],
+  "findings": [
+    {
+      "rule": "MD025",
+      "wcag": "1.3.1 A",
+      "severity": "serious",
+      "location": "docs\\sdd\\001-bootstrap.md:3",
+      "summary": "The document contains multiple level-one headings.",
+      "fix": "Keep the task title as the only H1 and demote Scope, Acceptance, Exclusions, and Verification record to H2 headings.",
+      "evidence": "# Task 001 — Enterprise AI OS bootstrap; # Scope; # Acceptance; # Exclusions; # Verification record"
+    }
+  ],
+  "passed": [
+    "Domain 1: Descriptive Links",
+    "Domain 2: Image Alt Text",
+    "Domain 4: Table Accessibility",
+    "Domain 5: Emoji",
+    "Domain 6: Mermaid / ASCII Diagrams",
+    "Domain 7: Em-Dash and En-Dash Normalization",
+    "Domain 8: Anchor Links",
+    "Domain 9: Plain Language and List Structure"
+  ]
+}
