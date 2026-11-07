@@ -35,7 +35,7 @@ ainsi jusqu'à trois connexions disponibles pour HTTP et le limiteur.
 | apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations, idempotence et composition des modules |
 | apps/api/src/business/jobs | Outbox chiffrée, réservation atomique, baux, reprises et worker borné à deux jobs |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013–0015 B2B, 0016 idempotence/outbox, 0017 pagination, 0018 limites partagées, 0019 accusé obsolète |
+| apps/api/migrations | SQL immuable et checksummé ; 0013–0015 B2B ; 0016–0018 annuaire, sécurité, préférences, outbox, pagination et limites ; 0019–0020 correctifs outbox et limites. Numéros provisoires à réconcilier |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP
@@ -46,14 +46,14 @@ ainsi jusqu'à trois connexions disponibles pour HTTP et le limiteur.
 | GET/POST /api/auth/* | Contrats Better Auth ; origine POST et email vérifié |
 | GET /api/me?tenantId | Contexte serveur, tenants accessibles et indicateur de gestion des rôles workspace ; le client tolère l'absence de `access` dans les payloads legacy |
 | GET /api/tenants | Annuaire des tenants accessibles au contexte |
-| GET/POST /api/organizations | Lecture client-scopée ; création super-admin |
+| GET/POST /api/organizations | Lecture limitée aux organisations accessibles (supprimées exclues) ; création super-admin |
 | POST /api/organizations/:id/tenants | Super-admin ou organisation-admin du client ; adminEmail fournit billing et invitation initiale |
 | GET/POST /api/platform/tenants | Compatibilité super-admin ; POST crée client + premier tenant et enfile l'email |
 | GET/POST /api/roles ; PUT /api/roles/:id | Lecture avec roles.assign autorisé ; édition super-admin, impact/confirmation si modification affectante |
 | GET/POST /api/role-assignments | Portée et pyramide SQL ; grant/revoke explicites |
 | PATCH /api/members/:id/status | Statut invited/active/suspended ; inférieur seulement, dernier admin protégé |
 | GET/PUT /api/profile?tenantId | Compte propre ; PUT prénom/nom valides, champs personnels et emploi du tenant sélectionné |
-| GET/PUT /api/preferences | Compte propre, locale/theme/timezone/date_format ; aucun sélecteur identité |
+| GET/POST/PUT /api/preferences | Compte propre ; POST initialise sans écraser, PUT fusionne les champs transmis ; aucun sélecteur identité |
 | GET /api/workspaces?tenantId&before ; GET/POST /api/workspaces ; GET/PATCH /api/workspaces/:id | Pages bornées à 50, curseur date/UUID tenant-scopé, accès privé vérifié explicitement par la fonction SQL et permissions |
 | GET/POST/DELETE membres workspace ; GET/DELETE membres tenant | Fonctions étroites, hiérarchie et dernier admin ; retrait tenant = suspension |
 | GET/POST /api/invitations ; POST accept/retry/revoke | Email vérifié, portée, expiration48h, hash et anti-rejeu ; rôle pair interdit |

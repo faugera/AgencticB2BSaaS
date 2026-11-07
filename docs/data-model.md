@@ -1,8 +1,6 @@
 # Modèle de données courant
 
-Les migrations 0001–0018 sont historiques et immuables. Les migrations 0016 à 0019
-ajoutent l'idempotence/outbox, la pagination par curseur, le store partagé des
-limites au [contrat B2B](../specs/002-b2b-organizations-rbac/spec.md).
+Les migrations 0001–0015 implémentent le [contrat B2B](../specs/002-b2b-organizations-rbac/spec.md). Les migrations proposées 0016–0020 ajoutent sécurité, préférences, idempotence/outbox, pagination et limites partagées. Leurs préfixes concurrents restent à réconcilier après inventaire des environnements.
 Leur présence ne prouve aucune application en production. pg sans ORM ; migrateur
 atomique, verrou transactionnel et checksums opérateur.
 
@@ -31,9 +29,7 @@ atomique, verrou transactionnel et checksums opérateur.
 
 ## Autorisation
 
-RLS ENABLE/FORCE sur organisations, tenants, workspaces et journal. Métadonnées privées
-sans grants runtime directs ; fonctions SECURITY DEFINER à search_path fixe et autorisation
-explicite dans chaque fonction, y compris pour la visibilité des workspaces. Runtimes
+RLS ENABLE/FORCE sur organisations, tenants, workspaces et journal. L'annuaire ne retourne que les organisations accessibles et actives. Métadonnées privées sans grants runtime directs ; fonctions SECURITY DEFINER à search_path fixe et autorisation explicite, y compris pour les workspaces privés. Runtimes
 non propriétaires, non superuser, sans BYPASSRLS. Le serveur établit identité, tenant,
 IP et user-agent dans la même transaction avec set_config local. Le tenant demandé
 par le navigateur est revérifié depuis les appartenances et permissions persistées.
@@ -42,6 +38,11 @@ Seul active ouvre un tenant ; une appartenance explicite inactive refuse aussi l
 organisation-admin, tandis que son accès transversal sans appartenance reste autorisé.
 Les permissions tenant ne traversent jamais un autre tenant. Les références composites
 interdisent l'affectation d'un workspace d'un autre client/tenant.
+La reprise du journal conserve également les événements historiques sans tenant ; le contexte
+par défaut ignore les tenants supprimés logiquement.
+La migration 0017 reprend le journal sous une identité opérateur autorisée à contourner la RLS.
+La migration 0018 initialise les préférences sans écraser une ligne existante et fusionne
+atomiquement les champs modifiés.
 
 ## Reprise et exploitation
 

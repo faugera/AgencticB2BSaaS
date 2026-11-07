@@ -18,9 +18,9 @@ migration appliquée n’est modifiée.
   `pg`, Better Auth, Nodemailer ; Zod est déjà une dépendance directe de l’API.
 - **Stockage** : PostgreSQL ; schémas identité, métier et autorisation privée ;
   migrations versionnées et immuables après application.
-- **Tests** : Vitest unitaire, intégrations PostgreSQL jetables, Playwright,
-  Mailpit, contrôles `pnpm verify`, `pnpm verify:security`,
-  `pnpm verify:tenant-isolation`, `pnpm test:auth:e2e`,
+- **Tests** : Vitest unitaire, intégrations PostgreSQL jetables,
+  contrôles `pnpm verify`, `pnpm verify:security`,
+  `pnpm verify:tenant-isolation`,
   `pnpm docs:test` et `pnpm docs:check`.
 - **Plateforme cible** : API Fastify derrière un proxy HTTPS same-origin, web
   statique, PostgreSQL et relais SMTP configurés par l’opérateur.
@@ -114,7 +114,6 @@ apps/web/src/
 packages/shared/src/index.ts       # types uniquement, si contrat public à ajuster
 apps/api/src/**/*.test.ts          # tests API et règles de reprise
 apps/api/src/**/*.integration.test.ts
-tests/e2e/                         # parcours navigateur affectés
 docs/architecture.md
 docs/architecture.html
 docs/data-model.md
@@ -210,8 +209,7 @@ préparation d’une PR séparée.
 - **Web** : contrat invalide, pagination, erreurs, clavier, FR/EN,
   responsive ; revue d’accessibilité avant changement UI.
 - **Gates dépôt** : `pnpm docs:test`, `pnpm docs:check`, `pnpm verify`,
-  `pnpm verify:security`, `pnpm verify:tenant-isolation`,
-  `pnpm test:auth:e2e` selon les surfaces réellement modifiées.
+  `pnpm verify:security` et `pnpm verify:tenant-isolation` selon les surfaces modifiées.
 - **Exploitation** : restauration d’une copie jetable ; si infrastructure
   absente, résultat `NOT_RUN`, jamais `PASS`.
 

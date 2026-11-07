@@ -5,4 +5,11 @@
 apps/api/migrations/0013_profile_metadata.sql text eol=lf
 apps/api/migrations/0014_organizations_rbac.sql text eol=lf
 apps/api/migrations/0015_unified_audit.sql text eol=lf
+apps/api/migrations/0016_organization_directory_isolation.sql text eol=lf
+apps/api/migrations/0017_review_security_repairs.sql text eol=lf
+apps/api/migrations/0018_preferences_partial_update.sql text eol=lf
 apps/api/migrations/0019_outbox_failure_ack_token_guard.sql text eol=lf
+apps/api/migrations/0016_idempotency_outbox.sql text eol=lf
+apps/api/migrations/0017_keyset_pagination.sql text eol=lf
+apps/api/migrations/0018_shared_rate_limits.sql text eol=lf
+apps/api/migrations/0020_shared_rate_limit_timestamp_fix.sql text eol=lf

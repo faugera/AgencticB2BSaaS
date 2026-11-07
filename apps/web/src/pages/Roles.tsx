@@ -24,6 +24,7 @@ export function Roles({ access, query }: { access: AccessContext; query: string 
  const selectedSpace = assignableSpaces.find((space) => space.id === workspaceId);
  const canAssign = generalAssignment || assignableSpaces.length > 0;
  const tenantId = new URLSearchParams(query).get('tenantId') || access.tenantId;
+ const catalogQuery = tenantId ? '?tenantId=' + encodeURIComponent(tenantId) : '';
  const queryRef = useRef(query);
  queryRef.current = query;
  useEffect(() => {
@@ -31,9 +32,9 @@ export function Roles({ access, query }: { access: AccessContext; query: string 
   const workspaces = tenantId
    ? api('/api/workspaces' + query, workspacePageSchema)
    : Promise.resolve({ items: [], nextCursor: null });
-  void Promise.all([api('/api/roles', roleDefinitionListSchema), api('/api/tenants', tenantSummaryListSchema), api('/api/organizations', organizationSummaryListSchema), workspaces]).then(([catalog, directory, clients, workspacePage]) => { if (active) { setRoles(catalog); setTenants(directory); setOrganizations(clients); setSpaces(workspacePage.items); setWorkspaceCursor(workspacePage.nextCursor); } }).catch(() => { if (active) setError(true); });
+  void Promise.all([api('/api/roles' + catalogQuery, roleDefinitionListSchema), api('/api/tenants', tenantSummaryListSchema), api('/api/organizations', organizationSummaryListSchema), workspaces]).then(([catalog, directory, clients, workspacePage]) => { if (active) { setRoles(catalog); setTenants(directory); setOrganizations(clients); setSpaces(workspacePage.items); setWorkspaceCursor(workspacePage.nextCursor); } }).catch(() => { if (active) setError(true); });
   return () => { active = false; };
- }, [query, revision, tenantId]);
+ }, [query, catalogQuery, revision, tenantId]);
  useEffect(() => {
   if (!tenantId || (!generalAssignment && !workspaceId)) return;
   let active = true; const params = new URLSearchParams(query);

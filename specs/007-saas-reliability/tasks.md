@@ -128,7 +128,7 @@ une livraison revue, sans merge ni déploiement.
 
 - [X] T033 [P] Mettre à jour la carte produit et les capacités B2B uniquement si le statut fonctionnel change dans `.specs/domains/product-map.md` et `docs/features-b2b.md`.
 - [X] T034 [P] Vérifier les exigences du routage documentaire et les liens de cette feature avec `pnpm docs:test` et `pnpm docs:check`.
-- [ ] T035 Exécuter `pnpm verify`, `pnpm verify:security`, `pnpm verify:tenant-isolation`, `pnpm test:auth:e2e` et `pnpm test:e2e` selon leurs prérequis, inspecter les workflows CI et automatisations pour confirmer qu’aucun merge ou déploiement automatique n’est déclenché, puis consigner PASS/FAIL/NOT_RUN et les limites dans `specs/007-saas-reliability/quickstart.md`.
+- [ ] T035 Exécuter `pnpm verify`, `pnpm verify:security`, `pnpm verify:tenant-isolation` selon leurs prérequis, inspecter les workflows CI et automatisations pour confirmer qu’aucun merge ou déploiement automatique n’est déclenché, puis consigner PASS/FAIL/NOT_RUN et les limites dans `specs/007-saas-reliability/quickstart.md`.
 - [X] T036 Relancer l’analyse Spec Kit et la convergence, traiter les écarts et conserver les preuves sans modifier les historiques dans `specs/007-saas-reliability/`.
 
 ## Dépendances et ordre d’exécution
@@ -178,5 +178,5 @@ ne peut être qualifiée de réussite.
 
 ## Phase 8: Convergence
 
-- [ ] T037 Diagnostiquer et corriger les parcours Playwright échoués, puis relancer `pnpm test:e2e` jusqu’à validation de SC-008 (partial).
+- [x] T037 NOT_APPLICABLE : suites navigateur retirées à la demande du propriétaire ; SC-008 ne dispose plus de preuve navigateur automatisée.
 - [X] T038 Corriger par migration additive `apps/api/migrations/0020_shared_rate_limit_timestamp_fix.sql` le type de timestamp utilisé par `business.consume_rate_limit` ; le scénario d’expiration de T023 couvre le reset. L’exécution PostgreSQL reste suivie dans T035.

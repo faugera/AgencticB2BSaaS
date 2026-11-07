@@ -28,7 +28,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
   const location = useLocation();
   const basePath = adminOnly ? '/admin' : '/app';
   const loginPath = adminOnly ? '/admin/login' : '/login';
-  const [me, setMe] = useState<Me | null>(null);
+  const [session, setSession] = useState<{ path: string; data: Me } | null>(null);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const scope = new URLSearchParams(location.search).get('tenantId') ?? '';
@@ -43,11 +43,15 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
   const [revision, setRevision] = useState(0);
   const [selected, setSelected] = useState<Workspace | null>(null);
   const [loadedPath, setLoadedPath] = useState('');
+  const query = scope ? `?tenantId=${encodeURIComponent(scope)}` : '';
+  const path = location.pathname + query;
+  const me = session && (session.path === path || (query && location.pathname === basePath + '/profile' && session.path.split('?')[0] === location.pathname)) ? session.data : null;
   const superAdmin = me?.access?.platformRole === 'super_admin';
   const admin = superAdmin || me?.access?.tenantRole === 'tenant_admin' || me?.access?.organizationRole === 'organization_admin' || Boolean(me?.access?.permissions?.includes('members.manage'));
-  const query = scope ? `?tenantId=${encodeURIComponent(scope)}` : '';
   const queryRef = useRef(query);
   queryRef.current = query;
+  const invitationAdmin = superAdmin || me?.access?.tenantRole === 'tenant_admin' || me?.access?.organizationRole === 'organization_admin' || Boolean(me?.access?.permissions?.includes('invitations.manage'));
+  const effectiveQuery = query || (!superAdmin && me?.access?.tenantId ? '?tenantId=' + encodeURIComponent(me.access.tenantId) : '');
   const adminPage = location.pathname.replace(/\/$/, '');
   const overview = adminPage === '/admin';
   const organizationPage = adminPage === basePath + '/organizations';
@@ -73,7 +77,8 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
           void navigate('/403', { replace: true });
           return;
         }
-        if (!adminOnly && ['/app/members', '/app/invitations'].includes(location.pathname) && data.access?.tenantRole !== 'tenant_admin' && data.access?.organizationRole !== 'organization_admin' && !data.access?.permissions?.includes('members.manage') && data.access?.platformRole !== 'super_admin') {
+        const invitationPath = location.pathname === '/app/invitations';
+        if (!adminOnly && (invitationPath ? !data.access?.permissions?.includes('invitations.manage') && data.access?.tenantRole !== 'tenant_admin' && data.access?.organizationRole !== 'organization_admin' && data.access?.platformRole !== 'super_admin' : location.pathname === '/app/members' && data.access?.tenantRole !== 'tenant_admin' && data.access?.organizationRole !== 'organization_admin' && !data.access?.permissions?.includes('members.manage') && data.access?.platformRole !== 'super_admin')) {
           void navigate('/403', { replace: true });
           return;
         }
@@ -83,7 +88,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
           return;
         }
         if (!adminOnly && auditPage && !data.access?.permissions?.includes('audit.read')) { void navigate('/403', { replace: true }); return; }
-        setMe(data);
+        setSession({ path, data });
         if (data.access?.platformRole === 'super_admin' || data.access?.tenants) {
           const directory = data.access?.platformRole === 'super_admin' ? await api('/api/tenants', tenantSummaryListSchema) : [...(data.access?.tenants ?? [])];
           if (active) setTenants(directory);
@@ -104,7 +109,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     return () => {
       active = false;
     };
-  }, [navigate, location.pathname, location.search, revision, adminOnly, loginPath, adminPage, auditPage, query]);
+  }, [navigate, location.pathname, location.search, revision, adminOnly, loginPath, adminPage, auditPage, query, path]);
   useEffect(() => {
     if (!me || (adminOnly && !superAdmin)) return;
     if (profilePage || securityPage || docsPage || auditPage || rolesPage || organizationPage) {
@@ -135,9 +140,9 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
               workspaceSchema,
             )
           : Promise.resolve(null),
-        admin
-        ? api('/api/invitations' + query, invitationPageSchema)
-        : Promise.resolve({ items: [], nextCursor: null }),
+        showInvitations && invitationAdmin
+          ? api('/api/invitations' + query, invitationPageSchema)
+          : Promise.resolve({ items: [], nextCursor: null }),
       ]);
       const people = current?.can_manage
         ? await api(
@@ -168,7 +173,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     return () => {
       active = false;
     };
-  }, [me, query, scope, admin, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, securityPage, docsPage, auditPage, rolesPage, organizationPage]);
+  }, [me, query, scope, admin, invitationAdmin, showInvitations, location.pathname, revision, navigate, adminOnly, superAdmin, profilePage, securityPage, docsPage, auditPage, rolesPage, organizationPage]);
   async function action(run: () => Promise<unknown>) {
     setBusy(true);
     setError('');
@@ -251,8 +256,10 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
     });
   }
   if (!me) return <main className="auth-page"><p role={error ? 'alert' : 'status'}>{t(error ? 'access_unavailable_or_denied_contact_your_administrator' : 'loading')}</p></main>;
+  const scopePending = session?.path !== path;
+  const visibleMe: Me = scopePending ? { user: me.user } : me;
   return (
-    <AppShell me={me} admin={adminOnly} scope={scope} tenants={tenants} workspaces={workspaces} selected={selected} busy={busy} onSignOut={() => {
+    <AppShell me={visibleMe} admin={adminOnly} scope={scope} tenants={tenants} workspaces={scopePending ? [] : workspaces} selected={scopePending ? null : selected} busy={busy} onSignOut={() => {
       void action(async () => { const result = await authClient.signOut(); if (result.error) throw new Error(); void navigate(loginPath); });
     }} onScopeChange={(value) => {
       setSelected(null); setWorkspaces([]); setMembers([]); setInvitations([]);
@@ -281,7 +288,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
         me && (!adminOnly || superAdmin) && (
           <main id="app-main" aria-busy={busy} tabIndex={-1}>
             <header className="ui-page-header"><h1>{adminOnly ? t(adminHeading) : t(rolesPage ? 'roles_page' : auditPage ? 'audit_log' : organizationPage ? 'organizations' : profilePage ? 'profile' : adminPage.endsWith('/security') ? 'account_security' : showMembers ? 'members_page' : showInvitations ? 'invitations_page' : 'workspaces')}</h1>{showInvitations && <p>{t('access_description')}</p>}</header>
-            {rolesPage && me.access ? <Roles key={query} access={me.access} query={query} /> : organizationPage ? <Organizations superAdmin={superAdmin} /> : auditPage ? <AuditLog key={scope} query={query} global={superAdmin} /> : profilePage ? <Profile me={me} onSaved={() => setRevision((value) => value + 1)} /> : docsPage ? <Documentation /> : loadedPath !== location.pathname + query ? (
+            {rolesPage && me.access ? <Roles key={query} access={me.access} query={query} /> : organizationPage ? <Organizations superAdmin={superAdmin} /> : auditPage ? <AuditLog key={effectiveQuery} query={effectiveQuery} global={superAdmin} /> : profilePage ? <Profile me={visibleMe} scopePending={scopePending} query={effectiveQuery} onSaved={() => setRevision((value) => value + 1)} /> : docsPage ? <Documentation /> : loadedPath !== location.pathname + query ? (
               <p role="status">{t('loading')}</p>
             ) : location.pathname === basePath + '/security' ? (
               <Security t={t} />
@@ -296,9 +303,9 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
                     <p>{t('organization_scope_help')}</p>
                   </section>
                 )}
-                {showInvitations && admin && (!superAdmin || scope) && <InvitationManagement invitations={invitations} nextCursor={invitationCursor} onLoadMore={() => loadMore('invitations')} query={query} busy={busy} action={action} />}
+                {showInvitations && invitationAdmin && (!superAdmin || scope) && <InvitationManagement invitations={invitations} nextCursor={invitationCursor} onLoadMore={() => loadMore('invitations')} query={query} busy={busy} action={action} />}
                 {showMembers && admin && (!superAdmin || scope) && <MemberManagement members={members} nextCursor={memberCursor} onLoadMore={() => loadMore('members')} query={query} busy={busy} action={action} />}
-                {showInvitations && admin && (!superAdmin || scope) && <AccessRequests key={query} query={query} onApproved={() => setRevision((value) => value + 1)} />}
+                {showInvitations && invitationAdmin && (!superAdmin || scope) && <AccessRequests key={query} query={query} onApproved={() => setRevision((value) => value + 1)} />}
               </>
             )}
           </main>

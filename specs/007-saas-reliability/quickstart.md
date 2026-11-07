@@ -82,13 +82,9 @@ puis exécuter :
 ```powershell
 pnpm verify:security
 pnpm verify:tenant-isolation
-pnpm test:auth:e2e
-pnpm test:e2e
 ```
 
-Le parcours d’auth et de messagerie réelle requiert PostgreSQL et Mailpit
-jetables. Si ces services ne sont pas explicitement disponibles, classer le
-contrôle `NOT_RUN`, jamais `PASS`.
+Les tests navigateur et le parcours SMTP piloté par navigateur sont retirés à la demande du propriétaire. Si PostgreSQL jetable est indisponible, classer les contrôles SQL `NOT_RUN`, jamais `PASS`.
 
 ## Vérification de restauration et exploitation
 

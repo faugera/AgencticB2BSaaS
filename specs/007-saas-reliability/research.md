@@ -18,7 +18,7 @@
   `apps/web/src/http.ts` transforme aujourd’hui directement le JSON en `T`.
 - L’audit et les demandes d’accès ont déjà une pagination bornée ; d’autres
   listes retournent des collections complètes.
-- La CI lance PostgreSQL, Mailpit, tests navigateur, tests auth et isolation ;
+- La CI lance les tests unitaires, PostgreSQL et isolation ; les tests navigateur sont retirés ;
   aucune action de déploiement n’est présente. La documentation précise que
   l’automatisation des sauvegardes/RTO n’est pas déployée.
 

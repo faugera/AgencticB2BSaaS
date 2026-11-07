@@ -7,7 +7,7 @@ import { authClient } from '../auth/client';
 import { useLanguage } from '../i18n';
 
 type Session = typeof authClient.$Infer.Session.session;
-export function Profile({ me, onSaved }: { me: MeResponse; onSaved: () => void }) {
+export function Profile({ me, query, scopePending, onSaved }: { me: MeResponse; query: string; scopePending: boolean; onSaved: () => void }) {
   const { locale, t } = useLanguage();
   const { data: current } = authClient.useSession();
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -29,8 +29,8 @@ export function Profile({ me, onSaved }: { me: MeResponse; onSaved: () => void }
   return <section className="panel profile-panel">
     {error && <p role="alert">{t('unable_to_complete_this_request_try_again_later')}</p>}
     {notice && <p role="status">{t(notice === 'name' ? 'profile_saved' : 'sessions_revoked')}</p>}
-    <ProfileDetailsForm query={me.access?.tenantId ? '?tenantId=' + encodeURIComponent(me.access.tenantId) : ''} onSaved={onSaved} />
-    <p>{t('account_roles')} : {(me.access?.roles ?? [role ?? t('no_role')]).join(', ')}</p>
+    <ProfileDetailsForm query={query} onSaved={onSaved} />
+    {!scopePending && <p>{t('account_roles')} : {(me.access?.roles ?? [role ?? t('no_role')]).join(', ')}</p>}
     <ProfilePreferences identity={me.user.id} />
     <section aria-busy={busy}>
       <h3>{t('active_sessions')}</h3>

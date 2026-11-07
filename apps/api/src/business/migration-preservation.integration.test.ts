@@ -44,6 +44,7 @@ describe.skipIf(process.env.AUTH_TEST_MIGRATION_PRESERVATION !== 'true')('repris
         await client.query('INSERT INTO business.tenants(id,name,created_at,updated_at) VALUES($1,$2,$5,$6),($3,$4,$5,$6)', [tenant, 'Client historique', invitedTenant, 'Invitation historique', created, updated]);
         await client.query("INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'tenant_admin')", [actor, tenant]);
         await client.query('INSERT INTO business.workspaces(id,tenant_id,name) VALUES($1,$2,$3)', [workspace, tenant, 'Atelier historique']);
+        await client.query("INSERT INTO authorization_private.audit(actor_id,tenant_id,action,resource_type,resource_id,changed_fields) VALUES($1,NULL,'review.legacy.global','actor','legacy-audit',ARRAY['enabled'])", [actor]);
         await client.query('COMMIT');
       } catch (error) {
         await client.query('ROLLBACK');
@@ -54,6 +55,8 @@ describe.skipIf(process.env.AUTH_TEST_MIGRATION_PRESERVATION !== 'true')('repris
       expect((await operator.query("SELECT count(*)::int count FROM information_schema.columns WHERE table_schema='identity' AND table_name='user' AND column_name='first_name'")).rows[0]?.count).toBe(0);
       await operator.query("INSERT INTO authorization_private.invitations(tenant_id,email,role,token_hash) VALUES($1,'invited-admin@example.test','tenant_admin',$2)", [invitedTenant, randomBytes(32).toString('hex')]);
       await migrateAuth(config, migrationURL);
+      const recovered = await operator.query("SELECT tenant_id,actor_id,action,target_type,target_id,payload,legacy_id FROM business.audit_logs WHERE action='review.legacy.global'");
+      expect(recovered.rows).toEqual([expect.objectContaining({ tenant_id: null, actor_id: actor, target_type: 'actor', target_id: 'legacy-audit', payload: { changed_fields: ['enabled'] }, legacy_id: expect.any(String) })]);
       const users = await operator.query('SELECT id,name,email,"emailVerified",image,"createdAt","updatedAt","deletedAt",first_name,last_name FROM identity."user" ORDER BY id');
       expect(users.rows).toEqual([
         { id: 'legacy-admin', name: '  Anne   Marie Dupont  ', email: 'admin@example.test', emailVerified: true, image: 'https://example.test/avatar.png', createdAt: new Date(created), updatedAt: new Date(updated), deletedAt: null, first_name: 'Anne', last_name: 'Marie Dupont' },
@@ -69,6 +72,7 @@ describe.skipIf(process.env.AUTH_TEST_MIGRATION_PRESERVATION !== 'true')('repris
       expect((await operator.query('SELECT id,tenant_id,slug FROM business.workspaces')).rows).toEqual([{ id: workspace, tenant_id: tenant, slug: 'atelier-historique-' + workspace.replaceAll('-', '') }]);
       const versions = await operator.query('SELECT * FROM migration_history.versions ORDER BY name');
       await migrateAuth(config, migrationURL);
+      expect((await operator.query("SELECT legacy_id FROM business.audit_logs WHERE action='review.legacy.global'")).rows).toEqual([{ legacy_id: recovered.rows[0]?.legacy_id }]);
       expect((await operator.query('SELECT * FROM migration_history.versions ORDER BY name')).rows).toEqual(versions.rows);
       expect((await operator.query('SELECT id,name,email,"emailVerified",image,"createdAt","updatedAt","deletedAt",first_name,last_name FROM identity."user" ORDER BY id')).rows).toEqual(users.rows);
       expect((await operator.query('SELECT id,billing_email,slug,created_at,updated_at FROM business.tenants ORDER BY id')).rows).toEqual(tenantRows.rows);
