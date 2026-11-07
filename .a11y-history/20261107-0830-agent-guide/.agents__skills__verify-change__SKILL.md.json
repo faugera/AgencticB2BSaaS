@@ -1,0 +1,18 @@
+{
+  "skill": "markdown-scanner",
+  "scope": [
+    ".agents\\skills\\verify-change\\SKILL.md"
+  ],
+  "findings": [],
+  "passed": [
+    "Domain 1: Descriptive Links",
+    "Domain 2: Image Alt Text",
+    "Domain 3: Heading Hierarchy",
+    "Domain 4: Table Accessibility",
+    "Domain 5: Emoji",
+    "Domain 6: Mermaid / ASCII Diagrams",
+    "Domain 7: Em-Dash and En-Dash Normalization",
+    "Domain 8: Anchor Links",
+    "Domain 9: Plain Language and List Structure"
+  ]
+}
