@@ -65,7 +65,10 @@ par date et UUID ; le curseur inclut le tenant et ne remplace jamais l'autorisat
 réévaluée par le serveur. Le curseur conserve la précision microseconde du timestamp.
 La fonction `workspaces_page` vérifie explicitement `business.workspace_access` pour ne
 pas dépendre du seul RLS sous `SECURITY DEFINER`. Le worker verrouille l'outbox et
-l'invitation pendant l'envoi SMTP et l'accusé, sérialisant ainsi révocation et livraison.
+l'invitation pendant l'envoi SMTP et l'accusé, avec un timeout transactionnel local de
+60 secondes pour permettre les livraisons plus longues que le timeout d'inactivité global.
+Les statuts d'échec de livraison ne s'appliquent qu'au message correspondant au jeton
+courant de l'invitation, pas à une tentative remplacée.
 Les limites métiers utilisent un compteur PostgreSQL partagé et échouent explicitement
 si la fonction de comptage est indisponible.
 

@@ -19,9 +19,11 @@ Les mutations ciblées acceptent `Idempotency-Key` : acteur, action, portée et 
 de requête déterminent le rejeu, conservé au plus 24 h. L'invitation et sa charge
 AES-256-GCM chiffrée sont écrites dans la même transaction métier ; le worker PostgreSQL
 réserve par bail et reprend les échecs. Avant SMTP, il verrouille les lignes de l'outbox
-et de l'invitation jusqu'à l'accusé, ce qui sérialise une révocation concurrente. L'état
-HTTP initial `pending` ne confirme pas la livraison. SMTP reste au moins une fois ; un
-accusé ambigu peut produire un doublon.
+et de l'invitation jusqu'à l'accusé, ce qui sérialise une révocation concurrente. Cette
+transaction utilise un timeout d'inactivité local de 60 s ; les statuts d'échec ne
+s'appliquent qu'au message correspondant au jeton courant. L'état HTTP initial `pending`
+ne confirme pas la livraison. SMTP reste au moins une fois ; un accusé ambigu peut
+produire un doublon.
 
 | Module | Responsabilité |
 | --- | --- |

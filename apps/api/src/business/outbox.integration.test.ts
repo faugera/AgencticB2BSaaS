@@ -307,6 +307,80 @@ describe('Outbox PostgreSQL et worker', () => {
     expect(expired.rows).toHaveLength(0);
   });
 
+  it('ne laisse pas un ancien message mettre en échec une nouvelle tentative', async () => {
+    for (const previousState of ['pending', 'failed'] as const) {
+      const email = `retry-${previousState}-${randomBytes(8).toString('hex')}@example.test`;
+      const oldToken = randomBytes(32).toString('base64url');
+      const invitationId = await enqueue(email, oldToken);
+      if (previousState === 'failed') {
+        await operator.query(
+          `UPDATE authorization_private.outbox_messages
+           SET state='failed',ciphertext='',iv='',tag=''
+           WHERE invitation_id=$1`,
+          [invitationId],
+        );
+        await operator.query(
+          `UPDATE authorization_private.invitations SET delivery='failed'
+           WHERE id=$1`,
+          [invitationId],
+        );
+      }
+
+      const token = randomBytes(32).toString('base64url');
+      await businessTransaction(
+        business,
+        identityId,
+        tenantId,
+        'fixture.retry_invitation',
+        async (client) => {
+          await client.query(
+            'SELECT business.update_invitation($1,$2,$3)',
+            [
+              invitationId,
+              'retry',
+              createHash('sha256').update(token, 'utf8').digest('hex'),
+            ],
+          );
+          await enqueueInvitation(client, keyring, {
+            id: invitationId,
+            tenantId,
+            email,
+            token,
+          });
+        },
+      );
+
+      const newOperationKey = `invitation:${invitationId}:${createHash('sha256')
+        .update(token, 'utf8')
+        .digest('hex')}`;
+      const newMessage = await operator.query<{ id: string }>(
+        'SELECT id FROM authorization_private.outbox_messages WHERE operation_key=$1',
+        [newOperationKey],
+      );
+      const claimed = await business.query<{ id: string }>(
+        'SELECT * FROM business.claim_invitation_outbox($1,$2)',
+        [20, 120],
+      );
+      expect(
+        claimed.rows.some((row) => row.id === newMessage.rows[0]?.id),
+      ).toBe(true);
+
+      const state = await operator.query<{
+        delivery: string;
+        previous_state: string;
+      }>(
+        `SELECT i.delivery,o.state AS previous_state
+         FROM authorization_private.invitations i
+         JOIN authorization_private.outbox_messages o ON o.invitation_id=i.id
+         WHERE i.id=$1 AND o.operation_key<>$2`,
+        [invitationId, newOperationKey],
+      );
+      expect(state.rows).toEqual([
+        { delivery: 'pending', previous_state: previousState === 'pending' ? 'expired' : 'failed' },
+      ]);
+    }
+  });
+
   it('réévalue l’invitation après la prise du bail', async () => {
     const id = await enqueue(
       `raced-${randomBytes(8).toString('hex')}@example.test`,
@@ -373,7 +447,7 @@ describe('Outbox PostgreSQL et worker', () => {
       revokeFinished = true;
     });
     await revoking;
-    await delay(50);
+    await delay(10_100);
     const revokeWasBlocked = !revokeFinished;
     releaseSending();
     await processing;

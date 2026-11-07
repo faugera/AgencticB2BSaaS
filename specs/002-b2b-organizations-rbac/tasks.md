@@ -47,3 +47,5 @@ Docker indisponible ; PostgreSQL17 portable et Mailpit isolés utilisés. Résul
 - [x] T022 Distinguer les portées et rôles dans les sélecteurs d'attribution et de contexte ; vérifier octroi et retrait (FR-009).
 - [x] T023 Distinguer les rôles homonymes dans le catalogue et les confirmations globales (FR-008/009).
 - [x] T024 Afficher entièrement la sélection et son identifiant sur les petits écrans ; conserver l'état des formulaires indépendants (FR-009).
+- [x] T025 Aligner le timeout transactionnel local du worker sur les livraisons SMTP lentes, sans relâcher les verrous pendant l'envoi ; ajouter une régression au-delà de l'ancien délai (FR-017).
+- [x] T026 Ne modifier le statut de livraison qu'à partir du message d'outbox correspondant au jeton courant ; couvrir les retries pending et failed (FR-016/017).

@@ -73,7 +73,10 @@ application and PostgreSQL/Mailpit evidence remain unverified in this branch.
 Retry rotates the invitation token; stale queued payloads are invalidated by
 comparing their operation key with the persisted invitation token hash. Before
 SMTP delivery, the worker locks the outbox and invitation through the delivery
-acknowledgment, serializing a concurrent revocation with that attempt.
+acknowledgment, serializing a concurrent revocation with that attempt. The worker
+sets a transaction-local 60-second idle timeout for this delivery transaction;
+the invitation's delivery state is updated only by the outbox message matching
+the current token hash, so a superseded retry cannot fail its replacement.
 
 Browser invitation secrets use URL fragments and memory only. Reloading during
 login/MFA requires reopening the invitation email. Reset tokens are removed from

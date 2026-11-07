@@ -78,6 +78,9 @@ export function createOutboxWorker(
       client = await pool.connect();
       await client.query('BEGIN');
       transactionOpen = true;
+      await client.query(
+        "SET LOCAL idle_in_transaction_session_timeout = '60s'",
+      );
       const activeBeforeDelivery = await client.query<{ active: boolean }>(
         'SELECT business.invitation_outbox_active($1,$2) active',
         [job.id, job.lease_id],

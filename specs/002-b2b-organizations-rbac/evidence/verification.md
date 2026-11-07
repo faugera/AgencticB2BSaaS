@@ -63,3 +63,18 @@ Le contrôle frais confirme15/15SQL identiques octet par octet et un rejeu du mi
 depuis ce checkout avec15versions et historique strictementidentique (checkout-replay-proof.md).
 La lecture du catalogue sans contexte runtime est explicitement refusée42501 ; test
 adversarial direct ajouté dans organizations.integration.test.ts pour prévenir une régression.
+
+## Vérification des corrections de revue PR #16 — 2026-11-07
+
+Périmètre : corrections outbox du delta basé sur `95b7987` ; timeout transactionnel
+local du worker, statut de livraison limité au message associé au jeton courant, tests
+d'intégration de retry et de livraison SMTP lente. Les migrations utilisées en test
+doivent rester jetables.
+
+| Contrôle | Résultat | Preuve / limite |
+| --- | --- | --- |
+| `pnpm verify` | PASS | Typecheck, lint, 112 tests unitaires, build et smoke sur le delta. |
+| `pnpm docs:test` / `pnpm docs:check` | PASS | 22 tests documentaires ; liens, routage et manifeste d'architecture valides. |
+| `pnpm verify:security` | NOT_RUN | Variables PostgreSQL jetables/Mailpit absentes ; aucune base n'a été créée ou migrée. |
+| `pnpm verify:tenant-isolation` / `pnpm test:auth:e2e` | NOT_RUN | PostgreSQL/Mailpit de test explicitement configurés indisponibles. |
+| Tests PostgreSQL/Mailpit de l'outbox | NOT_RUN | Les scénarios régressifs ont été ajoutés, dont une attente SMTP de 10,1 s et retry depuis ancien état pending/failed ; exécution réelle non disponible. |

@@ -143,7 +143,8 @@ BEGIN
         AND (i.accepted_at IS NOT NULL OR i.revoked_at IS NOT NULL OR i.expires_at<=clock_timestamp()));
   UPDATE authorization_private.invitations i SET delivery='failed'
     WHERE i.delivery='pending' AND EXISTS(SELECT FROM authorization_private.outbox_messages o
-      WHERE o.invitation_id=i.id AND o.state='expired');
+      WHERE o.invitation_id=i.id AND o.state='expired'
+        AND o.operation_key='invitation:'||i.id::text||':'||i.token_hash);
   UPDATE authorization_private.outbox_messages SET state='retryable',lease_id=NULL,leased_until=NULL,
       available_at=clock_timestamp()
     WHERE state='leased' AND leased_until<=clock_timestamp() AND expires_at>clock_timestamp() AND attempts<8;
@@ -152,7 +153,8 @@ BEGIN
     WHERE state='leased' AND leased_until<=clock_timestamp() AND attempts>=8;
   UPDATE authorization_private.invitations i SET delivery='failed'
     WHERE i.delivery='pending' AND EXISTS(SELECT FROM authorization_private.outbox_messages o
-      WHERE o.invitation_id=i.id AND o.state='failed');
+      WHERE o.invitation_id=i.id AND o.state='failed'
+        AND o.operation_key='invitation:'||i.id::text||':'||i.token_hash);
   DELETE FROM authorization_private.outbox_messages
     WHERE ctid IN (SELECT ctid FROM authorization_private.outbox_messages
       WHERE expires_at<=clock_timestamp() AND state IN ('sent','failed','expired')
