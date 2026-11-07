@@ -33,3 +33,14 @@ describe('CI integration test selection', () => {
     ).toHaveLength(1);
   });
 });
+
+describe('CI sans tests navigateur', () => {
+  it('ne prévoit plus de commande Playwright et conserve les gates SQL', () => {
+    expect(manifest.scripts['test:e2e']).toBeUndefined();
+    expect(manifest.scripts['test:auth:e2e']).toBeUndefined();
+    expect(workflow).not.toMatch(/playwright|test:e2e|test:auth:e2e/i);
+    expect(workflow).toContain('pnpm verify:security');
+    expect(workflow).toContain('pnpm verify:tenant-isolation');
+    expect(workflow).toContain('migration-preservation.integration.test.ts');
+  });
+});
