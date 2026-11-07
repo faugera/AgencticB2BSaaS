@@ -57,7 +57,7 @@ describe('Idempotence HTTP avec PostgreSQL jetable', () => {
   beforeAll(async () => {
     await provisionRoles(migrationURL, databaseURL, businessURL);
     await migrateAuth(config, migrationURL);
-    app = buildApp({ authConfig: config });
+    app = buildApp({ authConfig: config, trustedProxies: ['127.0.0.1'] });
     const auth = createAuth(config, identity, async () => {}, true);
     const email = `idempotency-${randomBytes(8).toString('hex')}@example.test`;
     const password = randomBytes(24).toString('base64url');
@@ -121,7 +121,7 @@ describe('Idempotence HTTP avec PostgreSQL jetable', () => {
     const path = `/api/organizations/${organizationId}/tenants`;
     const payload = { name, adminEmail: email };
     const responses = await Promise.all(
-      Array.from({ length: 10 }, () =>
+      Array.from({ length: 10 }, (_, index) =>
         app.inject({
           method: 'POST',
           url: path,
@@ -129,6 +129,7 @@ describe('Idempotence HTTP avec PostgreSQL jetable', () => {
             origin: config.baseURL,
             cookie: account.cookie,
             'idempotency-key': key,
+            'x-forwarded-for': `192.0.2.${index + 1}`,
           },
           payload,
         }),

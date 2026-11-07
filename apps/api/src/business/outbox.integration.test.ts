@@ -79,6 +79,15 @@ async function enqueue(
   );
 }
 
+async function claimInvitationFirst(invitationId: string) {
+  await operator.query(
+    `UPDATE authorization_private.outbox_messages
+     SET available_at='1970-01-01T00:00:00Z'::timestamptz
+     WHERE invitation_id=$1`,
+    [invitationId],
+  );
+}
+
 describe('Outbox PostgreSQL et worker', () => {
   beforeAll(async () => {
     await provisionRoles(migrationURL, databaseURL, businessURL);
@@ -206,7 +215,7 @@ describe('Outbox PostgreSQL et worker', () => {
           `SMTP accepted but acknowledgement was lost: ${smtpBody}`,
         );
     });
-    const worker = createOutboxWorker(business, config, send, {
+    const worker = createOutboxWorker(business, identity, config, send, {
       error: (context, message) => logs.push({ context, message }),
     });
 
@@ -254,6 +263,7 @@ describe('Outbox PostgreSQL et worker', () => {
     const messages: { to: string; subject: string; text: string }[] = [];
     const worker = createOutboxWorker(
       business,
+      identity,
       config,
       async (message) => {
         messages.push(message);
@@ -381,23 +391,88 @@ describe('Outbox PostgreSQL et worker', () => {
     }
   });
 
+  it('ignore l’accusé d’échec quand le jeton du message a été remplacé', async () => {
+    const invitationId = await enqueue(
+      `stale-failure-${randomBytes(8).toString('hex')}@example.test`,
+    );
+    await claimInvitationFirst(invitationId);
+    const claimed = await business.query<{
+      id: string;
+      invitation_id: string;
+      lease_id: string;
+    }>('SELECT * FROM business.claim_invitation_outbox($1,$2)', [1, 120]);
+    const job = claimed.rows.find(
+      (row) => row.invitation_id === invitationId,
+    );
+    if (!job) throw new Error('Outbox fixture was not claimed');
+
+    await operator.query(
+      'UPDATE authorization_private.invitations SET token_hash=$1 WHERE id=$2',
+      [
+        createHash('sha256')
+          .update(randomBytes(32))
+          .digest('hex'),
+        invitationId,
+      ],
+    );
+    await expect(
+      business.query<{ finish_invitation_outbox: boolean }>(
+        'SELECT business.finish_invitation_outbox($1,$2,false,$3) finish_invitation_outbox',
+        [job.id, job.lease_id, 'delivery_failed'],
+      ),
+    ).resolves.toMatchObject({
+      rows: [{ finish_invitation_outbox: true }],
+    });
+
+    const state = await operator.query<{
+      delivery: string;
+      outbox_state: string;
+    }>(
+      `SELECT i.delivery,o.state AS outbox_state
+       FROM authorization_private.invitations i
+       JOIN authorization_private.outbox_messages o ON o.invitation_id=i.id
+       WHERE i.id=$1 AND o.id=$2`,
+      [invitationId, job.id],
+    );
+    expect(state.rows).toEqual([
+      { delivery: 'pending', outbox_state: 'retryable' },
+    ]);
+    const failureAudit = await operator.query(
+      `SELECT 1 FROM business.audit_logs
+       WHERE target_id=$1 AND action='invitation.failed'`,
+      [invitationId],
+    );
+    expect(failureAudit.rows).toHaveLength(0);
+    await operator.query(
+      `UPDATE authorization_private.outbox_messages
+       SET state='expired',ciphertext='',iv='',tag='',lease_id=NULL,leased_until=NULL
+       WHERE id=$1`,
+      [job.id],
+    );
+  });
+
   it('réévalue l’invitation après la prise du bail', async () => {
     const id = await enqueue(
       `raced-${randomBytes(8).toString('hex')}@example.test`,
     );
-    const claim = await business.query<{ id: string; lease_id: string }>(
+    await claimInvitationFirst(id);
+    const claim = await business.query<{
+      id: string;
+      invitation_id: string;
+      lease_id: string;
+    }>(
       'SELECT * FROM business.claim_invitation_outbox($1,$2)',
       [1, 120],
     );
-    const job = claim.rows.find((row) => row.id === id);
-    expect(job).toBeDefined();
+    const job = claim.rows.find((row) => row.invitation_id === id);
+    if (!job) throw new Error('Outbox fixture was not claimed');
     await operator.query(
       'UPDATE authorization_private.invitations SET revoked_at=clock_timestamp() WHERE id=$1',
       [id],
     );
     const active = await business.query<{ active: boolean }>(
       'SELECT business.invitation_outbox_active($1,$2) active',
-      [id, job?.lease_id],
+      [job.id, job.lease_id],
     );
     expect(active.rows[0]?.active).toBe(false);
   });
@@ -406,6 +481,7 @@ describe('Outbox PostgreSQL et worker', () => {
     const id = await enqueue(
       `serialized-${randomBytes(8).toString('hex')}@example.test`,
     );
+    await claimInvitationFirst(id);
     let startSending = () => {};
     let releaseSending = () => {};
     const sending = new Promise<void>((resolve) => {
@@ -416,6 +492,7 @@ describe('Outbox PostgreSQL et worker', () => {
     });
     const worker = createOutboxWorker(
       business,
+      identity,
       config,
       async () => {
         startSending();
@@ -437,6 +514,7 @@ describe('Outbox PostgreSQL et worker', () => {
       tenantId,
       'fixture.revoke_during_delivery',
       async (client) => {
+        await client.query("SET LOCAL statement_timeout = '20s'");
         startRevoking();
         await client.query(
           'SELECT business.update_invitation($1,$2)',
@@ -462,7 +540,7 @@ describe('Outbox PostgreSQL et worker', () => {
       `SELECT o.state,i.delivery,i.revoked_at
        FROM authorization_private.outbox_messages o
        JOIN authorization_private.invitations i ON i.id=o.invitation_id
-       WHERE o.id=$1`,
+       WHERE o.invitation_id=$1`,
       [id],
     );
     expect(finalState.rows[0]?.state).toBe('sent');

@@ -23,7 +23,9 @@ et de l'invitation jusqu'à l'accusé, ce qui sérialise une révocation concurr
 transaction utilise un timeout d'inactivité local de 60 s ; les statuts d'échec ne
 s'appliquent qu'au message correspondant au jeton courant. L'état HTTP initial `pending`
 ne confirme pas la livraison. SMTP reste au moins une fois ; un accusé ambigu peut
-produire un doublon.
+produire un doublon. Le worker traite au plus deux messages en parallèle par instance et
+réutilise le pool d'identité de l'application ; le pool métier de cinq connexions conserve
+ainsi jusqu'à trois connexions disponibles pour HTTP et le limiteur.
 
 | Module | Responsabilité |
 | --- | --- |
@@ -31,9 +33,9 @@ produire un doublon.
 | apps/api/src/auth | Better Auth, provisioning/migrations opérateur, invitations identité et SMTP |
 | apps/api/src/business/store.ts | Transaction locale et identité, audit privilégié, vérification rôles SQL runtime |
 | apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations, idempotence et composition des modules |
-| apps/api/src/business/jobs | Outbox chiffrée, réservation atomique, baux, reprises et worker |
+| apps/api/src/business/jobs | Outbox chiffrée, réservation atomique, baux, reprises et worker borné à deux jobs |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013–0015 B2B, 0016 idempotence/outbox, 0017 pagination, 0018 limites partagées |
+| apps/api/migrations | SQL immuable et checksummé ; 0013–0015 B2B, 0016 idempotence/outbox, 0017 pagination, 0018 limites partagées, 0019 accusé obsolète |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP
@@ -42,7 +44,7 @@ produire un doublon.
 | --- | --- |
 | GET /health, /ready | Liveness ; readiness DB/auth/privilèges |
 | GET/POST /api/auth/* | Contrats Better Auth ; origine POST et email vérifié |
-| GET /api/me?tenantId | Contexte serveur, tenants accessibles, indicateur de gestion des rôles workspace sans énumération non bornée |
+| GET /api/me?tenantId | Contexte serveur, tenants accessibles et indicateur de gestion des rôles workspace ; le client tolère l'absence de `access` dans les payloads legacy |
 | GET /api/tenants | Annuaire des tenants accessibles au contexte |
 | GET/POST /api/organizations | Lecture client-scopée ; création super-admin |
 | POST /api/organizations/:id/tenants | Super-admin ou organisation-admin du client ; adminEmail fournit billing et invitation initiale |

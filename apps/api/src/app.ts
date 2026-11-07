@@ -106,7 +106,7 @@ export function buildApp({
       : undefined;
     const outboxWorker =
       business && authConfig.outboxEncryption
-        ? createOutboxWorker(business, authConfig, mailer.send, app.log)
+        ? createOutboxWorker(business, pool, authConfig, mailer.send, app.log)
         : undefined;
     registerAuthRoutes(app, auth, !!business);
     if (business)

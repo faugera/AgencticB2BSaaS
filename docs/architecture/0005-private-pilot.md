@@ -76,7 +76,11 @@ SMTP delivery, the worker locks the outbox and invitation through the delivery
 acknowledgment, serializing a concurrent revocation with that attempt. The worker
 sets a transaction-local 60-second idle timeout for this delivery transaction;
 the invitation's delivery state is updated only by the outbox message matching
-the current token hash, so a superseded retry cannot fail its replacement.
+the current token hash, so a superseded retry cannot fail its replacement. Migration
+0019 also guards the failure acknowledgement after SMTP/provisioning has released its
+transaction locks. Each worker claims at most two messages in parallel and reuses the
+application identity pool; with a five-connection business pool, this leaves up to three
+connections for HTTP requests and the shared rate limiter.
 
 Browser invitation secrets use URL fragments and memory only. Reloading during
 login/MFA requires reopening the invitation email. Reset tokens are removed from

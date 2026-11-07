@@ -78,3 +78,21 @@ doivent rester jetables.
 | `pnpm verify:security` | NOT_RUN | Variables PostgreSQL jetables/Mailpit absentes ; aucune base n'a été créée ou migrée. |
 | `pnpm verify:tenant-isolation` / `pnpm test:auth:e2e` | NOT_RUN | PostgreSQL/Mailpit de test explicitement configurés indisponibles. |
 | Tests PostgreSQL/Mailpit de l'outbox | NOT_RUN | Les scénarios régressifs ont été ajoutés, dont une attente SMTP de 10,1 s et retry depuis ancien état pending/failed ; exécution réelle non disponible. |
+
+## Vérification complémentaire de la revue PR #16 — 2026-11-07
+
+Périmètre : delta local basé sur `79f421f` ; worker limité à deux livraisons avec pool
+d'identité partagé, compatibilité `/api/me`, isolation des tests de quota, pagination,
+IDs outbox et révocation concurrente ; migration additive 0019 pour l'accusé d'échec.
+Les commandes ci-dessous couvrent le diff local avant son commit.
+
+| Contrôle | Résultat | Preuve / limite |
+| --- | --- | --- |
+| `pnpm verify` | PASS | Typecheck, lint, 113 tests, builds API/web et smoke. |
+| `pnpm docs:test` / `pnpm docs:check` | PASS | 22 tests documentaires ; liens, routage, statuts et manifeste synchronisés. |
+| `node scripts/architecture-sync.mjs --reviewed` | PASS | Sources Markdown et migrations relues puis enregistrées dans le manifeste. |
+| `node scripts/security.mjs` | PASS | Contrôles statiques du dépôt ; ne remplace pas un service de secret-scanning. |
+| `pnpm audit --audit-level high` | PASS | Une vulnérabilité moderate signalée, sous le seuil `high` configuré ; non traitée dans ce delta. |
+| `pnpm verify:security` | NOT_RUN | L'agrégat exige les intégrations PostgreSQL ; contrôles statiques et audit exécutés séparément. |
+| Isolation tenant, auth e2e et tests outbox/idempotence/pagination PostgreSQL | NOT_RUN | Variables PostgreSQL/Mailpit jetables absentes ; aucune base n'a été créée ou migrée. |
+| Production / migration de développement | NOT_RUN | Non autorisées ; aucun déploiement ni certification d'infrastructure. |

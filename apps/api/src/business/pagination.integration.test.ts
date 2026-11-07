@@ -45,6 +45,8 @@ const config: AuthConfig = {
 const operator = new Pool({ connectionString: migrationURL });
 const identity = createAuthPool(databaseURL);
 const business = createBusinessPool(businessURL);
+const additionalWorkspaceCount = 110;
+const initialWorkspaceCount = 1;
 let app: ReturnType<typeof buildApp>;
 let account: { identityId: string; actorId: string; cookie: string };
 let otherAccount: { identityId: string; cookie: string };
@@ -142,8 +144,8 @@ describe('Pagination PostgreSQL et portée tenant', () => {
     await operator.query(
       `INSERT INTO business.workspaces(tenant_id,name,visibility)
        SELECT $1,'Pagination fixture ' || n,'private'
-       FROM generate_series(1,110) AS n`,
-      [tenantIds[0]],
+       FROM generate_series(1,$2::integer) AS n`,
+      [tenantIds[0], additionalWorkspaceCount],
     );
   });
 
@@ -211,7 +213,9 @@ describe('Pagination PostgreSQL et portée tenant', () => {
       ...second.items,
       ...third.items,
     ].map((item) => item.id);
-    expect(allIds).toHaveLength(109);
+    expect(allIds).toHaveLength(
+      initialWorkspaceCount + additionalWorkspaceCount - 1,
+    );
     expect(new Set(allIds).size).toBe(allIds.length);
     expect(allIds).not.toContain(deletedId);
   });

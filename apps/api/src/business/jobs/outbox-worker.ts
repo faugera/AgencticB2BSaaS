@@ -30,6 +30,7 @@ type OutboxJob = {
 
 export function createOutboxWorker(
   pool: Pool,
+  identityPool: Pool,
   config: AuthConfig,
   send: SendAuthMail,
   log: { error: (context: object, message: string) => void },
@@ -74,6 +75,7 @@ export function createOutboxWorker(
         parsed.data.email,
         parsed.data.name,
         false,
+        identityPool,
       );
       client = await pool.connect();
       await client.query('BEGIN');
@@ -149,7 +151,7 @@ export function createOutboxWorker(
     try {
       const result = await pool.query<OutboxJob>(
         'SELECT * FROM business.claim_invitation_outbox($1,$2)',
-        [5, 120],
+        [2, 120],
       );
       await Promise.all(result.rows.map(process));
       return result.rows.length > 0;

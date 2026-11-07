@@ -1,7 +1,7 @@
 # Modèle de données courant
 
-Les migrations 0001–0015 sont historiques et immuables. Les migrations 0016 à 0018
-ajoutent l'idempotence/outbox, la pagination par curseur et le store partagé des
+Les migrations 0001–0018 sont historiques et immuables. Les migrations 0016 à 0019
+ajoutent l'idempotence/outbox, la pagination par curseur, le store partagé des
 limites au [contrat B2B](../specs/002-b2b-organizations-rbac/spec.md).
 Leur présence ne prouve aucune application en production. pg sans ORM ; migrateur
 atomique, verrou transactionnel et checksums opérateur.
@@ -68,7 +68,9 @@ pas dépendre du seul RLS sous `SECURITY DEFINER`. Le worker verrouille l'outbox
 l'invitation pendant l'envoi SMTP et l'accusé, avec un timeout transactionnel local de
 60 secondes pour permettre les livraisons plus longues que le timeout d'inactivité global.
 Les statuts d'échec de livraison ne s'appliquent qu'au message correspondant au jeton
-courant de l'invitation, pas à une tentative remplacée.
+courant de l'invitation, pas à une tentative remplacée ; l'accusé après échec revalide
+également cette clé avant de modifier le statut ou d'écrire l'audit. Le worker traite
+deux messages au plus par instance et réutilise le pool d'identité de l'application.
 Les limites métiers utilisent un compteur PostgreSQL partagé et échouent explicitement
 si la fonction de comptage est indisponible.
 

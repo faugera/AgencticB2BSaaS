@@ -97,9 +97,12 @@ export const meSchema = z.object({
       email: z.string().email(),
     })
     .strict(),
-  access: accessContextSchema,
+  access: accessContextSchema.optional(),
   can_assign_workspace_roles: z.boolean().optional(),
-}).strict();
+}).strict().transform(({ access, ...response }) => ({
+  ...response,
+  ...(access === undefined ? {} : { access }),
+}));
 
 export const tenantSummarySchema = z
   .object({ id: uuid, name: z.string(), organization_id: uuid })

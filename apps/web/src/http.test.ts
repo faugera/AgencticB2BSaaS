@@ -114,6 +114,30 @@ describe('api response validation', () => {
     });
   });
 
+  it('accepts a legacy /api/me payload without access context', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          user: {
+            id: 'legacy-user',
+            name: 'Legacy user',
+            email: 'legacy@example.test',
+          },
+        }),
+      }),
+    );
+
+    await expect(api('/api/me', meSchema)).resolves.toEqual({
+      user: {
+        id: 'legacy-user',
+        name: 'Legacy user',
+        email: 'legacy@example.test',
+      },
+    });
+  });
+
   it.each([
     ['workspacePageSchema', workspacePageSchema, [{ id: '00000000-0000-4000-8000-000000000001', tenant_id: '00000000-0000-4000-8000-000000000002', name: 'Workspace', visibility: 'private' }]],
     ['invitationPageSchema', invitationPageSchema, [{ id: '00000000-0000-4000-8000-000000000001', email: 'user@example.test', role: 'member', expires_at: '2026-11-06T00:00:00.000Z', accepted_at: null, revoked_at: null, delivery: 'pending' }]],

@@ -68,3 +68,13 @@ Unitaires DTO, migrations ancienne base/vide/rejeu, matrice HTTP/SQL deux client
 statuts, hiérarchie et révocation, audit immuable et auth SDK. UI FR/EN375/768/1280,
 revue visuelle, parcours réel avec PostgreSQL/Mailpit jetables. pnpm verify, docs gates,
 security/isolation/auth-live, analyse/convergence et PR. Si infrastructure absente, NOT_RUN.
+
+## Corrections de revue PR #16
+Conserver l'outbox transactionnelle et ses verrous SMTP, mais borner son lot à deux
+traitements et lui injecter le pool d'identité déjà possédé par l'application ; trois
+connexions métier restent disponibles pour HTTP et le limiteur. Les tests d'idempotence
+gardent le limiteur actif en utilisant des IP de test distinctes derrière le proxy de test.
+Les payloads `/api/me` sans contexte d'accès restent compatibles côté client. Les tests
+outbox distinguent les IDs d'invitation et de message et élargissent uniquement le timeout
+de leur transaction de révocation. Toute correction de fonction SQL respecte l'immutabilité
+des migrations en ajoutant une migration versionnée.

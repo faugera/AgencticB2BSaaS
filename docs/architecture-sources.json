@@ -1,6 +1,6 @@
 {
-  "docs/architecture.md": "6bcc1d418e7a05b8823a9bcef31cba400479ea1d438e7738a0cf5cc362cc573d",
-  "docs/data-model.md": "5449238b09cdc9131c3570bb334784109190afd3e7becd4932f6103f1a2a8bf0",
+  "docs/architecture.md": "93acb2e76932edf2b04033d004ee3f60920ac5c58833f14016dff584c99284d3",
+  "docs/data-model.md": "ad14c5fe04f15bf04d75bd283dd5804105465d18230c19de400f2a98bced8b3b",
   "apps/api/migrations/0001_identity.sql": "30348881f2f911da218b42467eacca79f12801ec8da549d871b9b78fdf88ab18",
   "apps/api/migrations/0002_business.sql": "2b29d31b271c02fcdada79d2497c0b9a4f305e8f0072ef0e9d3fcf648371d73f",
   "apps/api/migrations/0003_mfa_index.sql": "2dbdba5cabbdff0dc8ccbabdf60055d8e6ec259acc5709ca2fc6d8441ac7dece",
@@ -18,5 +18,6 @@
   "apps/api/migrations/0015_unified_audit.sql": "169893ae35e0a16f6959a64f47934ae1ffb2e25cba6322e83a9f77d60f9b6086",
   "apps/api/migrations/0016_idempotency_outbox.sql": "e17b3aab786cb0aa2e267065a43773c2b8dcc2b1ff5ee55860795ee0ba23bff7",
   "apps/api/migrations/0017_keyset_pagination.sql": "e1e008332b03b3248054098307092709c2f41f0ae10ac1391531e282c082d5bc",
-  "apps/api/migrations/0018_shared_rate_limits.sql": "cdac5790343fb088dc689d6149c5cb818f020a49c7c1bb5ab753bfac19797979"
+  "apps/api/migrations/0018_shared_rate_limits.sql": "cdac5790343fb088dc689d6149c5cb818f020a49c7c1bb5ab753bfac19797979",
+  "apps/api/migrations/0019_outbox_failure_ack_token_guard.sql": "5322716e3f1ad95ae957fd2c9bcfdb22aba75df908cca1462dfdf9f60704d05e"
 }
