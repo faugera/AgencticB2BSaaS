@@ -39,7 +39,7 @@ Utiliser Node 24 et pnpm 11.25.0. Depuis la racine :
 | Tester le navigateur | `pnpm test:e2e` | Après `pnpm build`, Chromium installé |
 | Vérifier la documentation | `pnpm docs:test` puis `pnpm docs:check` | Tests du vérificateur puis liens, structure et synchronisation |
 | Vérifier sécurité et isolation | `pnpm verify:security` puis `pnpm verify:tenant-isolation` | PostgreSQL jetable et configuration dédiée ; accès réseau pour audit dépendances |
-| Tester les parcours auth réels | `pnpm test:auth:e2e` | PostgreSQL et Mailpit jetables configurés |
+| Tester les parcours auth réels | `pnpm test:auth:e2e` | Après `pnpm build`, Chromium installé, PostgreSQL et Mailpit jetables configurés |
 | Provisionner / migrer | `pnpm db:provision` puis `pnpm auth:migrate` | Opérateur uniquement ; suivre le runbook, jamais pour une vérification documentaire |
 
 Les contrôles nécessitant des services qui ne sont pas explicitement configurés sont
@@ -80,12 +80,14 @@ de tests sont dans le [runbook pilote privé](docs/setup/private-pilot.md).
 
 ## Workflow Spec Kit
 
-Utiliser les skills officiels dans l’ordre : `speckit-specify`, `speckit-clarify` si
-nécessaire, `speckit-plan`, `speckit-checklist` si utile, `speckit-tasks`,
-`speckit-analyze`, approbation explicite, `speckit-implement`, puis `speckit-converge`.
-Les specs actives sont dans `specs/`. Les anciens dossiers `.specs/changes` sont des
-archives ; ne pas les réécrire pour une nouvelle évolution. Les skills projet
-`tenant-boundary` et `verify-change` complètent le workflow.
+Utiliser les skills officiels dans l’ordre : `speckit-specify`, revue et approbation de la
+spec, `speckit-clarify` si nécessaire puis revue des clarifications, `speckit-plan` puis
+revue du plan, `speckit-checklist` si utile, `speckit-tasks` puis revue des tâches,
+`speckit-analyze` puis revue de l’analyse et approbation explicite avant
+`speckit-implement`, enfin `speckit-converge` puis revue de convergence. Les specs actives
+sont dans `specs/`. Les anciens dossiers `.specs/changes` sont des archives ; ne pas les
+réécrire pour une nouvelle évolution. Les skills projet `tenant-boundary` et
+`verify-change` complètent le workflow. Voir le [parcours obligatoire détaillé](docs/setup/spec-kit.md).
 
 ## Références utiles
 

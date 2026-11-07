@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-07
 
-**Status**: Draft
+**Status**: Complete
 
 **Input**: User request: « Analyse la codebase et améliore le agent.md pour avoir à minima les commandes, résumé et objectif du projet, do et don't, stack technique et architecture + référence à speckit et autres fichiers importants. »
 
