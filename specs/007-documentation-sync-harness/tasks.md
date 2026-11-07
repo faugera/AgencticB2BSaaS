@@ -125,3 +125,4 @@ lorsqu'elle appartient à une histoire et des chemins précis.
 - [x] T021 Exiger les décisions historiques pour une règle supprimée ou rétrogradée, même sans autre source modifiée.
 - [x] T022 Refuser les segments `.` des motifs et les en-têtes de décision incomplets avec leurs régressions.
 - [ ] T023 Vérifier le diff et la CI sans navigateur sur le SHA final.
+- [x] T024 Accepter plusieurs specs dans un diff uniquement avec un fichier d’impact commun non ambigu, avec régression.

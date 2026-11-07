@@ -633,3 +633,13 @@ test('rejects a documentation decision table without the required status and rea
   const errors = await checkDocumentationSync(root, ['apps/api/src/routes/users.mjs', 'docs/architecture.md', 'specs/001-demo/spec.md', 'specs/001-demo/documentation-impact.md']);
   assert(errors.some((error) => error.includes('table attendue')));
 });
+
+test('accepts one shared impact file for several feature specs and rejects ambiguous impact files', async (t) => {
+  const { root, put } = await documentationSyncFixture(t, updatedDecision);
+  await put('specs/002-other/spec.md', '# Other\n');
+  const files = ['apps/api/src/routes/users.mjs', 'docs/architecture.md', 'specs/001-demo/spec.md', 'specs/002-other/spec.md', 'specs/001-demo/documentation-impact.md'];
+  assert.deepEqual(await checkDocumentationSync(root, files), []);
+  await put('specs/002-other/documentation-impact.md', updatedDecision);
+  const errors = await checkDocumentationSync(root, [...files, 'specs/002-other/documentation-impact.md']);
+  assert(errors.some((error) => error.includes('impact documentaire unique')));
+});

@@ -229,11 +229,15 @@ export async function checkDocumentationSync(root, changedFiles, baselineRouting
   if (!affectedRules.length) return [];
 
   const featureSpecs = [...normalizedFiles].filter((file) => /^specs\/[^/]+\/spec\.md$/.test(file));
-  if (featureSpecs.length !== 1) {
-    return [`${routingFile}: une spec active unique doit apparaître dans le diff (spec.md actif introuvable ou ambigu)`];
+  if (!featureSpecs.length) {
+    return [`${routingFile}: spec.md actif introuvable dans le diff`];
   }
-  const featureDirectory = path.posix.dirname(featureSpecs[0]);
-  const impactFile = `${featureDirectory}/documentation-impact.md`;
+  const impactFiles = featureSpecs.map((spec) => `${path.posix.dirname(spec)}/documentation-impact.md`);
+  const changedImpactFiles = impactFiles.filter((file) => normalizedFiles.has(file));
+  if (featureSpecs.length > 1 && changedImpactFiles.length !== 1) {
+    return [`${routingFile}: un impact documentaire unique est requis pour les specs du diff`];
+  }
+  const impactFile = featureSpecs.length === 1 ? impactFiles[0] : changedImpactFiles[0];
   if (!normalizedFiles.has(impactFile)) {
     errors.push(`${impactFile}: doit être ajouté ou modifié dans le diff`);
   }

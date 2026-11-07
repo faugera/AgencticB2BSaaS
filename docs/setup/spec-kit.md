@@ -157,7 +157,8 @@ historiques même sans modification des autres sources.
 Une cible documentaire historique doit encore exister dans le dépôt, même si elle a
 été retirée de la carte courante ; sa suppression ne peut pas être déclarée `UPDATED`.
 Pour ces règles, `specs/<feature>/documentation-impact.md` doit faire partie du diff
-et contenir une décision par cible : `UPDATED` si la cible est modifiée,
+et contenir une décision par cible. Si le diff comprend plusieurs specs, un seul
+fichier d’impact modifié porte les décisions communes à toute la PR : `UPDATED` si la cible est modifiée,
 `REVIEWED_NO_CHANGE` ou `NOT_APPLICABLE` avec motif si elle ne l'est pas. La CI
 fournit le SHA de base du PR/push et récupère l'historique complet ; une référence
 absente ou invalide, une carte non reconnue ou une décision manquante fait échouer le contrôle.
