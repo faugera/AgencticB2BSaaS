@@ -115,6 +115,7 @@ function validRepoPattern(value) {
     && !value.includes('\\')
     && !value.includes('?')
     && !value.split('/').includes('..')
+    && !value.split('/').includes('.')
     && !value.includes('[')
     && !value.includes(']');
 }
@@ -144,7 +145,7 @@ function parseDocumentationDecisions(text, errors, file) {
     const cells = line.match(/^\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|\s*$/);
     if (!cells) continue;
     const values = cells.slice(1).map((value) => value.trim());
-    if (values[0].toLowerCase() === 'règle' && values[1].toLowerCase() === 'cible') {
+    if (values.map((value) => value.toLowerCase()).join('|') === 'règle|cible|statut|motif') {
       hasHeader = true;
       continue;
     }
@@ -215,8 +216,15 @@ export async function checkDocumentationSync(root, changedFiles, baselineRouting
   if (errors.length) return errors;
 
   const affectedRules = requiredRules.filter((rule) => {
+    const previous = baselineRules.find((item) => item.id === rule.id && item.policy === 'required');
+    const current = rules.find((item) => item.id === rule.id);
+    const coverageReduced = normalizedFiles.has(routingFile) && previous && (
+      current?.policy !== 'required'
+      || (previous.sources ?? []).some((source) => !current.sources?.includes(source))
+      || (previous.targets ?? []).some((target) => !current.targets?.includes(target))
+    );
     const patterns = rule.sources.map(globRegex);
-    return [...normalizedFiles].some((file) => patterns.some((pattern) => pattern.test(file)));
+    return coverageReduced || [...normalizedFiles].some((file) => patterns.some((pattern) => pattern.test(file)));
   });
   if (!affectedRules.length) return [];
 

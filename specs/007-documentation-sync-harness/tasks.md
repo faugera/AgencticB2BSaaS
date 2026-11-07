@@ -121,3 +121,7 @@ lorsqu'elle appartient à une histoire et des chemins précis.
 - [x] T020 Refuser `UPDATED` pour une cible documentaire supprimée et couvrir la
   suppression d’une cible historique dans `scripts/docs-check.mjs` et
   `scripts/docs-check.test.mjs`
+
+- [x] T021 Exiger les décisions historiques pour une règle supprimée ou rétrogradée, même sans autre source modifiée.
+- [x] T022 Refuser les segments `.` des motifs et les en-têtes de décision incomplets avec leurs régressions.
+- [ ] T023 Vérifier le diff et la CI sans navigateur sur le SHA final.

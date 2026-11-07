@@ -9,7 +9,7 @@ projet. Aucun code applicatif, IAM ou SQL n'est modifié.
 
 ## Résultats
 
-- `pnpm docs:test` : PASS, 36 tests, 0 échec. Inclut les décisions, cartes de
+- `pnpm docs:test` : PASS historique, 36 tests, 0 échec. Inclut les décisions, cartes de
   routage mal formées, `**/`, réductions de couverture, renommages, base divergente,
   SHA nul initial, chemins Unicode, fichiers non suivis et cibles historiques supprimées.
 - `DOCS_SYNC_BASE=origin/main pnpm docs:check` : PASS. Liens, structures,
@@ -31,3 +31,9 @@ sémantiquement la vérité du texte documentaire. La CI fournit une base SHA et
 récupère l'historique complet ; les exécutions locales exigent que la base choisie
 soit disponible. Les motifs et les tables Markdown suivent un sous-ensemble
 intentionnellement limité et couvert par tests.
+
+## Révision complémentaire du 7 novembre 2026
+
+- `pnpm docs:test` : PASS, 39 tests, dont suppression/rétrogradation isolée d'une règle requise, segment `.` et en-tête de décision incomplet.
+- `DOCS_SYNC_BASE=origin/main pnpm docs:check` : PASS ; `pnpm lint` et `git diff --check` : PASS.
+- CI distante : NOT_RUN sur cette révision locale. Les tests navigateur sont retirés à la demande du propriétaire.

@@ -603,3 +603,33 @@ test('resolves an explicit feature in read-only mode without persisting its poin
   assert(paths.TASKS.endsWith('/specs/001-demo/tasks.md'));
   await assert.rejects(access(path.join(root, '.specify/feature.json')));
 });
+
+test('requires historical decisions when a required rule is removed or downgraded without a source change', async (t) => {
+  const { root, put } = await documentationSyncFixture(t, '| Règle | Cible | Statut | Motif |\n|---|---|---|---|\n');
+  const baseline = `rules:\n  - id: api\n    sources: [apps/api/src/routes/**]\n    targets: [docs/architecture.md]\n    policy: required\n`;
+  const changed = ['.specs/standards/doc-sync-map.yml', 'specs/001-demo/spec.md', 'specs/001-demo/documentation-impact.md'];
+  for (const current of [
+    `rules:\n  - id: other\n    policy: none\n`,
+    `rules:\n  - id: api\n    sources: [apps/api/src/routes/**]\n    targets: [docs/architecture.md]\n    policy: review\n`,
+  ]) {
+    await put('.specs/standards/doc-sync-map.yml', current);
+    assert((await checkDocumentationSync(root, changed, baseline))
+      .some((error) => error.includes('décision absente pour api → docs/architecture.md')));
+  }
+  await put('specs/001-demo/documentation-impact.md', '| Règle | Cible | Statut | Motif |\n|---|---|---|---|\n| api | docs/architecture.md | REVIEWED_NO_CHANGE | Contrat toujours valide. |\n');
+  assert.deepEqual(await checkDocumentationSync(root, changed, baseline), []);
+});
+
+test('rejects relative dot segments in source patterns instead of silently disabling routing', async (t) => {
+  const { root, put } = await documentationSyncFixture(t, updatedDecision);
+  await put('.specs/standards/doc-sync-map.yml', `rules:\n  - id: api\n    sources: [./apps/api/**]\n    targets: [docs/architecture.md]\n    policy: required\n`);
+  const errors = await checkDocumentationSync(root, ['apps/api/routes.ts']);
+  assert(errors.some((error) => error.includes('motif source invalide')));
+});
+
+test('rejects a documentation decision table without the required status and reason headings', async (t) => {
+  const decision = '| Règle | Cible | Autre | Autre |\n|---|---|---|---|\n| api | docs/architecture.md | UPDATED | Contrat à jour. |\n';
+  const { root } = await documentationSyncFixture(t, decision);
+  const errors = await checkDocumentationSync(root, ['apps/api/src/routes/users.mjs', 'docs/architecture.md', 'specs/001-demo/spec.md', 'specs/001-demo/documentation-impact.md']);
+  assert(errors.some((error) => error.includes('table attendue')));
+});

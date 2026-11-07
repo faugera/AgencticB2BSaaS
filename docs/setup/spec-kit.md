@@ -138,7 +138,7 @@ fichiers officiels des deux intégrations. Il ne télécharge aucun lien externe
 ne contrôle pas les ancres, ne lit aucun fichier privé et ne prouve pas la cohérence métier.
 Les preuves datées, anciens skills et anciennes specs sont exclus des nouvelles exigences.
 Les fichiers YAML ciblés utilisent des formes simples prises en charge ; les motifs
-sources supportent les chemins littéraux, `*` et `**`. Le contrôle n'est
+sources supportent les chemins littéraux, `*` et `**` ; les segments `.` sont refusés. Le contrôle n'est
 pas un parseur YAML général. Toute évolution de ce format exige ses tests.
 Docs seules : contrôles docs. Outillage : tests ciblés et lint. Produit : pnpm verify ;
 UI et SQL/IAM ajoutent leurs gates selon verify-change. Aucun gate obligatoire absent
@@ -152,6 +152,8 @@ et ajout ; les chemins Git sont délimités par NUL pour préserver les noms Uni
 Un premier push avec le SHA nul GitHub est comparé à l’arbre vide.
 Le contrôle identifie ensuite les règles `required` dont les motifs sources correspondent,
 en conservant aussi les règles requises de la base si la carte courante réduit leur couverture.
+Une suppression, rétrogradation ou réduction d’une règle requise déclenche ses décisions
+historiques même sans modification des autres sources.
 Une cible documentaire historique doit encore exister dans le dépôt, même si elle a
 été retirée de la carte courante ; sa suppression ne peut pas être déclarée `UPDATED`.
 Pour ces règles, `specs/<feature>/documentation-impact.md` doit faire partie du diff
