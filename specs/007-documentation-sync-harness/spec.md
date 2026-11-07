@@ -109,8 +109,8 @@ contrôle avec la base Git appropriée.
 
 ## Assumptions
 
-- Le diff est borné à une feature Spec Kit active ; les changements multi-feature
-  sont refusés explicitement plutôt que résolus de façon ambiguë.
+- Un diff multi-feature est accepté si un unique fichier d’impact modifié couvre
+  toutes les règles affectées ; plusieurs fichiers d’impact sont refusés.
 - L'artefact de décision est `specs/<feature>/documentation-impact.md`, un
   historique durable propre à la feature.
 - Les règles sans politique `required` ne bloquent pas la clôture.

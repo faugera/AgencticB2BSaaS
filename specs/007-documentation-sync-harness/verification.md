@@ -34,7 +34,7 @@ intentionnellement limité et couvert par tests.
 
 ## Révision complémentaire du 7 novembre 2026
 
-- `pnpm docs:test` : PASS, 39 tests, dont suppression/rétrogradation isolée d'une règle requise, segment `.` et en-tête de décision incomplet.
+- `pnpm docs:test` : PASS, 40 tests, dont suppression/rétrogradation isolée d'une règle requise, segment `.` et en-tête de décision incomplet.
 - `DOCS_SYNC_BASE=origin/main pnpm docs:check` : PASS ; `pnpm lint` et `git diff --check` : PASS.
 - CI distante : NOT_RUN sur cette révision locale. Les tests navigateur sont retirés à la demande du propriétaire.
 
