@@ -1,26 +1,31 @@
 rules:
   - id: database
     change_type: Schéma DB, relation, contrainte ou migration
+    sources: [apps/api/migrations/**]
     targets: [docs/data-model.md, docs/architecture.html]
     policy: required
     reason: Maintenir le modèle réellement livré et ses frontières.
   - id: security
     change_type: Isolation tenant/workspace, RBAC ou IAM
+    sources: [apps/api/src/auth/**, apps/api/src/business/**]
     targets: [docs/architecture/0005-private-pilot.md, docs/features-b2b.md, .specs/standards/b2b-tenancy-rbac.md, docs/architecture.html]
     policy: required
     reason: Synchroniser garanties, matrice de permissions et lacunes.
   - id: api
     change_type: Endpoint ou contrat API
+    sources: [apps/api/src/app.ts, apps/api/src/auth/routes.ts, apps/api/src/business/routes.ts, apps/api/src/business/*-routes.ts, packages/shared/**]
     targets: [docs/architecture.md, docs/architecture.html]
     policy: required
     reason: Maintenir les flux et références des contrats HTTP.
   - id: environment
     change_type: Variable d'environnement ajoutée, modifiée ou retirée
+    sources: [.env.example, apps/api/.env.example, apps/api/migration.env.example]
     targets: [.env.example, README.md]
     policy: required
     reason: Expliquer la portée et actualiser l'exemple propriétaire existant dans apps/api si concerné, sans secret.
   - id: feature
     change_type: Fonctionnalité métier ou statut fonctionnel
+    sources: [apps/api/src/business/**, apps/web/src/pages/**, apps/web/src/application.tsx]
     targets: [.specs/domains/product-map.md, docs/features-b2b.md]
     policy: required
     reason: Distinguer capacités livrées et intentions.
@@ -39,3 +44,9 @@ rules:
     targets: []
     policy: none
     reason: Aucune documentation par défaut après analyse du changement réel.
+  - id: documentation-harness
+    change_type: Vérification documentaire, workflow ou CI du harness
+    sources: [scripts/docs-check.mjs, scripts/docs-check.test.mjs, .specs/standards/doc-sync-map.yml, .specify/workflows/speckit/workflow.yml, .github/workflows/ci.yml, .agents/skills/verify-change/SKILL.md, .claude/skills/verify-change/SKILL.md]
+    targets: [docs/setup/spec-kit.md, .specs/standards/workflow.md]
+    policy: required
+    reason: Garder le contrat documentaire aligné avec son contrôle automatisé.

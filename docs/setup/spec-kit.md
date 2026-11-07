@@ -69,8 +69,11 @@ avant implémentation pour vérifier l’arrêt du cycle.
 5. `analyze` vérifie spec/plan/tâches en lecture seule et repère les contradictions bloquantes.
 6. Après revue de l'analyse, approbation explicite obligatoire avant `implement`.
 7. `converge` évalue le code par rapport aux artefacts, ajoute les tâches restantes et
-   s'arrête après revue. Aucun merge ou déploiement automatique.
-8. Préparer une PR reviewable séparément ; aucune PR n'est créée automatiquement par ce cycle.
+   s'arrête après revue.
+8. Avant la porte finale `review-convergence`, exécuter `verify-change` et vérifier
+   les décisions documentaires sur le diff ; une convergence seule ne clôture pas
+   les contrôles de documentation. Aucun merge ou déploiement automatique.
+9. Préparer une PR reviewable séparément ; aucune PR n'est créée automatiquement par ce cycle.
 
 Ces noms désignent des skills exécutés par l'assistant, pas des commandes shell.
 L'approbation d'une étape ne valide pas les étapes futures ; l'approbation de l'analyse
@@ -126,19 +129,36 @@ Les contenus projet sont français ; conserver les identifiants et fichiers offi
 ## Contrôle léger et limites
 ~~~sh
 pnpm docs:test
-pnpm docs:check
+DOCS_SYNC_BASE=origin/main pnpm docs:check
 ~~~
 Le contrôle inspecte les liens Markdown locaux inline et par référence, hors blocs de code,
-les chemins path/targets du routage YAML, les sections et statuts des nouvelles specs,
+les chemins path/sources/targets du routage YAML, les sections et statuts des nouvelles specs,
 la cohérence des étapes/gates Spec Kit, la parité des skills projet et l'intégrité des
 fichiers officiels des deux intégrations. Il ne télécharge aucun lien externe,
 ne contrôle pas les ancres, ne lit aucun fichier privé et ne prouve pas la cohérence métier.
 Les preuves datées, anciens skills et anciennes specs sont exclus des nouvelles exigences.
-Les fichiers YAML ciblés utilisent des formes simples prises en charge ; le contrôle n'est
+Les fichiers YAML ciblés utilisent des formes simples prises en charge ; les motifs
+sources supportent les chemins littéraux, `*` et `**`. Le contrôle n'est
 pas un parseur YAML général. Toute évolution de ce format exige ses tests.
 Docs seules : contrôles docs. Outillage : tests ciblés et lint. Produit : pnpm verify ;
 UI et SQL/IAM ajoutent leurs gates selon verify-change. Aucun gate obligatoire absent
 ne devient PASS ; une raison explicite est requise pour NOT_APPLICABLE.
+
+Il calcule aussi les fichiers du diff Git depuis `DOCS_SYNC_BASE` (défaut local :
+`origin/main`), y compris les fichiers staged, unstaged et non suivis, puis identifie
+les règles `required` dont les motifs sources correspondent.
+Pour ces règles, `specs/<feature>/documentation-impact.md` doit faire partie du diff
+et contenir une décision par cible : `UPDATED` si la cible est modifiée,
+`REVIEWED_NO_CHANGE` ou `NOT_APPLICABLE` avec motif si elle ne l'est pas. La CI
+fournit le SHA de base du PR/push et récupère l'historique complet ; une référence
+absente ou invalide fait échouer le contrôle.
+
+Format exact de la table :
+
+| Règle | Cible | Statut | Motif |
+|---|---|---|---|
+| api | docs/architecture.md | UPDATED | Contrat HTTP synchronisé. |
+| api | docs/architecture.html | REVIEWED_NO_CHANGE | Le diagramme ne change pas. |
 
 ## Mises à jour
 Créer une PR dédiée pour changer de version. Installer la version exacte via uv, utiliser

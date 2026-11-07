@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +19,7 @@ const requiredWorkflowSteps = [
   ['approve-implementation', null],
   ['implement', 'speckit.implement'],
   ['converge', 'speckit.converge'],
+  ['verify-change', null],
   ['review-convergence', null],
 ];
 const projectSkills = ['tenant-boundary', 'verify-change'];
@@ -54,6 +56,190 @@ function workflowStepBlocks(text) {
 function stepField(step, field) {
   const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return step.lines.join('\n').match(new RegExp(`^    ${escaped}:\\s*(.*?)\\s*$`, 'm'))?.[1];
+}
+
+function inlineList(value) {
+  const match = value.match(/^\[([^\]]*)\]$/);
+  if (!match) return null;
+  return match[1].split(',').map((item) => item.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+}
+
+function parseDocSyncRules(text) {
+  const rules = [];
+  let current;
+  for (const line of text.split(/\r?\n/)) {
+    const start = line.match(/^ {2}- id:\s*([a-z0-9-]+)\s*$/);
+    if (start) {
+      current = { id: start[1], policy: undefined, sources: undefined, targets: undefined };
+      rules.push(current);
+      continue;
+    }
+    if (!current) continue;
+    const field = line.match(/^ {4}(policy|sources|targets):\s*(.*?)\s*$/);
+    if (!field) continue;
+    if (field[1] === 'policy') current.policy = field[2];
+    else current[field[1]] = inlineList(field[2]);
+  }
+  return rules;
+}
+
+function validRepoPattern(value) {
+  return typeof value === 'string'
+    && value.length > 0
+    && !value.startsWith('/')
+    && !/^[a-z]:/i.test(value)
+    && !value.includes('\\')
+    && !value.includes('?')
+    && !value.split('/').includes('..')
+    && !value.includes('[')
+    && !value.includes(']');
+}
+
+function globRegex(pattern) {
+  let source = '^';
+  for (let index = 0; index < pattern.length; index += 1) {
+    const char = pattern[index];
+    if (char === '*' && pattern[index + 1] === '*') {
+      source += '.*';
+      index += 1;
+    } else if (char === '*') source += '[^/]*';
+    else source += char.replace(/[|\\{}()[\]^$+?.]/g, '\\$&');
+  }
+  return new RegExp(`${source}$`);
+}
+
+function parseDocumentationDecisions(text, errors, file) {
+  const decisions = [];
+  let hasHeader = false;
+  for (const line of text.split(/\r?\n/)) {
+    const cells = line.match(/^\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|\s*([^|]*)\|\s*$/);
+    if (!cells) continue;
+    const values = cells.slice(1).map((value) => value.trim());
+    if (values[0].toLowerCase() === 'règle' && values[1].toLowerCase() === 'cible') {
+      hasHeader = true;
+      continue;
+    }
+    if (values.every((value) => /^:?-{3,}:?$/.test(value))) continue;
+    decisions.push({ rule: values[0], target: values[1], status: values[2], reason: values[3] });
+  }
+  if (!hasHeader) errors.push(`${file}: table attendue (Règle | Cible | Statut | Motif) absente`);
+  return decisions;
+}
+
+export async function checkDocumentationSync(root, changedFiles) {
+  root = path.resolve(root);
+  const errors = [];
+  const routingFile = '.specs/standards/doc-sync-map.yml';
+  let rules;
+  try {
+    rules = parseDocSyncRules(await readFile(path.join(root, routingFile), 'utf8'));
+  } catch (error) {
+    if (error.code === 'ENOENT') return [`${routingFile}: fichier de routage absent`];
+    throw error;
+  }
+
+  const normalizedFiles = new Set(changedFiles.map((file) => file.replace(/\\/g, '/')));
+  const requiredRules = rules.filter((rule) => rule.policy === 'required');
+  const ruleIds = new Set();
+  for (const rule of rules) {
+    if (ruleIds.has(rule.id)) errors.push(`${routingFile}: identifiant de règle dupliqué : ${rule.id}`);
+    ruleIds.add(rule.id);
+    if (!['required', 'review', 'none'].includes(rule.policy)) {
+      errors.push(`${routingFile}: politique absente ou inconnue pour ${rule.id} : ${rule.policy ?? 'absente'}`);
+    }
+    for (const pattern of rule.sources ?? []) {
+      if (!validRepoPattern(pattern)) errors.push(`${routingFile}: motif source invalide : ${pattern}`);
+    }
+  }
+  for (const rule of requiredRules) {
+    if (!rule.sources?.length) errors.push(`${routingFile}: règle required sans sources : ${rule.id}`);
+    if (!rule.targets?.length) errors.push(`${routingFile}: règle required sans targets : ${rule.id}`);
+    if (new Set(rule.targets ?? []).size !== (rule.targets ?? []).length) {
+      errors.push(`${routingFile}: cible dupliquée dans la règle ${rule.id}`);
+    }
+  }
+  if (errors.length) return errors;
+
+  const affectedRules = requiredRules.filter((rule) => {
+    const patterns = rule.sources.map(globRegex);
+    return [...normalizedFiles].some((file) => patterns.some((pattern) => pattern.test(file)));
+  });
+  if (!affectedRules.length) return [];
+
+  const featureSpecs = [...normalizedFiles].filter((file) => /^specs\/[^/]+\/spec\.md$/.test(file));
+  if (featureSpecs.length !== 1) {
+    return [`${routingFile}: une spec active unique doit apparaître dans le diff (spec.md actif introuvable ou ambigu)`];
+  }
+  const featureDirectory = path.posix.dirname(featureSpecs[0]);
+  const impactFile = `${featureDirectory}/documentation-impact.md`;
+  if (!normalizedFiles.has(impactFile)) {
+    errors.push(`${impactFile}: doit être ajouté ou modifié dans le diff`);
+  }
+  let decisions = [];
+  try {
+    decisions = parseDocumentationDecisions(await readFile(path.join(root, impactFile), 'utf8'), errors, impactFile);
+  } catch (error) {
+    if (error.code === 'ENOENT') errors.push(`${impactFile}: fichier de décisions absent`);
+    else throw error;
+  }
+
+  const ruleMap = new Map(rules.map((rule) => [rule.id, rule]));
+  const decisionMap = new Map();
+  for (const decision of decisions) {
+    const key = `${decision.rule}\0${decision.target}`;
+    if (decisionMap.has(key)) errors.push(`${impactFile}: décision dupliquée pour ${decision.rule} → ${decision.target}`);
+    decisionMap.set(key, decision);
+    const rule = ruleMap.get(decision.rule);
+    if (!rule) errors.push(`${impactFile}: règle inconnue : ${decision.rule}`);
+    else if (!rule.targets?.includes(decision.target)) {
+      errors.push(`${impactFile}: cible inconnue pour ${decision.rule} : ${decision.target}`);
+    }
+  }
+
+  for (const rule of affectedRules) {
+    for (const target of rule.targets) {
+      const decision = decisionMap.get(`${rule.id}\0${target}`);
+      if (!decision) {
+        errors.push(`${impactFile}: décision absente pour ${rule.id} → ${target}`);
+        continue;
+      }
+      if (!['UPDATED', 'REVIEWED_NO_CHANGE', 'NOT_APPLICABLE'].includes(decision.status)) {
+        errors.push(`${impactFile}: statut inconnu pour ${rule.id} → ${target} : ${decision.status}`);
+        continue;
+      }
+      if (!decision.reason || !decision.reason.trim()) {
+        errors.push(`${impactFile}: motif vide pour ${rule.id} → ${target}`);
+      }
+      const targetChanged = normalizedFiles.has(target);
+      if (decision.status === 'UPDATED' && !targetChanged) {
+        errors.push(`${impactFile}: UPDATED mais cible absente du diff : ${target}`);
+      } else if (decision.status !== 'UPDATED' && targetChanged) {
+        errors.push(`${impactFile}: ${decision.status} invalide, la cible modifiée doit être UPDATED : ${target}`);
+      }
+    }
+  }
+  return errors;
+}
+
+export function changedFilesSince(root, base) {
+  if (!base) throw new Error('DOCS_SYNC_BASE absent : fournir une référence Git de base (par ex. origin/main).');
+  if (!/^(?:[0-9a-f]{7,40}|origin\/[A-Za-z0-9._/-]+)$/.test(base) || base.includes('..')) {
+    throw new Error(`DOCS_SYNC_BASE invalide : ${base}. Utiliser un SHA ou une référence origin/<branche>.`);
+  }
+  try {
+    execFileSync('git', ['rev-parse', '--verify', '--end-of-options', `${base}^{commit}`], { cwd: root, stdio: 'ignore' });
+    const output = execFileSync('git', ['diff', '--name-only', '--diff-filter=ACDMRT', base], {
+      cwd: root,
+      encoding: 'utf8',
+    });
+    const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard'], {
+      cwd: root,
+      encoding: 'utf8',
+    });
+    return [...new Set(`${output}\n${untracked}`.split(/\r?\n/).filter(Boolean))];
+  } catch {
+    throw new Error(`Base Git invalide ou indisponible : ${base}. Récupérer la référence puis définir DOCS_SYNC_BASE.`);
+  }
 }
 
 async function checkWorkflow(root, errors) {
@@ -116,6 +302,14 @@ async function checkWorkflow(root, errors) {
       }
       if (stepField(step, 'on_reject') !== 'abort') errors.push(`${file}: la porte ${id} doit interrompre le cycle avec on_reject: abort`);
     }
+  }
+  const convergenceGate = steps.find((step) => step.id === 'review-convergence');
+  if (convergenceGate && !/verify-change/i.test(stepField(convergenceGate, 'message') ?? '')) {
+    errors.push(`${file}: la porte review-convergence doit exiger verify-change`);
+  }
+  const verifyChangeGate = steps.find((step) => step.id === 'verify-change');
+  if (verifyChangeGate && !/verify-change/i.test(stepField(verifyChangeGate, 'message') ?? '')) {
+    errors.push(`${file}: l'étape verify-change doit demander l'exécution de la compétence projet`);
   }
 
   const workflowVersion = text.match(/^ {2}version:\s*["']?([^"'\s]+)["']?\s*$/m)?.[1];
@@ -200,14 +394,17 @@ export async function checkDocuments(root) {
   for (const file of ['.specs/standards/index.yml', '.specs/standards/doc-sync-map.yml']) {
     if (!await exists(path.join(root, file))) continue;
     const text = await readFile(path.join(root, file), 'utf8');
-    for (const line of text.split(/\r?\n/).filter((line) => /^\s*(path|targets):/.test(line))) {
-      if (!/^\s*(?:path:\s*\S+|targets:\s*\[[^\]]*\])\s*$/.test(line)) {
-        errors.push(`${file}: format path/targets non pris en charge : ${line.trim()}`);
+    for (const line of text.split(/\r?\n/).filter((line) => /^\s*(path|sources|targets):/.test(line))) {
+      if (!/^\s*(?:path:\s*\S+|(?:sources|targets):\s*\[[^\]]*\])\s*$/.test(line)) {
+        errors.push(`${file}: format path/sources/targets non pris en charge : ${line.trim()}`);
       }
     }
-    for (const match of text.matchAll(/^\s*(?:path:\s*(\S+)|targets:\s*\[([^\]]*)\])\s*$/gm)) {
+    for (const match of text.matchAll(/^\s*(?:path:\s*(\S+)|(?:sources|targets):\s*\[([^\]]*)\])\s*$/gm)) {
       for (const target of (match[1] ? [match[1]] : match[2].split(',')).filter((s) => s.trim())) {
-        await checkPath(file, target.trim().replace(/^['"]|['"]$/g, ''), true);
+        const value = target.trim().replace(/^['"]|['"]$/g, '');
+        if (match[0].includes('sources:')) {
+          if (!validRepoPattern(value)) errors.push(`${file}: motif source invalide : ${value}`);
+        } else await checkPath(file, value, true);
       }
     }
   }
@@ -270,7 +467,25 @@ export async function checkDocuments(root) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const errors = await checkDocuments(path.resolve(fileURLToPath(new URL('..', import.meta.url))));
-  if (errors.length) { console.error(errors.join('\n')); process.exitCode = 1; }
-  else console.log('Documentation : liens, chemins, structures, statuts et manifestes valides.');
+  const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
+  try {
+    const errors = await checkDocuments(root);
+    if (errors.length) {
+      console.error(errors.join('\n'));
+      process.exitCode = 1;
+    } else {
+      const base = process.env.DOCS_SYNC_BASE || 'origin/main';
+      const changed = changedFilesSince(root, base);
+      const syncErrors = await checkDocumentationSync(root, changed);
+      if (syncErrors.length) {
+        console.error(syncErrors.join('\n'));
+        process.exitCode = 1;
+      } else {
+        console.log('Documentation : structure, liens, manifestes et décisions du diff valides.');
+      }
+    }
+  } catch (error) {
+    console.error(error.message);
+    process.exitCode = 1;
+  }
 }
