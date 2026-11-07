@@ -49,6 +49,8 @@ const config: AuthConfig = {
 const operator = new Pool({ connectionString: migrationURL });
 const identity = createAuthPool(databaseURL);
 const business = createBusinessPool(businessURL);
+const ipSuffix = randomBytes(4).toString('hex');
+const testIP = `2001:db8:${ipSuffix.slice(0, 4)}:${ipSuffix.slice(4)}::1`;
 let app: ReturnType<typeof buildApp>;
 let account: { id: string; actor: string; cookie: string };
 let organizationId: string;
@@ -79,7 +81,8 @@ describe('Idempotence HTTP avec PostgreSQL jetable', () => {
     const login = await app.inject({
       method: 'POST',
       url: '/api/auth/sign-in/email',
-      headers: { origin: config.baseURL },
+      remoteAddress: testIP,
+      headers: { origin: config.baseURL, 'x-auth-client-ip': testIP },
       payload: { email, password },
     });
     expect(login.statusCode).toBe(200);

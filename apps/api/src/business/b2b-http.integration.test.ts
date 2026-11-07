@@ -84,10 +84,18 @@ describe('Contrats B2B HTTP avec sessions et PostgreSQL réels', () => {
     expect(persisted.rows.map((row) => row.organization_id)).toEqual([at(organizations, 0), at(organizations, 0), at(organizations, 1)]);
     expect((await write('POST', '/api/organizations', { name: 'Forbidden' }, 1)).statusCode).toBe(403);
     expect((await get('/api/tenants', 1)).json<{ id: string }[]>().map((tenant) => tenant.id).sort()).toEqual(tenants.slice(0, 2).sort());
-    const invited = await operator.query<{ name: string; first_name: string | null; last_name: string | null }>('SELECT u.name,u.first_name,u.last_name FROM identity."user" u JOIN authorization_private.invitations i ON lower(i.email)=lower(u.email) WHERE i.tenant_id=ANY($1)', [tenants]);
-    expect(invited.rows).toHaveLength(3);
-    for (const user of invited.rows) expect(user).toMatchObject({ first_name: null, last_name: null });
-    expect(invited.rows.every((user) => user.name.trim().length > 0)).toBe(true);
+    const invitations = await operator.query<{ outbox_count: number }>(
+      `SELECT count(o.id)::int AS outbox_count
+       FROM authorization_private.invitations i
+       LEFT JOIN authorization_private.outbox_messages o ON o.invitation_id=i.id
+       WHERE i.tenant_id=ANY($1)
+       GROUP BY i.id`,
+      [tenants],
+    );
+    expect(invitations.rows).toHaveLength(3);
+    expect(invitations.rows.every(({ outbox_count }) => outbox_count > 0)).toBe(
+      true,
+    );
     expect((await get('/api/roles', 1)).statusCode).toBe(403);
   });
 
