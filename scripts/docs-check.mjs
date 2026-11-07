@@ -251,6 +251,10 @@ export async function checkDocumentationSync(root, changedFiles, baselineRouting
 
   for (const rule of affectedRules) {
     for (const target of rule.targets) {
+      if (!await exists(path.join(root, target))) {
+        errors.push(`${impactFile}: cible documentaire absente du dépôt : ${target}`);
+        continue;
+      }
       const decision = decisionMap.get(`${rule.id}\0${target}`);
       if (!decision) {
         errors.push(`${impactFile}: décision absente pour ${rule.id} → ${target}`);

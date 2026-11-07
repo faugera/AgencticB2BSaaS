@@ -36,4 +36,6 @@ Le SHA nul d’un premier push est remplacé par l’arbre Git vide afin d’ins
 tout le contenu suivi. Les règles `required` de la carte au merge-base sont unies
 à celles de la carte courante pour qu’une suppression ou une rétrogradation ne
 contourne pas les décisions documentaires. Un seul répertoire `specs/<feature>`
-peut être actif dans un même contrôle.
+peut être actif dans un même contrôle. Toute cible exigée par l’une de ces règles
+doit encore exister dans le dépôt ; une cible supprimée ne peut pas être déclarée
+`UPDATED`.

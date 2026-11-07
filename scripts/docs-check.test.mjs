@@ -464,6 +464,14 @@ test('retains required targets removed or downgraded from the current routing ma
 | api | docs/architecture.md | REVIEWED_NO_CHANGE | Le contrat documenté reste valide. |
 `);
   assert.deepEqual(await checkDocumentationSync(root, changedFilesSince(root, base), previousMap), []);
+
+  await rm(path.join(root, 'docs/architecture.md'));
+  await writeFile(impactFile, `| Règle | Cible | Statut | Motif |
+|---|---|---|---|
+| api | docs/architecture.md | UPDATED | Document supprimé. |
+`);
+  assert((await checkDocumentationSync(root, changedFilesSince(root, base), previousMap))
+    .some((error) => error.includes('cible documentaire absente du dépôt : docs/architecture.md')));
 });
 
 test('includes tracked and untracked workspace changes and rejects invalid Git bases', async (t) => {

@@ -118,3 +118,6 @@ lorsqu'elle appartient à une histoire et des chemins précis.
 - [x] T019 Documenter les chemins Unicode et actualiser les preuves ciblées dans
   `specs/007-documentation-sync-harness/data-model.md`,
   `docs/setup/spec-kit.md` et `specs/007-documentation-sync-harness/verification.md`
+- [x] T020 Refuser `UPDATED` pour une cible documentaire supprimée et couvrir la
+  suppression d’une cible historique dans `scripts/docs-check.mjs` et
+  `scripts/docs-check.test.mjs`

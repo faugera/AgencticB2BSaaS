@@ -152,6 +152,8 @@ et ajout ; les chemins Git sont délimités par NUL pour préserver les noms Uni
 Un premier push avec le SHA nul GitHub est comparé à l’arbre vide.
 Le contrôle identifie ensuite les règles `required` dont les motifs sources correspondent,
 en conservant aussi les règles requises de la base si la carte courante réduit leur couverture.
+Une cible documentaire historique doit encore exister dans le dépôt, même si elle a
+été retirée de la carte courante ; sa suppression ne peut pas être déclarée `UPDATED`.
 Pour ces règles, `specs/<feature>/documentation-impact.md` doit faire partie du diff
 et contenir une décision par cible : `UPDATED` si la cible est modifiée,
 `REVIEWED_NO_CHANGE` ou `NOT_APPLICABLE` avec motif si elle ne l'est pas. La CI
