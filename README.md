@@ -112,9 +112,10 @@ it does not grant platform-admin or tenant access. `operator:identity` and
 role. No default administrator/password is provided. See
 [ADR-005](docs/architecture/0005-private-pilot.md) for precise RLS boundaries.
 
-CI additionally runs `pnpm verify:security`, `pnpm verify:tenant-isolation` and
-`pnpm test:auth:e2e` against disposable PostgreSQL/Mailpit. These gates fail rather
-than skip when required test infrastructure is missing. See the runbook for variables.
+CI additionally runs migration replay, `pnpm verify:security` and
+`pnpm verify:tenant-isolation` against disposable PostgreSQL. These gates fail rather
+than skip when required test infrastructure is missing. Browser and SMTP journeys remain
+available locally or in a dedicated integration workflow. See the runbook for variables.
 
 ## Documentation et Spec Kit
 

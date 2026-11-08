@@ -41,7 +41,9 @@ imposer de couleur CSS calculée. Aucun code produit ni permission n'est modifi�
 La CI lance `test:auth:core` via `verify:security`, puis l'isolation une fois via
 `verify:tenant-isolation`. La sélection évite de relancer 15 scénarios d'isolation ;
 aucune assertion ni suite distincte n'est supprimée. `pnpm test:auth` garde tous
-les fichiers d'intégration pour une validation exhaustive.
+les fichiers d'intégration pour une validation exhaustive. Les scénarios navigateur et
+SMTP ne s'exécutent pas dans la CI de PR ; ils restent disponibles localement ou dans un
+workflow d'intégration dédié.
 Les tests UI simulés ne remplacent pas une preuve d'autorisation serveur.
 
 ## Vérification exécutée
