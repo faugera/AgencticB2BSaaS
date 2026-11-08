@@ -47,8 +47,7 @@ describe('Organisation et RBAC persistés', () => {
     }
     deletedOrganization = await tx(superIdentity, undefined, async client =>
       (await client.query<{ id: string }>('SELECT business.create_organization($1) id', ['Client supprimé'])).rows[0]?.id ?? '');
-    await tx(superIdentity, undefined, client => client.query(
-      'UPDATE business.organizations SET deleted_at=now() WHERE id=$1', [deletedOrganization]));
+    await operator.query('UPDATE business.organizations SET deleted_at=now() WHERE id=$1', [deletedOrganization]);
     for (const index of [0, 0, 1]) {
       tenants.push(await tx(superIdentity, undefined, async client =>
         (await client.query<{ id: string }>('SELECT business.create_tenant($1,$2,$3) id', [at(organizations, index), 'Tenant', 'billing@example.test'])).rows[0]?.id ?? ''));
