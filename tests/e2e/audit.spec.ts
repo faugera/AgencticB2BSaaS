@@ -49,7 +49,7 @@ for (const locale of ['fr', 'en'] as const) {
       await expect(page.getByText(locale === 'fr' ? 'Aucun événement à afficher.' : 'No events to display.', { exact: true })).toBeVisible();
       await page.route('**/api/audit-logs?*', (route) => route.fulfill({ status: 503, json: { code: 'INTERNAL_ERROR' } }));
       await page.getByRole('button', { name: locale === 'fr' ? 'Revenir aux plus récents' : 'Back to latest events' }).click();
-      await expect(page.getByRole('alert')).toBeVisible();
+      await expect(page.getByText(locale === 'fr' ? 'Impossible de terminer cette demande. Réessayez plus tard.' : 'Unable to complete this request. Try again later.', { exact: true })).toBeVisible();
     });
 }
 
