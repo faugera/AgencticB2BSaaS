@@ -139,7 +139,7 @@ test('switching tenants never keeps the previous profile form active', async ({ 
   await page.goBack();
   try {
     await expect(page).toHaveURL(new RegExp('tenantId=' + tenantA));
-    await expect(page.getByRole('status')).toContainText('Chargement…');
+    await expect(page.locator('p[role="status"][tabindex="-1"]')).toContainText('Chargement…');
     await expect(page.getByLabel('Fonction', { exact: true })).toHaveCount(0);
   } finally {
     releaseTenantA?.();
