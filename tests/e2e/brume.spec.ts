@@ -16,7 +16,7 @@ async function fixture(page: Page, locale: 'fr' | 'en') {
   const space = { id: workspace, tenant_id: tenant, name: 'Opérations', visibility: 'tenant', can_manage: true, color };
   if (['POST', 'PUT'].includes(request.method())) writes.push({ path, body: request.postDataJSON() });
   if (path === '/api/me') return route.fulfill({ json: { user: { id: 'fixture', name: 'Camille Martin', email: 'camille@example.test' }, access: { actorId: 'fixture', platformRole: null, tenantRole: 'tenant_admin', tenantId: tenant }, workspaces: [space] } });
-  if (path === '/api/preferences') { if (request.method() === 'PUT') preferences = request.postDataJSON(); return route.fulfill({ json: preferences }); }
+  if (path === '/api/preferences') { if (request.method() === 'PUT') preferences = { ...preferences, ...request.postDataJSON() }; return route.fulfill({ json: preferences }); }
   if (path === '/api/workspaces') return route.fulfill({ json: [space] });
   if (path === '/api/workspaces/' + workspace) return route.fulfill({ json: space });
   if (path.endsWith('/appearance')) { color = request.postDataJSON().color; return route.fulfill({ json: { color } }); }
@@ -65,7 +65,7 @@ for (const locale of ['fr', 'en'] as const) {
   await page.getByLabel(locale === 'fr' ? 'Thème' : 'Theme', { exact: true }).selectOption('dark');
   await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
   await closeSidebar(page);
-  expect(writes.find((item) => item.path === '/api/preferences')?.body).toEqual({ locale, theme: 'dark', timezone: 'Europe/Paris', date_format: 'DD/MM/YYYY' });
+  expect(writes.find((item) => item.path === '/api/preferences')?.body).toEqual({ theme: 'dark' });
   await page.reload();
   await expect.poll(() => page.evaluate(() => document.documentElement.dataset.theme)).toBe('dark');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

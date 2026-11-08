@@ -5,3 +5,6 @@
 apps/api/migrations/0013_profile_metadata.sql text eol=lf
 apps/api/migrations/0014_organizations_rbac.sql text eol=lf
 apps/api/migrations/0015_unified_audit.sql text eol=lf
+apps/api/migrations/0016_organization_directory_isolation.sql text eol=lf
+apps/api/migrations/0017_review_security_repairs.sql text eol=lf
+apps/api/migrations/0018_preferences_partial_update.sql text eol=lf

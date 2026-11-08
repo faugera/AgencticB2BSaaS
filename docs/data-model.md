@@ -1,6 +1,6 @@
 # Modèle de données courant
 
-Les migrations 0001–0012 sont historiques et immuables. Les migrations 0013–0016
+Les migrations 0001–0012 sont historiques et immuables. Les migrations 0013–0018
 implémentent le [contrat B2B](../specs/002-b2b-organizations-rbac/spec.md).
 Leur présence ne prouve aucune application en production. pg sans ORM ; migrateur
 atomique, verrou transactionnel et checksums opérateur.
@@ -39,6 +39,11 @@ Seul active ouvre un tenant ; une appartenance explicite inactive refuse aussi l
 organisation-admin, tandis que son accès transversal sans appartenance reste autorisé.
 Les permissions tenant ne traversent jamais un autre tenant. Les références composites
 interdisent l'affectation d'un workspace d'un autre client/tenant.
+La reprise du journal conserve également les événements historiques sans tenant ; le contexte
+par défaut ignore les tenants supprimés logiquement.
+La migration 0017 reprend le journal sous une identité opérateur autorisée à contourner la RLS.
+La migration 0018 initialise les préférences sans écraser une ligne existante et fusionne
+atomiquement les champs modifiés.
 
 ## Reprise et exploitation
 

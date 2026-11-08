@@ -42,7 +42,7 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 | GET/POST /api/role-assignments | Portée et pyramide SQL ; grant/revoke explicites |
 | PATCH /api/members/:id/status | Statut invited/active/suspended ; inférieur seulement, dernier admin protégé |
 | GET/PUT /api/profile?tenantId | Compte propre ; PUT prénom/nom valides, champs personnels et emploi du tenant sélectionné |
-| GET/PUT /api/preferences | Compte propre, locale/theme/timezone/date_format ; aucun sélecteur identité |
+| GET/POST/PUT /api/preferences | Compte propre ; POST initialise sans écraser, PUT fusionne les champs transmis ; aucun sélecteur identité |
 | GET/POST /api/workspaces ; GET/PATCH /api/workspaces/:id | RLS et permissions de création/modification |
 | GET/POST/DELETE membres workspace ; GET/DELETE membres tenant | Fonctions étroites, hiérarchie et dernier admin ; retrait tenant = suspension |
 | GET/POST /api/invitations ; POST accept/retry/revoke | Email vérifié, portée, expiration48h, hash et anti-rejeu ; rôle pair interdit |

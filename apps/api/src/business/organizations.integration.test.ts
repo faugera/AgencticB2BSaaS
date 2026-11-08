@@ -75,13 +75,15 @@ describe('Organisation et RBAC persistés', () => {
   });
 
   it('limite l’annuaire au client de l’acteur et exclut les organisations supprimées', async () => {
+    expect((await runtime.query('SELECT * FROM business.organization_directory()')).rowCount).toBe(0);
     const memberDirectory = await tx(at(ids, 2), at(tenants, 1), client =>
       client.query<{ id: string }>('SELECT * FROM business.organization_directory()'));
     expect(memberDirectory.rows.map(row => row.id)).toEqual([at(organizations, 0)]);
     const superDirectory = await tx(superIdentity, undefined, client =>
       client.query<{ id: string }>('SELECT * FROM business.organization_directory()'));
-    expect(superDirectory.rows.map(row => row.id)).toEqual(organizations);
-    expect(superDirectory.rows.map(row => row.id)).not.toContain(deletedOrganization);
+    const active = await operator.query<{ id: string }>(
+      'SELECT id FROM business.organizations WHERE deleted_at IS NULL ORDER BY name,id');
+    expect(superDirectory.rows.map(row => row.id)).toEqual(active.rows.map(row => row.id));
   });
 
   it('organisation-admin traverse les workspaces privés de son client seulement', async () => {

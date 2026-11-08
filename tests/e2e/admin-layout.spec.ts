@@ -20,6 +20,8 @@ for (const locale of ['fr', 'en'] as const) {
     const organizations = navigation.getByRole('link', { name: locale === 'fr' ? 'Organisations' : 'Organizations', exact: true });
     await expect(organizations).toBeVisible();
     await page.getByLabel(locale === 'fr' ? 'Tenant actif' : 'Active tenant').selectOption(tenant);
+    await expect(page).toHaveURL('/admin?tenantId=' + tenant);
+    await openSidebar(page);
     await expect(page.locator('#admin-scope-help')).toContainText(tenantName + ' (' + tenant + ')');
     await expect(page.locator('#admin-scope-help')).toBeVisible();
     for (const width of [375, 768, 1280]) {

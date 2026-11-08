@@ -1,6 +1,6 @@
 {
-  "docs/architecture.md": "d33ada62a70eb2b202e7adbbc5366af853c60f475b510b136f5ee20d4b18f932",
-  "docs/data-model.md": "54db6d7d1ac92881ec9ce2c96bb09c60087a329181505a21880c2adb9a82c2b6",
+  "docs/architecture.md": "781e624ead3e9daa493246f442a386069330225e67576336da61b7ef1e7f4aea",
+  "docs/data-model.md": "c46419655717dd70be07cbfa0be9ee4dd2050aa8411f64fb063ee726cf7b11c3",
   "apps/api/migrations/0001_identity.sql": "30348881f2f911da218b42467eacca79f12801ec8da549d871b9b78fdf88ab18",
   "apps/api/migrations/0002_business.sql": "2b29d31b271c02fcdada79d2497c0b9a4f305e8f0072ef0e9d3fcf648371d73f",
   "apps/api/migrations/0003_mfa_index.sql": "2dbdba5cabbdff0dc8ccbabdf60055d8e6ec259acc5709ca2fc6d8441ac7dece",
@@ -16,5 +16,7 @@
   "apps/api/migrations/0013_profile_metadata.sql": "22db30dda1579bc269d4b5725dfcd2528c83bf91e1269d1df16df91308324545",
   "apps/api/migrations/0014_organizations_rbac.sql": "2c126aadc1d6b35e9a74f9b65da9e6d6e38cb18b22da8006d2fba16f05111b72",
   "apps/api/migrations/0015_unified_audit.sql": "169893ae35e0a16f6959a64f47934ae1ffb2e25cba6322e83a9f77d60f9b6086",
-  "apps/api/migrations/0016_organization_directory_isolation.sql": "8f43f6bb3a06c6afd390bf9a90c40a2e32e5c22c760fca27fac4072ba860119a"
+  "apps/api/migrations/0016_organization_directory_isolation.sql": "8f43f6bb3a06c6afd390bf9a90c40a2e32e5c22c760fca27fac4072ba860119a",
+  "apps/api/migrations/0017_review_security_repairs.sql": "f6f4d5af1af46fce7d0224b1924d41199c96d88a10c554038a55716dd6312611",
+  "apps/api/migrations/0018_preferences_partial_update.sql": "9fd3ef48f8d6dd46fd4da39f0914e6548d44dee85d4c2601cb53dc08fc5a73ed"
 }
