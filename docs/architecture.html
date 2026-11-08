@@ -38,7 +38,7 @@
   <header>
     <div class="eyebrow">AgencticB2BSaaS · architecture</div>
     <h1>Une plateforme, des clients isolés.</h1>
-    <p>Vue du code de cette branche : architecture applicative, puis modèle de données B2B, selon les migrations 0001 à 0015. Sa fusion et l'application des migrations restent à vérifier. Aucune base déployée n'a été inspectée.</p>
+    <p>Vue du code de cette branche : architecture applicative, puis modèle de données B2B, selon les migrations 0001 à 0016. Sa fusion et l'application des migrations restent à vérifier. Aucune base déployée n'a été inspectée.</p>
     <nav aria-label="Sections"><a href="#architecture">Architecture</a><a href="#donnees">Base de données</a><a href="#maintenance">Sources et maintenance</a></nav>
   </header>
   <section id="architecture">
@@ -105,7 +105,7 @@
       <div><h3>Accès et rôles</h3><p>Une adhésion explicite doit être active. Les rôles se cumulent dans leur portée ; la hiérarchie et les droits sont contrôlés côté serveur.</p></div>
       <div><h3>Identité et profil</h3><p><code>identity.user</code> conserve l'identité et les noms éventuellement absents ; une invitation email ne fabrique pas de prénom ni de nom.</p></div>
     </div>
-    <p class="note">L'organisation-admin bénéficie d'un accès transversal contrôlé à sa seule organisation ; une adhésion explicitement inactive bloque le tenant concerné.</p>
+    <p class="note">L'organisation-admin traverse uniquement sa propre organisation. L'annuaire affiche seulement les organisations accessibles et exclut les suppressions logiques ; une adhésion explicitement inactive bloque le tenant concerné.</p>
   </section>
   <section id="maintenance">
     <div class="eyebrow">03 / Références</div><h2>Sources et maintenance</h2>
