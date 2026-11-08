@@ -87,6 +87,66 @@ for (const locale of ['fr', 'en'] as const) {
       }
     });
 }
+test('switching tenants never keeps the previous profile form active', async ({ page }) => {
+  const tenantA = '10000000-0000-4000-8000-000000000001';
+  const tenantB = '10000000-0000-4000-8000-000000000002';
+  let tenantAReads = 0;
+  let releaseTenantA: (() => void) | undefined;
+  const sessions = [{ ...session, token: 'synthetic-current' }];
+  const profile = (tenantId: string) => ({
+    first_name: tenantId === tenantA ? 'Alice' : 'Bob',
+    last_name: tenantId === tenantA ? 'Alpha' : 'Beta',
+    avatar_url: null,
+    phone_number: null,
+    job_title: tenantId === tenantA ? 'Tenant A role' : 'Tenant B role',
+    department: tenantId === tenantA ? 'Tenant A department' : 'Tenant B department',
+    email: 'fixture@example.test',
+    is_email_verified: true,
+    created_at: '2026-10-24T08:00:00Z',
+    updated_at: '2026-10-24T08:00:00Z',
+  });
+  await page.route('**/api/**', async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const path = url.pathname;
+    if (path === '/api/me') {
+      const tenantId = url.searchParams.get('tenantId') ?? tenantA;
+      return route.fulfill({ json: { user: { id: 'fixture', name: 'Fixture', email: 'fixture@example.test' }, access: { actorId: 'fixture', platformRole: null, tenantRole: 'tenant_admin', tenantId, handle: null, tenants: [{ id: tenantA, name: 'Tenant A' }, { id: tenantB, name: 'Tenant B' }] } } });
+    }
+    if (path === '/api/tenants') return route.fulfill({ json: [{ id: tenantA, name: 'Tenant A' }, { id: tenantB, name: 'Tenant B' }] });
+    if (path === '/api/profile') {
+      const tenantId = url.searchParams.get('tenantId') ?? tenantA;
+      if (request.method() === 'GET' && tenantId === tenantA && ++tenantAReads === 2) {
+        await new Promise<void>((resolve) => { releaseTenantA = resolve; });
+      }
+      return route.fulfill({ json: profile(tenantId) });
+    }
+    if (path === '/api/auth/get-session') return route.fulfill({ json: { user: { id: 'fixture', name: 'Fixture', email: 'fixture@example.test' }, session } });
+    if (path === '/api/auth/list-sessions') return route.fulfill({ json: sessions });
+    if (path === '/api/preferences') return route.fulfill({ json: { locale: 'fr', theme: 'system', timezone: 'Europe/Paris', date_format: 'DD/MM/YYYY' } });
+    return route.fulfill({ json: [] });
+  });
+  await page.goto('/app/profile?tenantId=' + tenantA);
+  await expect(page.getByLabel('Fonction', { exact: true })).toHaveValue('Tenant A role');
+  const mobileMenu = page.locator('.ui-bottom-nav button');
+  const isMobile = await mobileMenu.isVisible();
+  if (isMobile) await mobileMenu.click();
+  await page.locator('.admin-scope select').selectOption(tenantB);
+  if (isMobile) await mobileMenu.click();
+  await expect(page).toHaveURL(new RegExp('tenantId=' + tenantB));
+  await expect(page.getByLabel('Fonction', { exact: true })).toHaveValue('Tenant B role');
+  await page.getByLabel('Fonction', { exact: true }).focus();
+  await page.goBack();
+  try {
+    await expect(page).toHaveURL(new RegExp('tenantId=' + tenantA));
+    await expect(page.getByRole('status')).toContainText('Chargement…');
+    await expect(page.getByRole('status')).toBeFocused();
+    await expect(page.getByLabel('Fonction', { exact: true })).toHaveCount(0);
+  } finally {
+    releaseTenantA?.();
+  }
+  await expect(page.getByLabel('Fonction', { exact: true })).toHaveValue('Tenant A role');
+});
 test('anonymous visitors and ordinary members cannot access protected pages', async ({ page }) => {
   await fixture(page, 'anonymous');
   await page.goto('/docs');

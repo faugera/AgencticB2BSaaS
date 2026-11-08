@@ -1,0 +1,29 @@
+{
+  "skill": "markdown-scanner",
+  "scope": ["specs/004-profile-scope-editing/research.md"],
+  "findings": [
+    {
+      "rule": "MARKDOWN-PLAIN-TECHNICAL-JARGON",
+      "wcag": "n/a",
+      "severity": "minor",
+      "location": "research.md:27",
+      "summary": "L’acronyme « DTO » apparaît sans être développé à sa première occurrence.",
+      "fix": "Écrire « objet de transfert de données (DTO) » à la première occurrence.",
+      "evidence": "« DTO partagé »"
+    }
+  ],
+  "passed": [
+    "Liens descriptifs : aucun lien ni URL.",
+    "Texte alternatif : aucune image.",
+    "Hiérarchie des titres : un H1 et des H2 correctement ordonnés.",
+    "Tableaux : aucun tableau.",
+    "Émojis : aucun émoji détecté.",
+    "Diagrammes Mermaid et ASCII : aucun diagramme.",
+    "Normalisation des tirets : aucun motif applicable.",
+    "Ancres : aucun lien d’ancre."
+  ],
+  "notes": [
+    "Le scanner automatisé n’a pas pu accéder au fichier ; les neuf domaines ont été examinés manuellement.",
+    "markdownlint a signalé MD013 aux lignes 6 et 29 ; cette règle ne correspond pas aux domaines d’accessibilité examinés."
+  ]
+}

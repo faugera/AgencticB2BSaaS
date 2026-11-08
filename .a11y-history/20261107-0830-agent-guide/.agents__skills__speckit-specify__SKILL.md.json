@@ -1,0 +1,27 @@
+{
+  "skill": "markdown-scanner",
+  "scope": [
+    ".agents\\skills\\speckit-specify\\SKILL.md"
+  ],
+  "findings": [
+    {
+      "rule": "MD-HEADING-001",
+      "wcag": "1.3.1 A",
+      "severity": "serious",
+      "location": ".agents\\skills\\speckit-specify\\SKILL.md:11",
+      "summary": "The document has no level-one heading to identify its primary topic.",
+      "fix": "Add a single descriptive level-one heading near the start of the document, before the first level-two heading.",
+      "evidence": "## User Input"
+    }
+  ],
+  "passed": [
+    "Domain 1: Descriptive Links",
+    "Domain 2: Image Alt Text",
+    "Domain 4: Table Accessibility",
+    "Domain 5: Emoji",
+    "Domain 6: Mermaid / ASCII Diagrams",
+    "Domain 7: Em-Dash and En-Dash Normalization",
+    "Domain 8: Anchor Links",
+    "Domain 9: Plain Language and List Structure"
+  ]
+}

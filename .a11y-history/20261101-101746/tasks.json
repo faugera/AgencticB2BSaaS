@@ -1,0 +1,50 @@
+{
+  "skill": "markdown-scanner",
+  "scope": ["specs/004-profile-scope-editing/tasks.md"],
+  "findings": [
+    {
+      "rule": "PLAIN-LANGUAGE-001",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "tasks.md:12",
+      "summary": "Le terme technique « tenant-scopée » n’est pas expliqué lors de sa première occurrence.",
+      "fix": "Remplacer par une formulation explicite, par exemple « limitée au tenant courant (espace de travail) ».",
+      "evidence": "la transaction tenant-scopée"
+    },
+    {
+      "rule": "PLAIN-LANGUAGE-001",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "tasks.md:26",
+      "summary": "Le terme « membership » n’est pas expliqué et peut être difficile à comprendre pour un lectorat francophone.",
+      "fix": "Employer « adhésion » ou « appartenance au tenant », selon le sens voulu, et définir le terme technique si nécessaire.",
+      "evidence": "le compte ou la membership courante"
+    },
+    {
+      "rule": "PLAIN-LANGUAGE-001",
+      "wcag": "n/a",
+      "severity": "minor",
+      "confidence": "medium",
+      "location": "tasks.md:52",
+      "summary": "Le terme informatique « query » apparaît sans explication en français.",
+      "fix": "Remplacer par « requête active » ou expliquer « query » lors de sa première occurrence.",
+      "evidence": "à la query active"
+    }
+  ],
+  "passed": [
+    "Liens descriptifs : aucun lien ni URL détecté.",
+    "Texte alternatif : aucune image détectée.",
+    "Hiérarchie des titres : un seul H1 et aucun saut de niveau.",
+    "Accessibilité des tableaux : aucun tableau détecté.",
+    "Émojis : aucun émoji détecté.",
+    "Diagrammes Mermaid et ASCII : aucun diagramme détecté.",
+    "Normalisation des tirets : aucun tiret cadratin ou demi-cadratin détecté.",
+    "Ancres : aucune ancre ni lien interne détecté."
+  ],
+  "notes": [
+    "Le scanner automatisé n’a pas pu lire le fichier depuis son périmètre d’accès ; les domaines ont été examinés manuellement.",
+    "markdownlint-cli2 a relevé 19 violations MD013 et 2 MD024, hors des domaines d’accessibilité examinés."
+  ]
+}
