@@ -34,6 +34,22 @@ describe('Régressions SQL des correctifs de revue', () => {
   });
   afterAll(async () => { await Promise.all([operator.end(), runtime.end()]); });
 
+  it('exclut du contexte super-admin les tenants des organisations supprimées', async () => {
+    const deletedOrg = randomUUID();
+    const deletedTenant = randomUUID();
+    await operator.query('INSERT INTO business.organizations(id,name,slug) VALUES($1,$2,$3)', [deletedOrg, 'Supprimée', deletedOrg]);
+    await operator.query("INSERT INTO business.tenants(id,organization_id,name,billing_email) VALUES($1,$2,'Masqué','billing@example.test')", [deletedTenant, deletedOrg]);
+    await operator.query('UPDATE business.organizations SET deleted_at=now() WHERE id=$1', [deletedOrg]);
+    await operator.query("UPDATE authorization_private.actors SET platform_role='super_admin' WHERE id=$1", [actor]);
+    try {
+      const context = await tx(undefined, async (_client, value) => value);
+      expect(context.tenants?.map(tenant => tenant.id)).toContain(tenantA);
+      expect(context.tenants?.map(tenant => tenant.id)).not.toContain(deletedTenant);
+    } finally {
+      await operator.query('UPDATE authorization_private.actors SET platform_role=NULL WHERE id=$1', [actor]);
+    }
+  });
+
   it('refuse une insertion dans un autre tenant accessible malgré une capacité dans le tenant courant', async () => {
     expect(await tx(tenantA, async client => (await client.query<{ allowed: boolean }>("SELECT business.can('workspace.create') allowed")).rows[0]?.allowed)).toBe(true);
     expect(await tx(tenantB, async client => (await client.query<{ allowed: boolean }>("SELECT business.can('workspace.create') allowed")).rows[0]?.allowed)).toBe(false);

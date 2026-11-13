@@ -38,7 +38,7 @@ conservent l’état et ne livrent pas un lien révoqué.
 
 ### Implémentation
 
-- [X] T004 [US1] Ajouter une migration additive `apps/api/migrations/0016_idempotency_outbox.sql` avec unicités, contraintes d’état, échéances et fonctions restreintes d’enregistrement, réservation, reprise et accusé, conformément à `specs/007-saas-reliability/data-model.md`.
+- [X] T004 [US1] Ajouter une migration additive `apps/api/migrations/0020_idempotency_outbox.sql` avec unicités, contraintes d’état, échéances et fonctions restreintes d’enregistrement, réservation, reprise et accusé, conformément à `specs/007-saas-reliability/data-model.md`.
 - [X] T005 [US1] Ajouter la configuration obligatoire de chiffrement d’outbox et ses validations dans `apps/api/src/auth/config.ts` et `apps/api/src/auth/config.test.ts`, puis documenter le nom, la génération et la rotation de la clé dans `.env.example` et `README.md` sans valeur réelle.
 - [X] T006 [US1] Implémenter dans `apps/api/src/business/jobs/outbox-crypto.ts` le chiffrement authentifié des charges sensibles, la lecture par version de clé et le refus explicite d’une version ou d’un tag invalide ; limiter ce module aux primitives cryptographiques.
 - [X] T007 [US1] Implémenter les fonctions d’accès à l’outbox, le traitement des baux expirés et l’effacement du texte chiffré après livraison/expiration dans `apps/api/src/business/jobs/outbox-store.ts`, sans accès direct runtime aux tables privées.
@@ -71,7 +71,7 @@ contiennent chaque élément une fois, dans un ordre stable, avec refus inter-te
 - [X] T016 [US2] Ajouter Zod comme dépendance directe de `apps/web/package.json` et synchroniser `pnpm-lock.yaml` avec la version déjà utilisée par l’API.
 - [X] T017 [US2] Définir les schémas runtime des réponses consommées et leur correspondance avec les types existants dans `apps/web/src/contracts/api.ts`, sans ajouter de logique runtime à `packages/shared/src/index.ts`.
 - [X] T018 [US2] Remplacer l’assertion `as Promise<T>` par une validation runtime dans `apps/web/src/http.ts` et passer le validateur adapté depuis tous les appels ciblés `api<T>` de `apps/web/src/`.
-- [X] T019 [US2] Ajouter les curseurs stables date/UUID et les limites bornées aux lectures membres, invitations et workspaces dans `apps/api/migrations/0017_keyset_pagination.sql` et les routes métier concernées.
+- [X] T019 [US2] Ajouter les curseurs stables date/UUID et les limites bornées aux lectures membres, invitations et workspaces dans `apps/api/migrations/0021_keyset_pagination.sql` et les routes métier concernées.
 - [X] T020 [US2] Documenter le contrat `items`/`nextCursor` et les réponses validées dans `apps/api` et `specs/007-saas-reliability/contracts/api.md`, en gardant les erreurs sûres existantes.
 - [X] T021 [US2] Implémenter la navigation paginée accessible et conserver la portée tenant sélectionnée dans `apps/web/src/pages/InvitationManagement.tsx`, `apps/web/src/pages/WorkspaceManagement.tsx` et `apps/web/src/application.tsx`.
 - [ ] T022 [US2] Exécuter les tests d’intégration sur au moins trois pages, curseurs invalides et requêtes inter-tenant dans `apps/api/src/business/pagination.integration.test.ts` et `tests/e2e/pagination.spec.ts`.
@@ -94,7 +94,7 @@ un dépassement et une panne du store sont vérifiés sans fallback local.
 
 ### Implémentation
 
-- [X] T024 [US3] Ajouter la migration `apps/api/migrations/0018_shared_rate_limits.sql` pour les fenêtres expirables et une fonction atomique à droits limités, sans réutiliser la table Better Auth.
+- [X] T024 [US3] Ajouter la migration `apps/api/migrations/0022_shared_rate_limits.sql` pour les fenêtres expirables et une fonction atomique à droits limités, sans réutiliser la table Better Auth.
 - [X] T025 [US3] Implémenter l’adaptateur PostgreSQL du plugin métier dans `apps/api/src/business/rate-limit-store.ts`, avec clé IP opaque à séparation de domaine et suppression bornée des fenêtres expirées.
 - [X] T026 [US3] Brancher le store partagé, le refus explicite `503` en cas d’indisponibilité et les signaux de diagnostic dans `apps/api/src/app.ts`, sans changer le limiteur auth de `apps/api/src/auth/service.ts`.
 - [ ] T027 [US3] Exécuter les tests inter-instances avec PostgreSQL jetable et intégrer `apps/api/src/business/rate-limit.integration.test.ts` à `.github/workflows/ci.yml`.
@@ -179,4 +179,4 @@ ne peut être qualifiée de réussite.
 ## Phase 8: Convergence
 
 - [x] T037 NOT_APPLICABLE : suites navigateur retirées à la demande du propriétaire ; SC-008 ne dispose plus de preuve navigateur automatisée.
-- [X] T038 Corriger par migration additive `apps/api/migrations/0020_shared_rate_limit_timestamp_fix.sql` le type de timestamp utilisé par `business.consume_rate_limit` ; le scénario d’expiration de T023 couvre le reset. L’exécution PostgreSQL reste suivie dans T035.
+- [X] T038 Corriger par migration additive `apps/api/migrations/0024_shared_rate_limit_timestamp_fix.sql` le type de timestamp utilisé par `business.consume_rate_limit` ; le scénario d’expiration de T023 couvre le reset. L’exécution PostgreSQL reste suivie dans T035.

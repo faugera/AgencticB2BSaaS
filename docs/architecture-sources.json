@@ -1,6 +1,6 @@
 {
-  "docs/architecture.md": "c2865e916c2a8b12cc8debaf354a96e5ec8be6f6984366d86f064435232872c6",
-  "docs/data-model.md": "1f2a130a3be747a69b55bb194d1ec4acaa60a7a979ae2ad045a3ef2bc1134a5d",
+  "docs/architecture.md": "a2a1a90d31e92c74f25f98f66d847e67a19a2c3e34da62c9e47406d02dc7d95a",
+  "docs/data-model.md": "b03638154049a9299d129f78b9e0b9c02f460c709c8be593b49dfca2508ad14b",
   "apps/api/migrations/0001_identity.sql": "30348881f2f911da218b42467eacca79f12801ec8da549d871b9b78fdf88ab18",
   "apps/api/migrations/0002_business.sql": "2b29d31b271c02fcdada79d2497c0b9a4f305e8f0072ef0e9d3fcf648371d73f",
   "apps/api/migrations/0003_mfa_index.sql": "2dbdba5cabbdff0dc8ccbabdf60055d8e6ec259acc5709ca2fc6d8441ac7dece",
@@ -16,12 +16,13 @@
   "apps/api/migrations/0013_profile_metadata.sql": "22db30dda1579bc269d4b5725dfcd2528c83bf91e1269d1df16df91308324545",
   "apps/api/migrations/0014_organizations_rbac.sql": "2c126aadc1d6b35e9a74f9b65da9e6d6e38cb18b22da8006d2fba16f05111b72",
   "apps/api/migrations/0015_unified_audit.sql": "169893ae35e0a16f6959a64f47934ae1ffb2e25cba6322e83a9f77d60f9b6086",
-  "apps/api/migrations/0016_idempotency_outbox.sql": "e17b3aab786cb0aa2e267065a43773c2b8dcc2b1ff5ee55860795ee0ba23bff7",
   "apps/api/migrations/0016_organization_directory_isolation.sql": "8f43f6bb3a06c6afd390bf9a90c40a2e32e5c22c760fca27fac4072ba860119a",
-  "apps/api/migrations/0017_keyset_pagination.sql": "e1e008332b03b3248054098307092709c2f41f0ae10ac1391531e282c082d5bc",
   "apps/api/migrations/0017_review_security_repairs.sql": "f6f4d5af1af46fce7d0224b1924d41199c96d88a10c554038a55716dd6312611",
   "apps/api/migrations/0018_preferences_partial_update.sql": "9fd3ef48f8d6dd46fd4da39f0914e6548d44dee85d4c2601cb53dc08fc5a73ed",
-  "apps/api/migrations/0018_shared_rate_limits.sql": "cdac5790343fb088dc689d6149c5cb818f020a49c7c1bb5ab753bfac19797979",
-  "apps/api/migrations/0019_outbox_failure_ack_token_guard.sql": "5322716e3f1ad95ae957fd2c9bcfdb22aba75df908cca1462dfdf9f60704d05e",
-  "apps/api/migrations/0020_shared_rate_limit_timestamp_fix.sql": "b40accc6f675ee97210f317cda58e1ba01b149256bd05f770ed80081b3218ba8"
+  "apps/api/migrations/0019_active_organization_context.sql": "cb4a98a7a9250461aea025609f0b81235aee07fabca7274bae80041e0415afc1",
+  "apps/api/migrations/0020_idempotency_outbox.sql": "e17b3aab786cb0aa2e267065a43773c2b8dcc2b1ff5ee55860795ee0ba23bff7",
+  "apps/api/migrations/0021_keyset_pagination.sql": "e1e008332b03b3248054098307092709c2f41f0ae10ac1391531e282c082d5bc",
+  "apps/api/migrations/0022_shared_rate_limits.sql": "cdac5790343fb088dc689d6149c5cb818f020a49c7c1bb5ab753bfac19797979",
+  "apps/api/migrations/0023_outbox_failure_ack_token_guard.sql": "5322716e3f1ad95ae957fd2c9bcfdb22aba75df908cca1462dfdf9f60704d05e",
+  "apps/api/migrations/0024_shared_rate_limit_timestamp_fix.sql": "b40accc6f675ee97210f317cda58e1ba01b149256bd05f770ed80081b3218ba8"
 }

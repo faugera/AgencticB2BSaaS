@@ -29,7 +29,6 @@ describe('Portée HTTP du catalogue de rôles', () => {
   beforeAll(async () => {
     await provisionRoles(migrationURL, databaseURL, businessURL);
     await migrateAuth(config, migrationURL);
-    await operator.query('TRUNCATE identity."rateLimit"');
     app = buildApp({ authConfig: config });
     const auth = createAuth(config, identity, async () => {}, true);
     const actors: { identity: string; actor: string; cookie: string }[] = [];
@@ -40,7 +39,8 @@ describe('Portée HTTP du catalogue de rôles', () => {
       await operator.query('UPDATE identity."user" SET "emailVerified"=true WHERE id=$1', [created.user.id]);
       const actor = await businessTransaction(business, created.user.id, undefined, 'fixture.read', async (_client, context) => context.actorId);
       if (!actor) throw new Error('Missing fixture actor');
-      const login = await app.inject({ method: 'POST', url: '/api/auth/sign-in/email', headers: { origin: config.baseURL }, payload: { email, password } });
+      const remoteAddress = `2001:db8:${randomBytes(2).toString('hex')}:${randomBytes(2).toString('hex')}::1`;
+      const login = await app.inject({ method: 'POST', url: '/api/auth/sign-in/email', remoteAddress, headers: { origin: config.baseURL }, payload: { email, password } });
       expect(login.statusCode).toBe(200);
       actors.push({ identity: created.user.id, actor, cookie: login.cookies.map((item) => item.name + '=' + item.value).join('; ') });
     }
@@ -62,7 +62,6 @@ describe('Portée HTTP du catalogue de rôles', () => {
   afterAll(async () => {
     await app?.close();
     if (superActor) await operator.query('UPDATE authorization_private.actors SET platform_role=NULL WHERE id=$1', [superActor]);
-    await operator.query('TRUNCATE identity."rateLimit"');
     await Promise.all([operator.end(), identity.end(), business.end()]);
   });
 

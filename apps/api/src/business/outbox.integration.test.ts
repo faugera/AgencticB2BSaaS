@@ -2,6 +2,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { Pool } from 'pg';
+import { z } from 'zod';
 import { createAuth, createAuthPool } from '../auth/service.js';
 import type { Auth } from '../auth/service.js';
 import { provisionRoles } from '../auth/provision.js';
@@ -10,6 +11,7 @@ import type { AuthConfig } from '../auth/config.js';
 import { businessTransaction, createBusinessPool } from './store.js';
 import { enqueueInvitation } from './jobs/outbox-store.js';
 import { createOutboxWorker } from './jobs/outbox-worker.js';
+import { createMailer } from '../auth/mail.js';
 
 const databaseURL = process.env.AUTH_TEST_DATABASE_URL;
 const migrationURL = process.env.AUTH_TEST_MIGRATION_DATABASE_URL;
@@ -282,6 +284,32 @@ describe('Outbox PostgreSQL et worker', () => {
     expect(created.rows).toEqual([
       { name: email.slice(0, email.indexOf('@')), emailVerified: false },
     ]);
+  });
+
+  it.skipIf(!process.env.AUTH_TEST_MAILPIT_URL || !process.env.AUTH_TEST_SMTP_PORT)('livre les liens de vérification et d’invitation par SMTP réel', async () => {
+    const mailpit = new URL(process.env.AUTH_TEST_MAILPIT_URL ?? '');
+    if (mailpit.hostname !== '127.0.0.1' || mailpit.protocol !== 'http:') throw new Error('Mailpit jetable local requis');
+    const email = `smtp-${randomBytes(8).toString('hex')}@example.test`;
+    const token = randomBytes(32).toString('base64url');
+    const id = await enqueue(email, token);
+    await claimInvitationFirst(id);
+    const mailer = createMailer({ ...config.smtp, port: Number(process.env.AUTH_TEST_SMTP_PORT) });
+    try {
+      const worker = createOutboxWorker(business, identity, config, mailer.send, { error: () => {} });
+      await expect(worker.runOnce()).resolves.toBe(true);
+      const response = await fetch(new URL('/api/v1/messages', mailpit));
+      expect(response.ok).toBe(true);
+      const list = z.object({ messages: z.array(z.object({ ID: z.string(), To: z.array(z.object({ Address: z.string() })) })) }).parse(await response.json());
+      const message = list.messages.find(item => item.To.some(recipient => recipient.Address === email));
+      expect(message).toBeDefined();
+      const detail = await fetch(new URL(`/api/v1/message/${message?.ID}`, mailpit));
+      expect(detail.ok).toBe(true);
+      const content = z.object({ Text: z.string() }).parse(await detail.json());
+      expect(content.Text).toContain('/auth/verify-email');
+      expect(content.Text).toContain('/invite#' + token);
+    } finally {
+      mailer.close();
+    }
   });
 
   it('n’envoie pas une invitation révoquée ou expirée et efface ses charges', async () => {

@@ -35,7 +35,7 @@ ainsi jusqu'à trois connexions disponibles pour HTTP et le limiteur.
 | apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations, idempotence et composition des modules |
 | apps/api/src/business/jobs | Outbox chiffrée, réservation atomique, baux, reprises et worker borné à deux jobs |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013–0015 B2B ; 0016–0018 annuaire, sécurité, préférences, outbox, pagination et limites ; 0019–0020 correctifs outbox et limites. Numéros provisoires à réconcilier |
+| apps/api/migrations | SQL immuable et checksummé ; 0013–0019 B2B ; 0020–0024 outbox, pagination et limites partagées |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP

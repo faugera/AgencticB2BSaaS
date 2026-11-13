@@ -18,6 +18,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
         with:
           version: 11.25.0
@@ -26,6 +28,8 @@ jobs:
           node-version: 24
       - run: pnpm install --frozen-lockfile
       - name: Documentation and Spec Kit workflow checks
+        env:
+          DOCS_SYNC_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         run: pnpm docs:test && pnpm docs:check
       - name: Type checking
         run: pnpm typecheck

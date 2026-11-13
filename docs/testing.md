@@ -67,7 +67,7 @@ Parcours direct de maintenance de tests, sans nouveau contrat métier ou schéma
 README et rapport CSS historique : UPDATED. Docs d'architecture et carte produit :
 REVIEWED_NO_CHANGE, aucune frontière ni capacité produit modifiée. Changelog produit :
 REVIEWED_NO_CHANGE, pas de changement utilisateur applicatif. Variables et IAM :
-NOT_APPLICABLE. Aucun changement de dépendance.
+NOT_APPLICABLE. Le retrait supprime la dépendance `@playwright/test` et ses commandes.
 
 ## Contrôle documentaire
 
