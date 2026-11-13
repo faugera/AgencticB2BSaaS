@@ -49,9 +49,8 @@ shell à défilement interne ; cette bande est un artefact de capture et n'est p
 utilisée comme preuve de composition. La série ciblée la remplace.
 Ces preuves décrivent le lot CSS historique. Le 25 octobre 2026, les tests
 cosmétiques et leur configuration dédiée ont été supprimés à la demande de
-l'utilisateur. La suite actuelle se lance avec `pnpm test:e2e` après build ;
-voir [la couverture conservée](../testing.md). Les mesures ci-dessus ne sont
-pas une certification de la suite actuelle.
+l'utilisateur. Les suites navigateur ont ensuite été retirées ; voir [la couverture
+actuelle](../testing.md). Les mesures ci-dessus restent des preuves historiques.
 
 Les tests UI interceptent l'API avec des fixtures synthétiques : ils vérifient les
 consommateurs et gardes frontend, sans certifier les permissions serveur ou SQL.

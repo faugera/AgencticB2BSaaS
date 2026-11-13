@@ -78,8 +78,6 @@ procedure; there is no undocumented platform-admin bypass.
 
 ```sh
 pnpm verify
-pnpm exec playwright install --with-deps chromium
-pnpm test:e2e
 ```
 
 Create a disposable PostgreSQL database named `enterprise_auth_test_*`. Supply
@@ -96,13 +94,8 @@ they fail rather than skip without database configuration. Do not point them at
 real data. Runtime role passwords are cluster-wide: use a separate test cluster
 or the same test credentials across test databases to avoid rotation surprises.
 
-Live browser checks need the same disposable database in `DATABASE_URL` and
-`BUSINESS_DATABASE_URL`, plus `AUTH_ENABLED=true`, preview
-`BETTER_AUTH_URL=http://127.0.0.1:4173`, an ephemeral auth secret, local SMTP and
-`AUTH_TEST_MAILPIT_URL=http://127.0.0.1:8025`. Keep the operator test variable set.
-`pnpm test:auth:e2e` exercises identity/MFA and B2B with real SQL and mail in both
-viewports/locales. Synthetic fixtures reset only the disposable auth rate-limit
-state; a pre-existing non-fixture super-admin makes fixture setup refuse changes.
+Les tests automatisés dans un navigateur et le parcours SMTP réel ont été retirés ;
+les contrôles SQL/HTTP ne remplacent pas la validation des parcours utilisateur.
 
 ## Migration, rotation and rollback
 
