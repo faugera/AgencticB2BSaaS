@@ -1,5 +1,8 @@
 # Validation reproductible
 
+> Document historique : les commandes et configurations navigateur ci-dessous ont été
+> retirées du dépôt. Pour les vérifications actuelles, voir [les tests](../../docs/testing.md).
+
 PostgreSQL17 et Mailpit jetables explicitement configurés, base enterprise_auth_test_*.
 Ne pas lire les fichiers privés ni utiliser une base dev. Docker Desktop est indisponible
 au cadrage ; une instance portable séparée peut fournir PostgreSQL.

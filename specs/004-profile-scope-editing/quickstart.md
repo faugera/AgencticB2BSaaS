@@ -1,5 +1,8 @@
 # Vérification rapide
 
+> Document historique : la suite navigateur ci-dessous a été retirée du dépôt.
+> Pour les vérifications actuelles, voir [les tests](../../docs/testing.md).
+
 ## Parcours navigateur
 
 Prérequis : dépendances du dépôt disponibles.
