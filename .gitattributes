@@ -8,3 +8,4 @@ apps/api/migrations/0015_unified_audit.sql text eol=lf
 apps/api/migrations/0016_organization_directory_isolation.sql text eol=lf
 apps/api/migrations/0017_review_security_repairs.sql text eol=lf
 apps/api/migrations/0018_preferences_partial_update.sql text eol=lf
+apps/api/migrations/0019_active_organization_context.sql text eol=lf

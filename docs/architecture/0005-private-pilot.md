@@ -125,7 +125,7 @@ adversarial tests are present ; leurs preuves historiques sont réconciliées da
 le registre, sans inspection de la DB courante.
 
 
-### Modèle B2B courant — 0013 à 0016
+### Modèle B2B courant — 0013 à 0019
 
 Cette décision supersède les anciennes équivalences organisation=tenant, appartenance
 unique et journal super-admin exclusif ci-dessus. Organisation=client, plusieurs tenants

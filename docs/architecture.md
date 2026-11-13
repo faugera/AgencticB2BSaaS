@@ -24,7 +24,7 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 | apps/api/src/business/store.ts | Transaction locale et identité, audit privilégié, vérification rôles SQL runtime |
 | apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations et composition des modules |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013 profil, 0014 organisations/RBAC, 0015 journal, 0016 annuaire organisation-scopé |
+| apps/api/migrations | SQL immuable et checksummé ; 0013 profil, 0014 organisations/RBAC, 0015 journal, 0016 annuaire, 0017 sécurité, 0018 préférences, 0019 contexte des organisations actives |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP
