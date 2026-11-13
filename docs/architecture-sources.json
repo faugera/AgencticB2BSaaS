@@ -1,6 +1,6 @@
 {
-  "docs/architecture.md": "c924c437c2f2b5e28281a3a63acc093cbacaca6fb2439f46dcee3dd6d24ee8c4",
-  "docs/data-model.md": "1afa9cdd8c78612d78df539e444a436b405936fb1a13826f5a35ffc8ee2a12e7",
+  "docs/architecture.md": "c4e01c797ed1528162c2cb7840b5179e9d1d38798b1d0adff2fec35d99d416f0",
+  "docs/data-model.md": "196c03c2b781c21cc00bb28985e1d7455f2aa9417161b5df4fe7678951f44c83",
   "apps/api/migrations/0001_identity.sql": "30348881f2f911da218b42467eacca79f12801ec8da549d871b9b78fdf88ab18",
   "apps/api/migrations/0002_business.sql": "2b29d31b271c02fcdada79d2497c0b9a4f305e8f0072ef0e9d3fcf648371d73f",
   "apps/api/migrations/0003_mfa_index.sql": "2dbdba5cabbdff0dc8ccbabdf60055d8e6ec259acc5709ca2fc6d8441ac7dece",
@@ -19,5 +19,11 @@
   "apps/api/migrations/0016_organization_directory_isolation.sql": "8f43f6bb3a06c6afd390bf9a90c40a2e32e5c22c760fca27fac4072ba860119a",
   "apps/api/migrations/0017_review_security_repairs.sql": "f6f4d5af1af46fce7d0224b1924d41199c96d88a10c554038a55716dd6312611",
   "apps/api/migrations/0018_preferences_partial_update.sql": "9fd3ef48f8d6dd46fd4da39f0914e6548d44dee85d4c2601cb53dc08fc5a73ed",
-  "apps/api/migrations/0019_active_organization_context.sql": "cb4a98a7a9250461aea025609f0b81235aee07fabca7274bae80041e0415afc1"
+  "apps/api/migrations/0019_active_organization_context.sql": "cb4a98a7a9250461aea025609f0b81235aee07fabca7274bae80041e0415afc1",
+  "apps/api/migrations/0020_idempotency_outbox.sql": "e17b3aab786cb0aa2e267065a43773c2b8dcc2b1ff5ee55860795ee0ba23bff7",
+  "apps/api/migrations/0021_keyset_pagination.sql": "e1e008332b03b3248054098307092709c2f41f0ae10ac1391531e282c082d5bc",
+  "apps/api/migrations/0022_shared_rate_limits.sql": "cdac5790343fb088dc689d6149c5cb818f020a49c7c1bb5ab753bfac19797979",
+  "apps/api/migrations/0023_outbox_failure_ack_token_guard.sql": "5322716e3f1ad95ae957fd2c9bcfdb22aba75df908cca1462dfdf9f60704d05e",
+  "apps/api/migrations/0024_shared_rate_limit_timestamp_fix.sql": "b40accc6f675ee97210f317cda58e1ba01b149256bd05f770ed80081b3218ba8",
+  "apps/api/migrations/0025_platform_context.sql": "144d95a6118b8322e47d18354685895a248fa2eaa4e0e436ef2d405e41d5a2d8"
 }

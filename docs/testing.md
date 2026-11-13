@@ -40,6 +40,18 @@ Les suites navigateur et le parcours SMTP réel ont été retirés à la demande
 La CI ne vérifie plus automatiquement les parcours UI, le clavier, le responsive ni
 l’authentification par navigateur. Les résultats ci-dessous sont historiques.
 
+## Fiabilisation des mutations et des listes
+
+Les tests unitaires couvrent les contrats HTTP côté web, les curseurs et le
+chiffrement de l'outbox. Les scénarios PostgreSQL de pagination, de livraison
+différée et de limite partagée exigent les deux URLs de base jetable indiquées
+dans le runbook privé ; les tests refusent de démarrer sans cette configuration.
+Ils ne doivent jamais cibler une base de développement ou de production.
+
+L'outbox métier porte actuellement les invitations ; les callbacks de
+vérification et d'activation Better Auth ne disposent pas encore d'événements
+autonomes dans cette outbox.
+
 ## Vérification exécutée
 
 Le 25 octobre : `pnpm verify` passe (types, lint, 44 tests unitaires, build, smoke).

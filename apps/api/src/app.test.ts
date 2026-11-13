@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { buildApp } from './app.js';
 
 describe('HTTP boundary', () => {
@@ -46,5 +46,36 @@ describe('HTTP boundary', () => {
     });
     expect(response.statusCode).toBe(status);
     expect(response.json()).toEqual({ code: 'INVALID_REQUEST' });
+  });
+
+  it('does not expose raw exception details in API responses or logs', async () => {
+    const app = buildApp();
+    apps.push(app);
+    const sensitive = {
+      token: 'synthetic-token-never-log',
+      secret: 'synthetic-secret-never-log',
+      body: 'private SMTP body never log',
+    };
+    const logged: unknown[] = [];
+    app.addHook('onRequest', (request, _reply, done) => {
+      vi.spyOn(request.log, 'error').mockImplementation((...args) => {
+        logged.push(args);
+      });
+      done();
+    });
+    app.get('/test-error', async () => {
+      throw new Error(
+        `${sensitive.token} ${sensitive.secret} ${sensitive.body}`,
+      );
+    });
+
+    const response = await app.inject({ url: '/test-error' });
+
+    expect(response.statusCode).toBe(500);
+    expect(response.json()).toEqual({ code: 'INTERNAL_ERROR' });
+    const logs = JSON.stringify(logged);
+    expect(logs).not.toContain(sensitive.token);
+    expect(logs).not.toContain(sensitive.secret);
+    expect(logs).not.toContain(sensitive.body);
   });
 });

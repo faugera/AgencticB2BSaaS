@@ -104,6 +104,14 @@ it does not grant platform-admin or tenant access. `operator:identity` and
 role. No default administrator/password is provided. See
 [ADR-005](docs/architecture/0005-private-pilot.md) for precise RLS boundaries.
 
+Le runtime métier exige aussi une clé d’outbox distincte de `BETTER_AUTH_SECRET`.
+Générez une clé aléatoire de 32 octets avec
+`node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"`,
+puis renseignez `OUTBOX_ENCRYPTION_ACTIVE_KEY_ID` et
+`OUTBOX_ENCRYPTION_KEYS` dans `apps/api/.env`. La valeur de ce dernier est un
+objet JSON indexé par version ; conservez les anciennes clés jusqu’à expiration
+des messages chiffrés en attente et ne les stockez jamais dans PostgreSQL.
+
 CI additionally runs `pnpm verify:security` and `pnpm verify:tenant-isolation`
 against disposable PostgreSQL. These gates fail rather
 than skip when required test infrastructure is missing. See the runbook for variables.

@@ -111,6 +111,7 @@ footer p { margin: 0; }
 .auth-card .text-button { color:var(--link); background:transparent; }
 .auth-card [role="alert"],[role="alert"] { color:var(--danger); }
 input:focus-visible,button:focus-visible,select:focus-visible,a:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
+.ui-pagination-status:focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
 @media(max-width:760px) { .page .masthead { height:auto; min-height:82px; padding:18px 0; flex-wrap:wrap; } .page .brand { flex-basis:100%; } }
 .application {
     max-inline-size: 1120px;

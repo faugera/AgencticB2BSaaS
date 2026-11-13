@@ -14,7 +14,7 @@ const migrationURL = process.env.AUTH_TEST_MIGRATION_DATABASE_URL;
 if (!databaseURL || !migrationURL || !new URL(databaseURL).pathname.startsWith('/enterprise_auth_test'))
   throw new Error('Explicit disposable PostgreSQL database required');
 const businessURL = databaseURL.replace('identity_runtime:', 'business_runtime:');
-const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
+const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, outboxEncryption: { activeKeyId: 'test-v1', keys: { 'test-v1': randomBytes(32).toString('base64url') } }, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
 const operator = new Pool({ connectionString: migrationURL });
 const identity = createAuthPool(databaseURL);
 const business = createBusinessPool(businessURL);
@@ -30,6 +30,7 @@ describe('Préférences partielles persistées', () => {
   beforeAll(async () => {
     await provisionRoles(migrationURL, databaseURL, businessURL);
     await migrateAuth(config, migrationURL);
+    await operator.query('TRUNCATE identity."rateLimit"');
     app = buildApp({ authConfig: config });
     const auth = createAuth(config, identity, async () => {}, true);
     const email = `preferences-${randomBytes(8).toString('hex')}@example.test`;
@@ -47,7 +48,7 @@ describe('Préférences partielles persistées', () => {
     expect(initLogin.statusCode).toBe(200);
     initCookie = initLogin.cookies.map((item) => item.name + '=' + item.value).join('; ');
   });
-  afterAll(async () => { await app?.close(); await Promise.all([operator.end(), identity.end(), business.end()]); });
+  afterAll(async () => { await app?.close(); await operator.query('TRUNCATE identity."rateLimit"'); await Promise.all([operator.end(), identity.end(), business.end()]); });
 
   it('initialise les préférences locales une seule fois malgré des onglets concurrents', async () => {
     const initialize = (payload: object) => app.inject({ method: 'POST', url: '/api/preferences', headers: { origin: config.baseURL, cookie: initCookie }, payload });

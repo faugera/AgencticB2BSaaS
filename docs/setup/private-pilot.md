@@ -97,6 +97,26 @@ or the same test credentials across test databases to avoid rotation surprises.
 Les tests automatisés dans un navigateur et le parcours SMTP réel ont été retirés ;
 les contrôles SQL/HTTP ne remplacent pas la validation des parcours utilisateur.
 
+## Reprise, pagination et limitation partagée
+
+Les invitations métier sont enregistrées dans l'outbox chiffrée avec la mutation
+et reprises par le worker. `OUTBOX_ENCRYPTION_ACTIVE_KEY_ID` sélectionne la clé
+active de `OUTBOX_ENCRYPTION_KEYS`, distincte du secret Better Auth. Générer les
+clés aléatoirement, les conserver hors base et hors dépôt, préserver les versions
+nécessaires aux messages en attente pendant une rotation, puis retirer une ancienne
+version uniquement après expiration ou traitement de ses messages. Une panne SMTP
+peut produire un doublon si l'accusé est ambigu ; le statut de livraison permet
+un nouvel essai autorisé sans exposer de jeton.
+
+Les listes concernées sont paginées par curseur date/UUID, à 50 éléments
+maximum. Le curseur ne confère aucun droit : chaque page est réautorisée par le
+serveur dans son contexte tenant. Le limiteur métier utilise PostgreSQL partagé ;
+une indisponibilité retourne une erreur explicite plutôt qu'un compteur mémoire.
+Les migrations 0017 et 0018, les reprises SMTP et le comportement multi-instance
+doivent être éprouvés avec PostgreSQL/Mailpit jetables avant toute mise en service.
+Les callbacks Better Auth de vérification/activation ne sont pas encore des
+événements autonomes de l'outbox.
+
 ## Migration, rotation and rollback
 
 Back up before migrating. Review new SQL/checksums; run `auth:migrate` once as

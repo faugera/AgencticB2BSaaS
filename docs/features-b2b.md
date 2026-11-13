@@ -12,9 +12,9 @@ Les preuves PR7/PR8 restent [historiques](sdd/legacy-reconciliation.md).
 | Appartenances multiples explicites dans le même client | IMPLEMENTED | Seul active donne accès ; invited/suspended refusés à la prochaine opération |
 | Catalogue global de rôles personnalisés cumulables | IMPLEMENTED | Lecture administrative avec roles.assign, édition super-admin ; attribution déléguée par portée et niveau |
 | Pyramide et dernier administrateur actif | IMPLEMENTED | Fonctions SQL contrôlent soi/pairs/supérieurs et capacité administrative restante |
-| Invitations, demandes et pagination | IMPLEMENTED | SMTP après commit, retry manuel ; tenant-admin ne peut inviter un pair |
+| Invitations, demandes et pagination | IMPLEMENTED | Outbox chiffrée, livraison auditée et sérialisée avec révocation, état de livraison et retry manuel ; SMTP, activation/vérification Better Auth et PostgreSQL restent à valider sur infrastructure jetable ; tenant-admin ne peut inviter un pair |
 | Profil complet et préférences du compte | IMPLEMENTED | Profil existant, noms inconnus acceptés à invitation ; PUT exige prénom et nom ; poste/département tenant-scopés |
-| Workspaces privés/visibles, apparence Brume | IMPLEMENTED | Permissions contrôlées SQL ; archived_at informatif |
+| Workspaces privés/visibles, apparence Brume | IMPLEMENTED | Accès privé vérifié explicitement par la fonction SQL de pagination ; permissions contrôlées SQL ; archived_at informatif |
 | Journal unique et consultation par portée | IMPLEMENTED | Migration0015, /api/audit-logs ; ancien journal archivé |
 | Suppression logique et dates | IMPLEMENTED | Opérateur SQL ; révocation accès, IDs conservés ; aucune nouvelle UI de suppression |
 | FR/EN et responsive | PARTIAL | Parcours et captures ciblés ; pas de certification exhaustive d'accessibilité |

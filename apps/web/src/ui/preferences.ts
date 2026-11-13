@@ -1,6 +1,7 @@
 import { useEffect, useSyncExternalStore } from 'react';
 import type { UIPreferences } from '@enterprise/shared';
 import { api } from '../http';
+import { preferencesSchema } from '../contracts/api';
 
 const listeners = new Set<() => void>();
 export function localLocale(): 'fr' | 'en' { try { return localStorage.getItem('locale') === 'en' ? 'en' : 'fr'; } catch { return 'fr'; } }
@@ -62,9 +63,9 @@ export function useAccountPreferences(identity: string) {
       const store: AccountStore = { identity, users: 0, queue: Promise.resolve(), versions: { locale: 0, theme: 0, timezone: 0, date_format: 0 }, snapshot: { ...emptySnapshot, preferences: { ...emptySnapshot.preferences, locale, theme } } };
       account = store; notify();
       const versions = { ...store.versions };
-      void api<UIPreferences | null>('/api/preferences').then(async (value) => {
+      void api('/api/preferences', preferencesSchema).then(async (value) => {
         if (account !== store) return;
-        if (value === null) value = await api<UIPreferences>('/api/preferences', { locale: store.snapshot.preferences.locale, theme: store.snapshot.preferences.theme });
+        if (value === null) value = await api('/api/preferences', preferencesSchema, { locale: store.snapshot.preferences.locale, theme: store.snapshot.preferences.theme });
         if (account !== store) return;
         if (!value || !['fr', 'en'].includes(value.locale) || !['system', 'light', 'dark'].includes(value.theme)) throw new Error('Invalid preferences');
         const preferences = { ...store.snapshot.preferences, ...value };
@@ -88,7 +89,7 @@ export function useAccountPreferences(identity: string) {
       if (!Object.keys(next).length) return true;
       const versions = { ...store.versions };
       try {
-        const value = await api<UIPreferences>('/api/preferences', next, 'PUT');
+        const value = await api('/api/preferences', preferencesSchema, next, 'PUT');
         if (account !== store) return false;
         if (!value || !['fr', 'en'].includes(value.locale) || !['system', 'light', 'dark'].includes(value.theme)) throw new Error('Invalid preferences');
         const preferences = { ...store.snapshot.preferences, ...value };

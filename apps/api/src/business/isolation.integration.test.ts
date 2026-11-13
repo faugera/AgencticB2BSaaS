@@ -29,6 +29,7 @@ const config: AuthConfig = {
   secret: randomBytes(48).toString('base64url'),
   databaseURL: identityURL,
   businessDatabaseURL: businessURL,
+  outboxEncryption: { activeKeyId: 'test-v1', keys: { 'test-v1': randomBytes(32).toString('base64url') } },
   smtp: {
     host: '127.0.0.1',
     port: 1025,
@@ -81,6 +82,7 @@ describe('PostgreSQL B2B adversarial isolation', () => {
         'test.read',
         async (_client, context) => context.actorId,
       );
+      if (!actor) throw new Error('Missing test actor');
       actors.push(actor);
     }
     // The first actor stays an ordinary user. Explicit operator bootstrap only.
@@ -140,6 +142,29 @@ describe('PostgreSQL B2B adversarial isolation', () => {
   afterAll(async () => {
     await app?.close();
     await Promise.all([operator.end(), identity.end(), business.end()]);
+  });
+  it('réserve le contexte plateforme au super-administrateur sans créer de tenant client', async () => {
+    const platform = '00000000-0000-0000-0000-000000000000';
+    const context = await businessTransaction(business, superId, undefined, 'test.read', async (client, access) => ({
+      access,
+      scope: (await client.query<{ value: string }>("SELECT current_setting('app.tenant_id') value")).rows[0]!.value,
+    }));
+    expect(context.access.tenantId).toBe(platform);
+    expect(context.scope).toBe(platform);
+    await expect(tx(0, platform, async () => null)).rejects.toThrow('ACCESS_DENIED');
+    expect((await operator.query('SELECT id FROM business.tenants WHERE id=$1', [platform])).rowCount).toBe(0);
+    await expect(operator.query("INSERT INTO business.tenants(id,name,organization_id) SELECT $1,'Reserved',organization_id FROM business.tenants WHERE id=$2", [platform, tenants[0]])).rejects.toThrow();
+  });
+  it('conserve audit global et rejeu des clés plateforme existantes', async () => {
+    const action = 'test.platform.' + randomBytes(8).toString('hex');
+    const key = hash(randomBytes(16).toString('hex'));
+    const digest = hash('request');
+    const actor = (await operator.query<{ id: string }>('SELECT id FROM authorization_private.actors WHERE identity_id=$1', [superId])).rows[0]!.id;
+    await operator.query("INSERT INTO authorization_private.idempotency_records(actor_id,action,scope_key,key_digest,request_digest,state,response,expires_at) VALUES($1,$2,'platform',$3,$4,'completed',$5,clock_timestamp()+interval '1 hour')", [actor, action, key, digest, { ok: true }]);
+    const result = await businessTransaction(business, superId, undefined, action, async (client) => (await client.query<{ result: { replay: boolean; response: { ok: boolean } } }>('SELECT business.begin_idempotency($1,$2,$3,$4) result', [action, null, key, digest])).rows[0]!.result);
+    expect(result).toEqual({ replay: true, response: { ok: true } });
+    const audit = await operator.query<{ tenant_id: string | null }>('SELECT tenant_id FROM business.audit_logs WHERE actor_id=$1 AND action=$2 ORDER BY created_at DESC LIMIT 1', [actor, action]);
+    expect(audit.rows[0]?.tenant_id).toBeNull();
   });
   it('uses two non-owner runtimes, rejects owner role escalation and identity access', async () => {
     await assertRuntimePrivileges(identity);
@@ -315,9 +340,11 @@ describe('PostgreSQL B2B adversarial isolation', () => {
     await tx(0, tenants[0], async (client) =>
       client.query('SELECT business.remove_member($1)', [actors[1]]),
     );
-    expect(
-      (await tx(1, undefined, async (_client, context) => context)).tenantId,
-    ).toBeNull();
+    const tenantless = await tx(1, undefined, async (client, context) => ({
+      tenant: context.tenantId,
+      scope: (await client.query<{ value: string }>("SELECT current_setting('app.tenant_id') value")).rows[0]!.value,
+    }));
+    expect(tenantless).toEqual({ tenant: null, scope: '' });
   });
   it('binds invitations to verified email, rejects replay, expiry and existing-tenant conflicts', async () => {
     const email = (

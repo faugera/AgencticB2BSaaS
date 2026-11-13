@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { ProfileDetails, ProfileInput } from '@enterprise/shared';
 import { api } from '../http';
+import { profileDetailsSchema } from '../contracts/api';
 import { useLanguage } from '../i18n';
 import { Alert, Button, Field, Input, Badge } from '../ui/primitives';
 
@@ -51,7 +52,7 @@ export function ProfileDetailsForm({ query, onSaved }: { query: string; onSaved:
 
   useEffect(() => {
     let active = true;
-    void api<ProfileDetails>('/api/profile' + query)
+    void api('/api/profile' + query, profileDetailsSchema)
       .then((value) => {
         if (active && activeQuery.current === query) {
           setLoadState({ query, profile: value, status: 'ready' });

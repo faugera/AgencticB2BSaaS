@@ -31,6 +31,6 @@ it('bloque une écriture après échec puis recharge les valeurs serveur avant m
   await vi.waitFor(() => expect(preferences.useAccountPreferences('compte').busy).toBe(false));
   expect(preferences.useAccountPreferences('compte').timezone).toBe('Asia/Tokyo');
   expect(await preferences.useAccountPreferences('compte').save({ theme: 'dark' })).toBe(true);
-  expect(api).toHaveBeenLastCalledWith('/api/preferences', { theme: 'dark' }, 'PUT');
+  expect(api).toHaveBeenLastCalledWith('/api/preferences', expect.anything(), { theme: 'dark' }, 'PUT');
   expect(preferences.useAccountPreferences('compte').date_format).toBe('YYYY-MM-DD');
 });

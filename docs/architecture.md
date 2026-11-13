@@ -15,16 +15,27 @@ Chaque opération métier établit depuis la session vérifiée un contexte tran
 local : identité, tenant demandé et réautorisé, permissions persistées, IP et user-agent
 serveur. COMMIT inclut l'audit applicable ; ROLLBACK annule mutations et traces.
 Les fonctions privées et RLS protègent les portées ; le navigateur n'est pas une autorité.
-Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
+Les mutations ciblées acceptent `Idempotency-Key` : acteur, action, portée et empreinte
+de requête déterminent le rejeu, conservé au plus 24 h. L'invitation et sa charge
+AES-256-GCM chiffrée sont écrites dans la même transaction métier ; le worker PostgreSQL
+réserve par bail et reprend les échecs. Avant SMTP, il verrouille les lignes de l'outbox
+et de l'invitation jusqu'à l'accusé, ce qui sérialise une révocation concurrente. Cette
+transaction utilise un timeout d'inactivité local de 60 s ; les statuts d'échec ne
+s'appliquent qu'au message correspondant au jeton courant. L'état HTTP initial `pending`
+ne confirme pas la livraison. SMTP reste au moins une fois ; un accusé ambigu peut
+produire un doublon. Le worker traite au plus deux messages en parallèle par instance et
+réutilise le pool d'identité de l'application ; le pool métier de cinq connexions conserve
+ainsi jusqu'à trois connexions disponibles pour HTTP et le limiteur.
 
 | Module | Responsabilité |
 | --- | --- |
 | apps/web/src | React Router, Brume, FR/EN, portail app/admin ; formulaires et sélection de portée |
 | apps/api/src/auth | Better Auth, provisioning/migrations opérateur, invitations identité et SMTP |
 | apps/api/src/business/store.ts | Transaction locale et identité, audit privilégié, vérification rôles SQL runtime |
-| apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations et composition des modules |
+| apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations, idempotence et composition des modules |
+| apps/api/src/business/jobs | Outbox chiffrée, réservation atomique, baux, reprises et worker borné à deux jobs |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013 profil, 0014 organisations/RBAC, 0015 journal, 0016 annuaire, 0017 sécurité, 0018 préférences, 0019 contexte des organisations actives |
+| apps/api/migrations | SQL immuable et checksummé ; 0013–0019 B2B ; 0020–0024 outbox, pagination et limites partagées ; 0025 contexte plateforme réservé |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP
@@ -33,17 +44,17 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 | --- | --- |
 | GET /health, /ready | Liveness ; readiness DB/auth/privilèges |
 | GET/POST /api/auth/* | Contrats Better Auth ; origine POST et email vérifié |
-| GET /api/me?tenantId | Contexte serveur, tenants accessibles, workspaces RLS |
+| GET /api/me?tenantId | Contexte serveur, tenants accessibles et indicateur de gestion des rôles workspace ; le client tolère l'absence de `access` dans les payloads legacy |
 | GET /api/tenants | Annuaire des tenants accessibles au contexte |
 | GET/POST /api/organizations | Lecture limitée aux organisations accessibles (supprimées exclues) ; création super-admin |
 | POST /api/organizations/:id/tenants | Super-admin ou organisation-admin du client ; adminEmail fournit billing et invitation initiale |
-| GET/POST /api/platform/tenants | Compatibilité super-admin ; POST crée client + premier tenant |
+| GET/POST /api/platform/tenants | Compatibilité super-admin ; POST crée client + premier tenant et enfile l'email |
 | GET/POST /api/roles ; PUT /api/roles/:id | Lecture avec roles.assign autorisé ; édition super-admin, impact/confirmation si modification affectante |
 | GET/POST /api/role-assignments | Portée et pyramide SQL ; grant/revoke explicites |
 | PATCH /api/members/:id/status | Statut invited/active/suspended ; inférieur seulement, dernier admin protégé |
 | GET/PUT /api/profile?tenantId | Compte propre ; PUT prénom/nom valides, champs personnels et emploi du tenant sélectionné |
 | GET/POST/PUT /api/preferences | Compte propre ; POST initialise sans écraser, PUT fusionne les champs transmis ; aucun sélecteur identité |
-| GET/POST /api/workspaces ; GET/PATCH /api/workspaces/:id | RLS et permissions de création/modification |
+| GET /api/workspaces?tenantId&before ; GET/POST /api/workspaces ; GET/PATCH /api/workspaces/:id | Pages bornées à 50, curseur date/UUID tenant-scopé, accès privé vérifié explicitement par la fonction SQL et permissions |
 | GET/POST/DELETE membres workspace ; GET/DELETE membres tenant | Fonctions étroites, hiérarchie et dernier admin ; retrait tenant = suspension |
 | GET/POST /api/invitations ; POST accept/retry/revoke | Email vérifié, portée, expiration48h, hash et anti-rejeu ; rôle pair interdit |
 | POST /api/access-link ; GET/POST /api/access-requests ; POST /:id | Collecte publique sans identité ; revue autorisée, pagination100 et curseur UUID tenant-scopé |
@@ -54,6 +65,9 @@ Le SMTP suit le commit ; pending/failed et retry manuel, sans worker/outbox.
 L'ancienne route /api/platform/audit est retirée. Le journal privé historique reste
 archivé et ses traces sont copiées avec legacy_id ; aucun deuxième journal actif.
 Les réponses d'erreurs métier restent génériques ; aucun secret/valeur de profil audité.
+La migration 0020 conserve les réservations d'idempotence au plus 24 h et les événements
+chiffrés jusqu'à livraison/échéance. Le runtime n'accède pas directement aux tables
+privées ; des fonctions dédiées limitent l'enregistrement, la réservation et l'accusé.
 
 ## Interface et limites
 
@@ -68,3 +82,4 @@ workspaces/journal, tables privées sans grants directs. Un serveur ou credentia
 compromis pouvant forger le contexte n'est pas neutralisé par RLS.
 MFA facultative V0 ; ni runtime IA, ni paiement, ni export/rétention externe,
 ni haute disponibilité certifiée. Preuves historiques : [registre](sdd/legacy-reconciliation.md).
+Les vérifications locales sur PostgreSQL et Mailpit jetables ne certifient pas un déploiement.

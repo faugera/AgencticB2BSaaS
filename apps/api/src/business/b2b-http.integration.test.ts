@@ -14,7 +14,7 @@ const migrationURL = process.env.AUTH_TEST_MIGRATION_DATABASE_URL;
 if (!databaseURL || !migrationURL || !new URL(databaseURL).pathname.startsWith('/enterprise_auth_test'))
   throw new Error('Explicit disposable PostgreSQL database required');
 const businessURL = databaseURL.replace('identity_runtime:', 'business_runtime:');
-const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
+const config: AuthConfig = { baseURL: 'http://127.0.0.1:5173', secret: randomBytes(48).toString('base64url'), databaseURL, businessDatabaseURL: businessURL, outboxEncryption: { activeKeyId: 'test-v1', keys: { 'test-v1': randomBytes(32).toString('base64url') } }, smtp: { host: '127.0.0.1', port: 1025, secure: false, from: 'test@example.test' } };
 const operator = new Pool({ connectionString: migrationURL });
 const identity = createAuthPool(databaseURL);
 const business = createBusinessPool(businessURL);
@@ -52,6 +52,7 @@ describe('Contrats B2B HTTP avec sessions et PostgreSQL réels', () => {
       const created = await auth.api.signUpEmail({ body: { email, name: 'HTTP fixture', password } });
       await operator.query('UPDATE identity."user" SET "emailVerified"=true WHERE id=$1', [created.user.id]);
       const actor = await businessTransaction(business, created.user.id, undefined, 'fixture.read', async (_client, context) => context.actorId);
+      if (!actor) throw new Error('HTTP fixture actor missing');
       const login = await app.inject({ method: 'POST', url: '/api/auth/sign-in/email', headers: { origin: config.baseURL }, payload: { email, password } });
       expect(login.statusCode).toBe(200);
       accounts.push({ id: created.user.id, actor, cookie: login.cookies.map((cookie) => cookie.name + '=' + cookie.value).join('; ') });
@@ -66,7 +67,7 @@ describe('Contrats B2B HTTP avec sessions et PostgreSQL réels', () => {
     for (const [index, organizationIndex] of [0, 0, 1].entries()) {
       const created = await write('POST', '/api/organizations/' + at(organizations, organizationIndex) + '/tenants', { name: 'HTTP tenant ' + index, adminEmail: `http-admin-${randomBytes(8).toString('hex')}@example.test` });
       expect(created.statusCode).toBe(201);
-      expect(created.json().delivery).toBe('sent');
+      expect(created.json().delivery).toBe('pending');
       tenants.push(created.json<{ id: string }>().id);
     }
     await operator.query("INSERT INTO authorization_private.memberships(actor_id,tenant_id,role) VALUES($1,$2,'member'),($1,$3,'member'),($4,$2,'tenant_admin')", [account(1).actor, at(tenants, 0), at(tenants, 1), account(2).actor]);
@@ -83,9 +84,18 @@ describe('Contrats B2B HTTP avec sessions et PostgreSQL réels', () => {
     expect(persisted.rows.map((row) => row.organization_id)).toEqual([at(organizations, 0), at(organizations, 0), at(organizations, 1)]);
     expect((await write('POST', '/api/organizations', { name: 'Forbidden' }, 1)).statusCode).toBe(403);
     expect((await get('/api/tenants', 1)).json<{ id: string }[]>().map((tenant) => tenant.id).sort()).toEqual(tenants.slice(0, 2).sort());
-    const invited = await operator.query('SELECT u.name,u.first_name,u.last_name FROM identity."user" u JOIN authorization_private.invitations i ON lower(i.email)=lower(u.email) WHERE i.tenant_id=ANY($1)', [tenants]);
-    expect(invited.rows).toHaveLength(3);
-    for (const user of invited.rows) expect(user).toEqual({ name: '', first_name: null, last_name: null });
+    const invitations = await operator.query<{ outbox_count: number }>(
+      `SELECT count(o.id)::int AS outbox_count
+       FROM authorization_private.invitations i
+       LEFT JOIN authorization_private.outbox_messages o ON o.invitation_id=i.id
+       WHERE i.tenant_id=ANY($1)
+       GROUP BY i.id`,
+      [tenants],
+    );
+    expect(invitations.rows).toHaveLength(3);
+    expect(invitations.rows.every(({ outbox_count }) => outbox_count > 0)).toBe(
+      true,
+    );
     expect((await get('/api/roles', 1)).statusCode).toBe(403);
   });
 
