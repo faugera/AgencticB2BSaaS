@@ -45,7 +45,7 @@ export function AppShell({ me, admin, scope, tenants, workspaces, selected, onSc
     <Field label={t('language')}>{(props) => <Select {...props} disabled={prefs.busy} value={prefs.locale} onChange={(event) => { void prefs.save({ locale: event.target.value === 'en' ? 'en' : 'fr' }); }}><option value="fr">Français</option><option value="en">English</option></Select>}</Field>
     <Field label={t('theme')}>{(props) => <Select {...props} disabled={prefs.busy} value={prefs.theme} onChange={(event) => { const value = event.target.value; void prefs.save({ theme: value === 'dark' || value === 'light' ? value : 'system' }); }}><option value="system">{t('theme_system')}</option><option value="light">{t('theme_light')}</option><option value="dark">{t('theme_dark')}</option></Select>}</Field>
     <Button type="button" variant="quiet" disabled={busy} onClick={onSignOut}>{t('sign_out')}</Button>
-    {prefs.error && <Alert tone="danger">{t('preferences_error')}</Alert>}
+    {prefs.error && <Alert tone="danger">{t('preferences_error')} <Button type="button" variant="quiet" onClick={() => window.location.reload()}>{t('preferences_reload')}</Button></Alert>}
    </div></details>
   </aside>
   <div className="ui-main-content" data-workspace-tint={Boolean(color)} inert={mobileOpen}>{children}</div>

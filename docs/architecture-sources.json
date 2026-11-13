@@ -1,6 +1,6 @@
 {
-  "docs/architecture.md": "63d1b357f096cd68cdb054867502c305a509bdad32ce6cb9e9af8d5d95080cfe",
-  "docs/data-model.md": "c46419655717dd70be07cbfa0be9ee4dd2050aa8411f64fb063ee726cf7b11c3",
+  "docs/architecture.md": "c924c437c2f2b5e28281a3a63acc093cbacaca6fb2439f46dcee3dd6d24ee8c4",
+  "docs/data-model.md": "1afa9cdd8c78612d78df539e444a436b405936fb1a13826f5a35ffc8ee2a12e7",
   "apps/api/migrations/0001_identity.sql": "30348881f2f911da218b42467eacca79f12801ec8da549d871b9b78fdf88ab18",
   "apps/api/migrations/0002_business.sql": "2b29d31b271c02fcdada79d2497c0b9a4f305e8f0072ef0e9d3fcf648371d73f",
   "apps/api/migrations/0003_mfa_index.sql": "2dbdba5cabbdff0dc8ccbabdf60055d8e6ec259acc5709ca2fc6d8441ac7dece",
@@ -18,5 +18,6 @@
   "apps/api/migrations/0015_unified_audit.sql": "169893ae35e0a16f6959a64f47934ae1ffb2e25cba6322e83a9f77d60f9b6086",
   "apps/api/migrations/0016_organization_directory_isolation.sql": "8f43f6bb3a06c6afd390bf9a90c40a2e32e5c22c760fca27fac4072ba860119a",
   "apps/api/migrations/0017_review_security_repairs.sql": "f6f4d5af1af46fce7d0224b1924d41199c96d88a10c554038a55716dd6312611",
-  "apps/api/migrations/0018_preferences_partial_update.sql": "9fd3ef48f8d6dd46fd4da39f0914e6548d44dee85d4c2601cb53dc08fc5a73ed"
+  "apps/api/migrations/0018_preferences_partial_update.sql": "9fd3ef48f8d6dd46fd4da39f0914e6548d44dee85d4c2601cb53dc08fc5a73ed",
+  "apps/api/migrations/0019_active_organization_context.sql": "cb4a98a7a9250461aea025609f0b81235aee07fabca7274bae80041e0415afc1"
 }
