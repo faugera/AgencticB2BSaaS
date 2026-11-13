@@ -29,7 +29,6 @@ describe('Portée HTTP du catalogue de rôles', () => {
   beforeAll(async () => {
     await provisionRoles(migrationURL, databaseURL, businessURL);
     await migrateAuth(config, migrationURL);
-    await operator.query('TRUNCATE identity."rateLimit"');
     app = buildApp({ authConfig: config });
     const auth = createAuth(config, identity, async () => {}, true);
     const actors: { identity: string; actor: string; cookie: string }[] = [];
@@ -62,7 +61,6 @@ describe('Portée HTTP du catalogue de rôles', () => {
   afterAll(async () => {
     await app?.close();
     if (superActor) await operator.query('UPDATE authorization_private.actors SET platform_role=NULL WHERE id=$1', [superActor]);
-    await operator.query('TRUNCATE identity."rateLimit"');
     await Promise.all([operator.end(), identity.end(), business.end()]);
   });
 
