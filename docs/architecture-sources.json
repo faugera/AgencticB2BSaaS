@@ -1,6 +1,6 @@
 {
-  "docs/architecture.md": "a2a1a90d31e92c74f25f98f66d847e67a19a2c3e34da62c9e47406d02dc7d95a",
-  "docs/data-model.md": "b03638154049a9299d129f78b9e0b9c02f460c709c8be593b49dfca2508ad14b",
+  "docs/architecture.md": "c4e01c797ed1528162c2cb7840b5179e9d1d38798b1d0adff2fec35d99d416f0",
+  "docs/data-model.md": "196c03c2b781c21cc00bb28985e1d7455f2aa9417161b5df4fe7678951f44c83",
   "apps/api/migrations/0001_identity.sql": "30348881f2f911da218b42467eacca79f12801ec8da549d871b9b78fdf88ab18",
   "apps/api/migrations/0002_business.sql": "2b29d31b271c02fcdada79d2497c0b9a4f305e8f0072ef0e9d3fcf648371d73f",
   "apps/api/migrations/0003_mfa_index.sql": "2dbdba5cabbdff0dc8ccbabdf60055d8e6ec259acc5709ca2fc6d8441ac7dece",
@@ -24,5 +24,6 @@
   "apps/api/migrations/0021_keyset_pagination.sql": "e1e008332b03b3248054098307092709c2f41f0ae10ac1391531e282c082d5bc",
   "apps/api/migrations/0022_shared_rate_limits.sql": "cdac5790343fb088dc689d6149c5cb818f020a49c7c1bb5ab753bfac19797979",
   "apps/api/migrations/0023_outbox_failure_ack_token_guard.sql": "5322716e3f1ad95ae957fd2c9bcfdb22aba75df908cca1462dfdf9f60704d05e",
-  "apps/api/migrations/0024_shared_rate_limit_timestamp_fix.sql": "b40accc6f675ee97210f317cda58e1ba01b149256bd05f770ed80081b3218ba8"
+  "apps/api/migrations/0024_shared_rate_limit_timestamp_fix.sql": "b40accc6f675ee97210f317cda58e1ba01b149256bd05f770ed80081b3218ba8",
+  "apps/api/migrations/0025_platform_context.sql": "144d95a6118b8322e47d18354685895a248fa2eaa4e0e436ef2d405e41d5a2d8"
 }

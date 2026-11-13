@@ -23,7 +23,7 @@ export function Roles({ access, query }: { access: AccessContext; query: string 
  const assignableSpaces = spaces.filter((space) => space.can_assign_roles);
  const selectedSpace = assignableSpaces.find((space) => space.id === workspaceId);
  const canAssign = generalAssignment || assignableSpaces.length > 0;
- const tenantId = new URLSearchParams(query).get('tenantId') || access.tenantId;
+ const tenantId = new URLSearchParams(query).get('tenantId') || (superAdmin ? null : access.tenantId);
  const catalogQuery = tenantId ? '?tenantId=' + encodeURIComponent(tenantId) : '';
  const queryRef = useRef(query);
  queryRef.current = query;

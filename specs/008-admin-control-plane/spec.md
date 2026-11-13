@@ -134,6 +134,12 @@ Le tenant `0000` est un identifiant de contexte plateforme réservé et non un t
 
 ## Clarifications
 
+- Pour la réconciliation de la PR #16, `0000` désigne l’UUID réservé
+  `00000000-0000-0000-0000-000000000000` : il représente le contexte global du
+  super-administrateur dans l’API et la transaction SQL, sans créer de tenant client.
+  Un compte ordinaire sans tenant conserve un contexte `null` ; une portée cliente
+  explicite conserve son UUID. Les événements d’audit globaux gardent `tenant_id NULL`
+  et les opérations idempotentes déjà enregistrées restent rejouables.
 - La séparation `/settings` vs `/control` est le modèle obligatoire de la feature ; elle ne remplace pas les permissions de tenant déjà existantes dans le codebase, mais les scinde visuellement et fonctionnellement.
 - Le `tenantId = 0000` est traité comme un identifiant réservé au control plane, pas comme un tenant client commercial ou de production.
 - Les niveaux de protection et les refus sont interprétés comme des décisions serveur, non comme des directives UI uniquement.

@@ -116,7 +116,7 @@ export function Application({ adminOnly = false }: { adminOnly?: boolean }) {
       setLoadedPath(location.pathname + query);
       return;
     }
-    if (!scope && !me.access?.tenantId) {
+    if (!scope && (!me.access?.tenantId || superAdmin)) {
       setWorkspaces([]);
       setWorkspaceCursor(null);
       setSelected(null);

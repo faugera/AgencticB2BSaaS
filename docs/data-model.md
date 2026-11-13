@@ -1,6 +1,6 @@
 # Modèle de données courant
 
-Les migrations 0001–0019 implémentent le [contrat B2B](../specs/002-b2b-organizations-rbac/spec.md). Les migrations 0020–0024 ajoutent idempotence/outbox, pagination et limites partagées.
+Les migrations 0001–0019 implémentent le [contrat B2B](../specs/002-b2b-organizations-rbac/spec.md). Les migrations 0020–0024 ajoutent idempotence/outbox, pagination et limites partagées. La migration 0025 réserve l’UUID nul au contexte plateforme, sans créer de tenant client ; l’audit global conserve un tenant SQL `NULL`.
 Leur présence ne prouve aucune application en production. pg sans ORM ; migrateur
 atomique, verrou transactionnel et checksums opérateur.
 

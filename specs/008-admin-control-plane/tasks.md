@@ -52,3 +52,12 @@
 - Les tâches de préparation doivent être complétées avant les validations de refus.
 - Les tests de sécurité doivent précéder les changements de permissions et d’accès.
 - La synchronisation documentaire se fait après validation des scénarios métier et de sécurité.
+
+## Réconciliation PR #16 — contexte plateforme
+
+- [x] T014 Tester l’UUID réservé dans l’API et la transaction, son refus aux acteurs ordinaires, l’absence de tenant client associé et le maintien de `null` sans appartenance.
+- [x] T015 Ajouter une migration après `0024` protégeant l’UUID réservé et établissant le contexte à partir de l’acteur vérifié, sans modifier les migrations appliquées.
+- [x] T016 Préserver les événements d’audit globaux à tenant SQL `NULL`, les clés d’idempotence existantes et les portées clientes explicites ; tester chaque comportement.
+- [ ] T017 Adapter les consommateurs de l’API et vérifier les autorisations et la navigation sans tests navigateur.
+- [ ] T018 Vérifier les migrations sur une base jetable neuve et une copie jetable d’un historique local, puis exécuter les contrôles sécurité, isolation, HTTP, SMTP, socle et documentation.
+- [ ] T019 Actualiser les documents concernés, consigner les preuves, publier la PR et traiter les discussions après CI verte.

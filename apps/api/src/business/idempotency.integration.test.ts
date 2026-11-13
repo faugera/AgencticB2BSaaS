@@ -118,6 +118,9 @@ describe('Idempotence HTTP avec PostgreSQL jetable', () => {
   });
 
   it('ne crée qu’un tenant, une invitation et un événement pour dix rejeux concurrents', async () => {
+    const me = await app.inject({ url: '/api/me', headers: { cookie: account.cookie } });
+    expect(me.statusCode).toBe(200);
+    expect(me.json().access.tenantId).toBe('00000000-0000-0000-0000-000000000000');
     const key = randomBytes(32).toString('base64url');
     const name = 'Idempotent tenant ' + randomBytes(6).toString('hex');
     const email = `idempotent-${randomBytes(8).toString('hex')}@example.test`;

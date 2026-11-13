@@ -35,7 +35,7 @@ ainsi jusqu'à trois connexions disponibles pour HTTP et le limiteur.
 | apps/api/src/business/routes.ts | Contexte, tenants, workspaces, invitations, idempotence et composition des modules |
 | apps/api/src/business/jobs | Outbox chiffrée, réservation atomique, baux, reprises et worker borné à deux jobs |
 | profile-routes.ts / rbac-routes.ts / audit-routes.ts | DTO Zod stricts, profil, catalogue/attributions et journal |
-| apps/api/migrations | SQL immuable et checksummé ; 0013–0019 B2B ; 0020–0024 outbox, pagination et limites partagées |
+| apps/api/migrations | SQL immuable et checksummé ; 0013–0019 B2B ; 0020–0024 outbox, pagination et limites partagées ; 0025 contexte plateforme réservé |
 | packages/shared/src/index.ts | Types publics seuls |
 
 ## Contrats HTTP
@@ -65,7 +65,7 @@ ainsi jusqu'à trois connexions disponibles pour HTTP et le limiteur.
 L'ancienne route /api/platform/audit est retirée. Le journal privé historique reste
 archivé et ses traces sont copiées avec legacy_id ; aucun deuxième journal actif.
 Les réponses d'erreurs métier restent génériques ; aucun secret/valeur de profil audité.
-La migration 0016 conserve les réservations d'idempotence au plus 24 h et les événements
+La migration 0020 conserve les réservations d'idempotence au plus 24 h et les événements
 chiffrés jusqu'à livraison/échéance. Le runtime n'accède pas directement aux tables
 privées ; des fonctions dédiées limitent l'enregistrement, la réservation et l'accusé.
 
@@ -82,5 +82,4 @@ workspaces/journal, tables privées sans grants directs. Un serveur ou credentia
 compromis pouvant forger le contexte n'est pas neutralisé par RLS.
 MFA facultative V0 ; ni runtime IA, ni paiement, ni export/rétention externe,
 ni haute disponibilité certifiée. Preuves historiques : [registre](sdd/legacy-reconciliation.md).
-L'application des migrations 0016 à 0018 et les scénarios PostgreSQL/Mailpit de cette feature
-restent à prouver sur des services jetables ; cette description ne certifie pas un déploiement.
+Les vérifications locales sur PostgreSQL et Mailpit jetables ne certifient pas un déploiement.

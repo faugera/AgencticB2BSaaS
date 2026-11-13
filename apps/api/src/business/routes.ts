@@ -107,7 +107,8 @@ export function registerBusinessRoutes(
           typeof params.id === 'string'
             ? params.id
             : undefined;
-        const scope = tenant ?? context.tenantId ?? resourceScope ?? 'platform';
+        const contextTenant = context.tenantId === '00000000-0000-0000-0000-000000000000' ? null : context.tenantId;
+        const scope = tenant ?? contextTenant ?? resourceScope ?? 'platform';
         const bodyHash = requestDigest({
           method: request.method,
           route: request.routeOptions.url,

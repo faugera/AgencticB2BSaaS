@@ -26,6 +26,12 @@ Clarifier et sécuriser la séparation entre la gestion du tenant client et la g
 
 ## Recherche de conception
 
+Pour la réconciliation de la PR #16, la portée de cette livraison est limitée au
+contexte plateforme réservé : une migration après `0024` protège l’identifiant,
+valide l’acteur et préserve audit, idempotence et isolation. Les autres capacités
+de cette spécification restent des objectifs distincts et ne sont pas revendiquées
+comme implémentées par cette correction. Les migrations enregistrées sont immuables.
+
 1. Conserver la distinction entre le rôle de tenant et le rôle de plateforme, sans implication implicite d’un territoire vers l’autre.
 2. Tracer les tentatives de franchissement de frontière, les accès cross-tenant et les escalades comme incidents de sécurité avec contexte servér.
 3. Traiter `tenantId = 0000` comme un identifiant réservé du control plane, jamais comme un tenant client ni comme une ressource de données client.

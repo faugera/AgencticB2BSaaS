@@ -50,6 +50,7 @@ let actorId = '';
 let identityId = '';
 let tenantId = '';
 let auth: Auth;
+let deferredMessages: { id: string; available_at: string; leased_until: string | null }[] = [];
 
 async function enqueue(
   email: string,
@@ -94,6 +95,8 @@ describe('Outbox PostgreSQL et worker', () => {
   beforeAll(async () => {
     await provisionRoles(migrationURL, databaseURL, businessURL);
     await migrateAuth(config, migrationURL);
+    deferredMessages = (await operator.query<{ id: string; available_at: string; leased_until: string | null }>("SELECT id,available_at::text,leased_until::text FROM authorization_private.outbox_messages WHERE state IN ('pending','retryable','leased') AND expires_at>clock_timestamp()")).rows;
+    if (deferredMessages.length) await operator.query("UPDATE authorization_private.outbox_messages SET available_at=clock_timestamp()+interval '1 day',leased_until=CASE WHEN state='leased' THEN clock_timestamp()+interval '1 day' ELSE leased_until END WHERE id=ANY($1::uuid[])", [deferredMessages.map((message) => message.id)]);
     auth = createAuth(config, identity, async () => {}, true);
     const email = `outbox-actor-${randomBytes(8).toString('hex')}@example.test`;
     const created = await auth.api.signUpEmail({
@@ -144,6 +147,7 @@ describe('Outbox PostgreSQL et worker', () => {
   });
 
   afterAll(async () => {
+    for (const message of deferredMessages) await operator.query('UPDATE authorization_private.outbox_messages SET available_at=$2,leased_until=$3 WHERE id=$1', [message.id, message.available_at, message.leased_until]);
     if (actorId)
       await operator.query(
         'UPDATE authorization_private.actors SET platform_role=NULL WHERE id=$1',

@@ -2,6 +2,8 @@
 .agents/skills/speckit-*/** text eol=lf
 .github/skills/speckit-*/** text eol=lf
 .claude/skills/speckit-*/** text eol=lf
+apps/api/migrations/0011_lifecycle.sql text eol=lf
+apps/api/migrations/0012_access_request_pagination.sql text eol=lf
 apps/api/migrations/0013_profile_metadata.sql text eol=lf
 apps/api/migrations/0014_organizations_rbac.sql text eol=lf
 apps/api/migrations/0015_unified_audit.sql text eol=lf
@@ -14,3 +16,4 @@ apps/api/migrations/0021_keyset_pagination.sql text eol=lf
 apps/api/migrations/0022_shared_rate_limits.sql text eol=lf
 apps/api/migrations/0023_outbox_failure_ack_token_guard.sql text eol=lf
 apps/api/migrations/0024_shared_rate_limit_timestamp_fix.sql text eol=lf
+apps/api/migrations/0025_platform_context.sql text eol=lf

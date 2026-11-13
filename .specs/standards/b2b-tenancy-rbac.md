@@ -15,7 +15,7 @@ IMPLEMENTED décrit le code ; aucune certification production n'est déduite des
 | Transaction locale et RLS FORCE | IMPLEMENTED | Organisations/tenants/workspaces/journal ; annuaire limité à la portée, fonctions privées sans grants runtime et vérification explicite de l’accès aux workspaces privés |
 | Runtimes sans propriété/BYPASSRLS | IMPLEMENTED | Provisioning et assertRuntimePrivileges ; état production UNKNOWN |
 | Journal unique append-only runtime | IMPLEMENTED | business.audit_logs ; archive privée figée, pas de valeurs sensibles |
-| Idempotence mutation et outbox invitation | IN_PROGRESS | Migration 0016 et fonctions privées dans le code ; application PostgreSQL/Mailpit non vérifiée, ne pas présenter comme opérationnelle |
+| Idempotence mutation et outbox invitation | IN_PROGRESS | Migration 0020 et fonctions privées dans le code ; vérifications locales jetables sans certification de déploiement |
 | Tests négatifs HTTP/SQL | IMPLEMENTED | Suites integration réexécutées pour chaque changement ; mocks insuffisants |
 | Export/rétention externe, ledger inviolable | PLANNED | Hors V0 |
 | Runtime IA / jobs / support dédié | NOT_FOUND | Garde-fous constitutionnels, aucun runtime |
