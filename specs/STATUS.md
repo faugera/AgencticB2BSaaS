@@ -24,6 +24,7 @@ motivé.
 | 008-retrait-tests-navigateur | In Progress | 4/4 | 0 | — | Statut à passer à Complete |
 | 009-reconciliation-securite-b2b | In Progress | 5/6 | 1 | Décision ops (T006) | Inventaire des environnements non jetables |
 | 010-rattrapage-documentaire | In Progress | 10/10 | 0 | — | Publication de la PR |
+| 011-idempotence-client | In Progress | 6/6 | 0 | — | Publication de la PR |
 
 ## Décisions en attente
 
@@ -35,7 +36,7 @@ motivé.
 
 ## Preuves de référence
 
-- `pnpm typecheck`, `pnpm lint`, `pnpm test` (116 tests), `pnpm docs:test` (40 tests),
+- `pnpm typecheck`, `pnpm lint`, `pnpm test` (122 tests), `pnpm docs:test` (40 tests),
   `pnpm docs:check` : exécutés localement le 15 novembre 2026.
 - PostgreSQL jetable, Mailpit, `pnpm verify:security`, `pnpm verify:tenant-isolation`,
   `pnpm build`, `pnpm smoke`, CI distante : `NOT_RUN` à cette date.

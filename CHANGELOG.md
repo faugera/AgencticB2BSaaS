@@ -6,7 +6,7 @@
 - Invitations métier via outbox chiffrée AES-256-GCM, worker à bail et reprise des échecs.
 - Pagination keyset des listes et limitation de débit partagée en PostgreSQL.
 - Contexte plateforme réservé à l'UUID nul ; aucune création de tenant client avec cet identifiant.
-- Preuves locales : contrôles documentaires, types, lint et 116 tests unitaires. PostgreSQL/Mailpit jetables et CI distante : `NOT_RUN`.
+- Preuves locales : contrôles documentaires, types, lint et 122 tests unitaires. PostgreSQL/Mailpit jetables et CI distante : `NOT_RUN`.
 
 ## B2B — organisations, rôles et profil
 

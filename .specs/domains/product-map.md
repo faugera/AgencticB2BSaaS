@@ -21,7 +21,7 @@ UNKNOWN état non vérifié. Aucun statut ne certifie un déploiement ou une con
 | Journal unique, consultation tenant autorisée et plateforme super-admin | IMPLEMENTED | apps/api/src/business/audit-routes.ts ; migration 0015 |
 | Suppression logique utilisateur/tenant et dates | IMPLEMENTED | Migration 0011 ; SQL opérateur uniquement, aucune UI/API de suppression |
 | Isolation tenant et autorisation persistée | IMPLEMENTED | apps/api/src/business/store.ts ; contexte transactionnel serveur |
-| Fiabilité des mutations : outbox, idempotence, pagination, débit partagé | IMPLEMENTED | Migrations 0020–0025 ; client web sans clé d'idempotence ; worker non exercé hors PostgreSQL/Mailpit jetables |
+| Fiabilité des mutations : outbox, idempotence, pagination, débit partagé | IMPLEMENTED | Migrations 0020–0025 ; worker non exercé hors PostgreSQL/Mailpit jetables |
 | Accessibilité et responsive exhaustifs | PARTIAL | FR/EN et parcours testés ; aucune certification exhaustive |
 | Exploitation : rétention/export audit, backups automatisés et HA | PARTIAL | Décisions opérateur restantes dans ADR-005 |
 | SSO/SCIM, MFA imposée et appartenance à plusieurs clients | PLANNED | Hors pilote ; ADR-005 |

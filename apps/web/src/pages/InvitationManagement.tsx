@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { api } from '../http';
+import { api, mutate } from '../http';
 import { useLanguage } from '../i18n';
 import { Badge, Button, EmptyState, Field, Input, Select } from '../ui/primitives';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
@@ -22,13 +22,13 @@ export function InvitationManagement({ invitations, nextCursor, onLoadMore, quer
     { key: 'email', heading: t('email_address'), cell: (row) => row.email },
     { key: 'role', heading: t('role'), cell: (row) => t(row.role === 'tenant_admin' ? 'organization_administrator' : 'member') },
     { key: 'status', heading: t('status'), cell: (row) => <Badge tone={status(row) === 'accepted' ? 'success' : status(row) === 'pending' ? 'warning' : 'neutral'}>{t(status(row))}</Badge> },
-    { key: 'actions', heading: t('actions'), cell: (row) => !row.accepted_at && !row.revoked_at && <div className="ui-cluster"><Button type="button" variant="quiet" disabled={busy} onClick={() => { void action(() => api('/api/invitations/' + row.id + query, { operation: 'retry' })); }}>{t('resend')}</Button><ConfirmDialog title={t('revoke') + ' — ' + row.email} trigger={t('revoke')} disabled={busy} onConfirm={() => { void action(() => api('/api/invitations/' + row.id + query, { operation: 'revoke' })); }} /></div> },
+    { key: 'actions', heading: t('actions'), cell: (row) => !row.accepted_at && !row.revoked_at && <div className="ui-cluster"><Button type="button" variant="quiet" disabled={busy} onClick={() => { void action(() => mutate('/api/invitations/' + row.id + query, { operation: 'retry' })); }}>{t('resend')}</Button><ConfirmDialog title={t('revoke') + ' — ' + row.email} trigger={t('revoke')} disabled={busy} onConfirm={() => { void action(() => mutate('/api/invitations/' + row.id + query, { operation: 'revoke' })); }} /></div> },
    ]} />}
    <PageNavigation nextCursor={nextCursor} busy={busy} onLoadMore={onLoadMore} />
   </section>
   <section className="ui-invitation-form"><h2>{t('invite_member')}</h2><p className="ui-help">{t('access_description')}</p><form onSubmit={(event) => {
    event.preventDefault(); const element = event.currentTarget; const form = new FormData(element);
-   void action(async () => { const result = await api('/api/invitations' + query, { email: String(form.get('email') ?? ''), role: String(form.get('role') ?? 'member') }); element.reset(); return result; });
+   void action(async () => { const result = await mutate('/api/invitations' + query, { email: String(form.get('email') ?? ''), role: String(form.get('role') ?? 'member') }); element.reset(); return result; });
   }}>
    <Field label={t('email_address')}>{(props) => <Input {...props} name="email" type="email" autoComplete="email" required maxLength={254} />}</Field>
    <Field label={t('role')}>{(props) => <Select {...props} name="role"><option value="member">{t('member')}</option><option value="tenant_admin">{t('organization_administrator')}</option></Select>}</Field>

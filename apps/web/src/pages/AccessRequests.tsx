@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { api } from '../http';
+import { api, mutate } from '../http';
 import {
   accessLinkSchema,
   accessRequestListSchema,
@@ -47,7 +47,7 @@ export function AccessRequests({ query, onApproved }: { query: string; onApprove
   {loading ? <Skeleton label={t('loading')} /> : !requests.length && !error ? <EmptyState title={t('no_requests')}>{t('no_requests_help')}</EmptyState> : requests.map((request) => <div className="ui-request" key={request.id}>
    <RequestReview request={request} busy={busy} review={(operation, role) => {
     setBusy(true); setError(false); setNotice(null);
-    void api('/api/access-requests/' + request.id + query, accessReviewResultSchema, { operation, role }).then((result) => { setNotice(result.delivery === 'failed' ? 'delivery' : 'saved'); setLoading(true); setRevision((value) => value + 1); if (operation === 'approve') onApproved(); }).catch(() => setError(true)).finally(() => setBusy(false));
+    void mutate('/api/access-requests/' + request.id + query, accessReviewResultSchema, { operation, role }).then((result) => { setNotice(result.delivery === 'failed' ? 'delivery' : 'saved'); setLoading(true); setRevision((value) => value + 1); if (operation === 'approve') onApproved(); }).catch(() => setError(true)).finally(() => setBusy(false));
    }} />
    <p className="ui-help">{t('request_date')} : <time dateTime={request.created_at}>{new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(request.created_at))}</time></p>
   </div>)}

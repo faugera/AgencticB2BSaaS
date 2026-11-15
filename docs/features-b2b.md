@@ -14,7 +14,7 @@ Les preuves PR7/PR8 restent [historiques](sdd/legacy-reconciliation.md).
 | Catalogue global de rôles personnalisés cumulables | IMPLEMENTED | Lecture administrative avec roles.assign, édition super-admin ; attribution déléguée par portée et niveau |
 | Pyramide et dernier administrateur actif | IMPLEMENTED | Fonctions SQL contrôlent soi/pairs/supérieurs et capacité administrative restante |
 | Invitations, demandes et pagination | IMPLEMENTED | Outbox chiffrée, livraison auditée et sérialisée avec révocation, état de livraison et retry manuel ; SMTP, activation/vérification Better Auth et PostgreSQL restent à valider sur infrastructure jetable ; tenant-admin ne peut inviter un pair |
-| Idempotence des mutations sensibles | IMPLEMENTED | API : `Idempotency-Key`, rejeu borné à 24 h sur création de tenant, invitations et revue de demande ; le client web n'envoie pas encore la clé |
+| Idempotence des mutations sensibles | IMPLEMENTED | API et client web : `Idempotency-Key` par soumission, rejeu unique sur perte de réponse, réservation bornée à 24 h ; la livraison SMTP reste au moins une fois |
 | Profil complet et préférences du compte | IMPLEMENTED | Profil existant, noms inconnus acceptés à invitation ; PUT exige prénom et nom ; poste/département tenant-scopés |
 | Workspaces privés/visibles, apparence Brume | IMPLEMENTED | Accès privé vérifié explicitement par la fonction SQL de pagination ; permissions contrôlées SQL ; archived_at informatif |
 | Journal unique et consultation par portée | IMPLEMENTED | Migration0015, /api/audit-logs ; ancien journal archivé |
