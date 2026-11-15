@@ -1,7 +1,8 @@
 # Capacités et permissions B2B
 
-État de la branche codex/b2b-organizations-rbac, 25 octobre 2026. IMPLEMENTED signifie
-code présent, pas déploiement certifié. Preuves : [spec et livraison](../specs/002-b2b-organizations-rbac/spec.md).
+État de `main` au 15 novembre 2026. IMPLEMENTED signifie code présent, pas déploiement
+certifié. Preuves : [spec et livraison](../specs/002-b2b-organizations-rbac/spec.md) et
+[fiabilisation SaaS](../specs/007-saas-reliability/spec.md).
 Les preuves PR7/PR8 restent [historiques](sdd/legacy-reconciliation.md).
 
 | Capacité | Statut | Source et limite |
@@ -13,6 +14,7 @@ Les preuves PR7/PR8 restent [historiques](sdd/legacy-reconciliation.md).
 | Catalogue global de rôles personnalisés cumulables | IMPLEMENTED | Lecture administrative avec roles.assign, édition super-admin ; attribution déléguée par portée et niveau |
 | Pyramide et dernier administrateur actif | IMPLEMENTED | Fonctions SQL contrôlent soi/pairs/supérieurs et capacité administrative restante |
 | Invitations, demandes et pagination | IMPLEMENTED | Outbox chiffrée, livraison auditée et sérialisée avec révocation, état de livraison et retry manuel ; SMTP, activation/vérification Better Auth et PostgreSQL restent à valider sur infrastructure jetable ; tenant-admin ne peut inviter un pair |
+| Idempotence des mutations sensibles | IMPLEMENTED | API : `Idempotency-Key`, rejeu borné à 24 h sur création de tenant, invitations et revue de demande ; le client web n'envoie pas encore la clé |
 | Profil complet et préférences du compte | IMPLEMENTED | Profil existant, noms inconnus acceptés à invitation ; PUT exige prénom et nom ; poste/département tenant-scopés |
 | Workspaces privés/visibles, apparence Brume | IMPLEMENTED | Accès privé vérifié explicitement par la fonction SQL de pagination ; permissions contrôlées SQL ; archived_at informatif |
 | Journal unique et consultation par portée | IMPLEMENTED | Migration0015, /api/audit-logs ; ancien journal archivé |

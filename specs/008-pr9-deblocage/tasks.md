@@ -1,5 +1,10 @@
 # Tasks: Déblocage de la PR 9
 
+> Audit du 15 novembre 2026 : `apps/api/src/business/review-role-http.integration.test.ts`
+> et `apps/api/src/business/review-repairs.integration.test.ts` existent déjà sur `main`.
+> Vérifier si T002–T005 sont couverts avant toute implémentation, puis clore la spec
+> comme supplantée ou migrer le reliquat vers 007/009.
+
 - [ ] T001 Vérifier la tête de la PR et les historiques de migrations pertinents avant toute correction dans `apps/api/migrations/`.
 - [ ] T002 [US1] Reproduire et isoler le 429 dans `apps/api/src/business/review-role-http.integration.test.ts`, sans altérer la sécurité de production.
 - [ ] T003 [US1] Rejouer la suite de rôles après les autres suites et deux fois sur PostgreSQL jetable ; consigner la preuve.

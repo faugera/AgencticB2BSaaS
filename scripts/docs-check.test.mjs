@@ -1,12 +1,23 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { access, copyFile, mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { baselineRoutingText, changedFilesSince, checkDocumentationSync, checkDocuments } from './docs-check.mjs';
+
+// WSL bash cannot see Windows temp paths; prefer a POSIX bash that can.
+function posixBash() {
+  if (process.platform !== 'win32') return 'bash';
+  return [
+    process.env.GIT_BASH,
+    'C:/Program Files/Git/bin/bash.exe',
+    'C:/Program Files (x86)/Git/bin/bash.exe',
+  ].find((candidate) => candidate && existsSync(candidate));
+}
 
 const workflowSteps = [
   ['specify', 'command: speckit.specify'],
@@ -586,17 +597,24 @@ test('resolves an explicit feature in read-only mode without persisting its poin
   for (const name of ['common.sh', 'check-prerequisites.sh']) {
     await copyFile(path.join(repositoryRoot, '.specify/scripts/bash', name), path.join(scriptDir, name));
   }
-  const result = execFileSync('bash', [
-    path.join(scriptDir, 'check-prerequisites.sh'), '--json', '--paths-only',
-  ], {
-    cwd: root,
-    env: {
-      ...process.env,
-      SPECIFY_FEATURE_DIRECTORY: 'specs/001-demo',
-      SPECIFY_FEATURE_NO_PERSIST: 'true',
-    },
-    encoding: 'utf8',
-  });
+  const bash = posixBash();
+  if (!bash) return t.skip('bash POSIX (Git Bash) indisponible : test de résolution de feature ignoré');
+  const script = path.posix.join(scriptDir.replace(/\\/g, '/'), 'check-prerequisites.sh');
+  let result;
+  try {
+    result = execFileSync(bash, [script, '--json', '--paths-only'], {
+      cwd: root,
+      env: {
+        ...process.env,
+        SPECIFY_FEATURE_DIRECTORY: 'specs/001-demo',
+        SPECIFY_FEATURE_NO_PERSIST: 'true',
+      },
+      encoding: 'utf8',
+    });
+  } catch (error) {
+    if (error.code === 'ENOENT') return t.skip('bash indisponible : test de résolution de feature ignoré');
+    throw error;
+  }
   const paths = JSON.parse(result);
   assert(paths.FEATURE_SPEC.endsWith('/specs/001-demo/spec.md'));
   assert(paths.IMPL_PLAN.endsWith('/specs/001-demo/plan.md'));

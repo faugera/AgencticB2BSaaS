@@ -1,0 +1,52 @@
+# Vérification : Rattrapage documentaire et portabilité du contrôle
+
+Résultats locaux du 15 novembre 2026, branche `codex/rattrapage-documentaire` issue
+de `main` (`94e8b9a`).
+
+## Contrôles exécutés
+
+| Contrôle | Résultat | Détail |
+|---|---|---|
+| `pnpm docs:test` | **PASS** | 40 tests, 40 réussis, 0 échec, 0 ignoré (Windows, Git Bash) |
+| `pnpm docs:check` | **PASS** | structure, liens, manifestes et décisions du diff valides |
+| `pnpm typecheck` | **PASS** | racine et trois workspaces |
+| `pnpm lint` | **PASS** | zéro warning |
+| `pnpm test` | **PASS** | 17 fichiers, 116 tests |
+| `node scripts/architecture-sync.mjs --reviewed` | **PASS** | manifeste régénéré après revue du delta |
+
+## Contrôles non exécutés
+
+| Contrôle | Résultat | Motif |
+|---|---|---|
+| `pnpm build` | NOT_RUN | hors périmètre de ce lot documentaire |
+| `pnpm smoke` | NOT_RUN | idem |
+| `pnpm verify:security` | NOT_RUN | PostgreSQL jetable non configuré |
+| `pnpm verify:tenant-isolation` | NOT_RUN | PostgreSQL jetable non configuré |
+| Parcours PostgreSQL/Mailpit | NOT_RUN | infrastructure non configurée |
+| CI distante | NOT_RUN | non consultée |
+
+## Portée du diff
+
+- Documents : `README.md`, `CHANGELOG.md`, `docs/architecture.md`,
+  `docs/features-b2b.md`, `.specs/domains/product-map.md`,
+  `docs/architecture-sources.json`.
+- Contrôle : `scripts/docs-check.test.mjs` (sélection d'un `bash` POSIX, chemin
+  converti, saut explicite).
+- Pilotage : `specs/STATUS.md`, `specs/010-rattrapage-documentaire/`, annotations de
+  `specs/007-saas-reliability/tasks.md` et `specs/008-pr9-deblocage/tasks.md`.
+- Aucun fichier de `apps/api`, `apps/web`, `packages/shared` ni aucune migration.
+
+## Nettoyage des branches
+
+- 7 branches locales supprimées après vérification (`ahead:0`) ; la branche
+  `codex/b2b-organizations-rbac` est conservée sous le tag
+  `archive/b2b-rbac-2026-11` avant suppression.
+- 6 branches restent attachées à des worktrees hors dépôt ; elles sont laissées en
+  l'état pour ne pas détruire un travail concurrent.
+
+## Limites
+
+- Le saut du test de résolution lorsque `bash` est absent reste un contournement
+  volontaire : la CI Ubuntu exécute réellement le script.
+- Les statuts de specs non modifiés dans ce lot sont listés dans `specs/STATUS.md`
+  et attendent une revue dédiée.
