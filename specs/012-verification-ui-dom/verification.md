@@ -31,9 +31,9 @@ Les appels réseau sont simulés : aucun serveur, aucune base, aucun navigateur.
 |---|---|---|
 | Navigateur réel (Playwright) | NOT_RUN | retiré à la demande du propriétaire le 7 novembre 2026 ; décision D2 maintenue |
 | Rendu CSS, responsive, clavier réel | NOT_RUN | hors périmètre de `jsdom` |
-| `pnpm smoke` | NOT_RUN | hors périmètre du lot |
-| `pnpm verify:security` / `pnpm verify:tenant-isolation` | NOT_RUN | PostgreSQL jetable non configuré |
-| CI distante | NOT_RUN | non consultée |
+| `pnpm smoke` | **PASS** en CI | run `43737124731` |
+| `pnpm verify:security` / `pnpm verify:tenant-isolation` | **PASS** en CI | PostgreSQL jetable, run `43737124731` |
+| CI distante | **PASS** | run `43737124731` : les 6 tests DOM passent dans le job `verify` |
 
 ## Portée du diff
 
@@ -51,5 +51,5 @@ Les appels réseau sont simulés : aucun serveur, aucune base, aucun navigateur.
   reste l'autorité et conserve ses propres tests de refus.
 - Aucune assertion de style, de disposition ou d'accessibilité réelle n'est
   revendiquée.
-- La CI exécute ces tests via `pnpm test`, mais elle n'a pas été observée dans cette
-  session.
+- La CI exécute ces tests via `pnpm test` et le run `43737124731` est vert ; les
+  six tests DOM passent dans le job `verify`.

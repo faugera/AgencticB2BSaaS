@@ -19,11 +19,12 @@ de `main` (`94e8b9a`).
 | Contrôle | Résultat | Motif |
 |---|---|---|
 | `pnpm build` | **PASS** | build complet exécuté pendant le lot 012, après les tests DOM |
-| `pnpm smoke` | NOT_RUN | idem |
-| `pnpm verify:security` | NOT_RUN | PostgreSQL jetable non configuré |
-| `pnpm verify:tenant-isolation` | NOT_RUN | PostgreSQL jetable non configuré |
-| Parcours PostgreSQL/Mailpit | NOT_RUN | infrastructure non configurée |
-| CI distante | NOT_RUN | non consultée |
+| `pnpm smoke` | **PASS** en CI | run `43737124731` |
+| `pnpm verify:security` | **PASS** en CI | PostgreSQL jetable, run `43737124731` |
+| `pnpm verify:tenant-isolation` | **PASS** en CI | PostgreSQL jetable, run `43737124731` |
+| Parcours PostgreSQL | **PASS** en CI | développement, préservation/rejeu et sécurité, run `43737124731` |
+| Mailpit | NOT_RUN | la CI ne démarre que PostgreSQL |
+| CI distante | **PASS** | run `43737124731`, 2 min 14 s |
 
 ## Portée du diff
 
@@ -52,8 +53,9 @@ de `main` (`94e8b9a`).
   sans nouvelle étape. Rendu CSS, responsive, clavier réel et authentification
   navigateur restent non couverts et ne sont pas revendiqués.
 - Après ces ajouts : `pnpm docs:check` et `pnpm docs:test` (40/40) **PASS**.
-  `pnpm test` : 21 fichiers, 128 tests. PostgreSQL jetable, navigateur et CI
-  restent `NOT_RUN`.
+  `pnpm test` : 21 fichiers, 128 tests. PostgreSQL jetable, sécurité, isolation et
+  smoke sont **PASS** en CI (run `43737124731`) ; navigateur réel et Mailpit restent
+  `NOT_RUN`.
 
 ## Nettoyage des branches
 

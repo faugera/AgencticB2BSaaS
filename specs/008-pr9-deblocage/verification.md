@@ -18,9 +18,9 @@ Spec clôturée comme **supplantée**. Vérifications sur `main` (`94e8b9a`) :
 | Correctif `business.context()` | Fait par migrations additives 0017, 0019, 0025 | `apps/api/migrations/` |
 | Documentation synchronisée | Fait par 009 | `specs/009-reconciliation-securite-b2b/documentation-impact.md` |
 | Gates PostgreSQL jetable | PASS historique du 7 novembre 2026 | `specs/009-reconciliation-securite-b2b/verification.md` |
-| Types, lint, tests unitaires, docs | PASS local le 15 novembre 2026 | 122 tests, `pnpm docs:test` 40/40, `pnpm docs:check` |
+| Types, lint, tests unitaires, docs | PASS local le 15 novembre 2026 | 128 tests, `pnpm docs:test` 40/40, `pnpm docs:check` |
 | Historique des migrations non jetables | `UNKNOWN` | Suivi par 009 T006 et la décision D1 |
-| CI distante de la branche courante | `NOT_RUN` | Non consultée |
+| CI distante de la branche courante | **PASS** | run `43737124731`, PostgreSQL, migrations, sécurité et isolation incluses |
 
 Conclusion : aucune implémentation supplémentaire n'est due au titre de 008. La
 publication de PR 9 est abandonnée au profit des fusions déjà présentes ; la

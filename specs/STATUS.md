@@ -18,7 +18,7 @@ motivé.
 | 005-copilot-spec-kit-integration | In Progress | 11/11 | 0 | — | Statut à passer à Complete |
 | 006-integration-test-efficiency | In Progress | 4/4 | 0 | — | Statut à passer à Complete |
 | 007-agent-guide | Complete | 8/8 | 0 | — | — |
-| 007-documentation-sync-harness | In Progress | 23/24 | 1 | Preuve CI (T023) | CI distante `NOT_RUN` |
+| 007-documentation-sync-harness | In Progress | 23/24 | 1 | Preuve CI (T023) | CI verte sur `d9a4904` (run `43737124731`) ; à reconfirmer sur le SHA final |
 | 007-saas-reliability | In Progress | 31/38 | 7 | 1 partiel, 4 preuves, 2 obsolètes | PostgreSQL jetable |
 | 008-admin-control-plane | In Progress | 9/19 | 10 | Implémentation et preuves | Codes de refus nommés (T002/T007/T008) ; PostgreSQL jetable (T018) ; publication (T019) |
 | 008-pr9-deblocage | Complete | 8/8 | 0 | — | Clôturée comme supplantée le 15 novembre 2026 ; reliquat migration suivi par 009/D1 |
@@ -41,8 +41,10 @@ motivé.
 - `pnpm typecheck`, `pnpm lint`, `pnpm test` (128 tests, 21 fichiers), `pnpm build`,
   `pnpm docs:test` (40 tests), `pnpm docs:check` : exécutés localement le
   15 novembre 2026.
-- PostgreSQL jetable, Mailpit, `pnpm verify:security`, `pnpm verify:tenant-isolation`,
-  `pnpm smoke`, CI distante : `NOT_RUN` à cette date.
+- PostgreSQL jetable, `pnpm verify:security`, `pnpm verify:tenant-isolation`,
+  `pnpm smoke` : **PASS** en CI GitHub, run `43737124731` (15 novembre 2026),
+  y compris la préservation et le rejeu des migrations.
+- Mailpit jetable, navigateur réel : `NOT_RUN` ; la CI ne démarre que PostgreSQL.
 
 ## Règles
 

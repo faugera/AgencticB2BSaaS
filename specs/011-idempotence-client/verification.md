@@ -17,12 +17,12 @@ de `main` (`94e8b9a`). Les contrôles portent sur les modifications du lot 4.
 
 | Contrôle | Résultat | Motif |
 |---|---|---|
-| `pnpm build` | NOT_RUN | hors périmètre du lot ; les portes précédentes restent vertes |
-| `pnpm smoke` | NOT_RUN | idem |
-| `pnpm verify:security` | NOT_RUN | PostgreSQL jetable non configuré |
-| `pnpm verify:tenant-isolation` | NOT_RUN | PostgreSQL jetable non configuré |
+| `pnpm build` | PASS en CI | run `43737124731` |
+| `pnpm smoke` | PASS en CI | run `43737124731` |
+| `pnpm verify:security` | PASS en CI | PostgreSQL jetable, run `43737124731` |
+| `pnpm verify:tenant-isolation` | PASS en CI | PostgreSQL jetable, run `43737124731` |
 | Rejeu réel navigateur / API | NOT_RUN | aucun environnement pilote configuré dans cette session |
-| CI distante | NOT_RUN | non consultée |
+| CI distante | **PASS** | run `43737124731`, 2 min 14 s |
 
 ## Preuves unitaires
 
