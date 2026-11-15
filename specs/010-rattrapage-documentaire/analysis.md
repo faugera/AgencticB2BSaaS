@@ -54,6 +54,9 @@ le 15 novembre 2026.
   les conserver, abandonner `/settings` et `/control`, et garder
   `00000000-0000-0000-0000-000000000000` comme sentinelle plateforme réservée par
   la migration 0025. Les codes de refus nommés restent des tâches ouvertes de 008.
+- **D2** : socle DOM minimal (`jsdom` + Testing Library) dans `pnpm test`, sans
+  navigateur. Six tests couvrent navigation, redirections de garde et création de
+  tenant ; l'autorisation reste serveur. Spec `012-verification-ui-dom`.
 - Aucun environnement non jetable n'a été inspecté : l'état réel des bases reste
   `UNKNOWN` et n'est pas présenté comme vérifié.
 

@@ -1,7 +1,7 @@
 # État des specs
 
-Synthèse au 15 novembre 2026, `main` au commit `94e8b9a`, plus les specs 010 et 011
-en cours sur `codex/rattrapage-documentaire`.
+Synthèse au 15 novembre 2026, `main` au commit `94e8b9a`, plus les specs 010, 011 et
+012 en cours sur `codex/rattrapage-documentaire`.
 Source de vérité pour le détail : chaque `tasks.md`. Une tâche n'est cochée que si
 sa preuve est datée et reproductible ; sinon elle reste ouverte ou devient `NOT_RUN`
 motivé.
@@ -19,28 +19,30 @@ motivé.
 | 006-integration-test-efficiency | In Progress | 4/4 | 0 | — | Statut à passer à Complete |
 | 007-agent-guide | Complete | 8/8 | 0 | — | — |
 | 007-documentation-sync-harness | In Progress | 23/24 | 1 | Preuve CI (T023) | CI distante `NOT_RUN` |
-| 007-saas-reliability | In Progress | 31/38 | 7 | 1 partiel, 4 preuves, 2 obsolètes | D2 ; PostgreSQL jetable |
-| 008-admin-control-plane | In Progress | 8/19 | 11 | Implémentation et preuves | D2 (vérification UI) ; PostgreSQL jetable (T018) ; publication (T019) |
+| 007-saas-reliability | In Progress | 31/38 | 7 | 1 partiel, 4 preuves, 2 obsolètes | PostgreSQL jetable |
+| 008-admin-control-plane | In Progress | 9/19 | 10 | Implémentation et preuves | Codes de refus nommés (T002/T007/T008) ; PostgreSQL jetable (T018) ; publication (T019) |
 | 008-pr9-deblocage | Complete | 8/8 | 0 | — | Clôturée comme supplantée le 15 novembre 2026 ; reliquat migration suivi par 009/D1 |
 | 008-retrait-tests-navigateur | In Progress | 4/4 | 0 | — | Statut à passer à Complete |
 | 009-reconciliation-securite-b2b | Complete | 6/6 | 0 | — | — |
-| 010-rattrapage-documentaire | In Progress | 13/13 | 0 | — | Publication de la PR |
+| 010-rattrapage-documentaire | In Progress | 14/14 | 0 | — | Publication de la PR |
 | 011-idempotence-client | In Progress | 6/6 | 0 | — | Publication de la PR |
+| 012-verification-ui-dom | Complete | 7/7 | 0 | — | Publication de la PR |
 
 ## Décisions
 
 | Réf. | Statut | Question | Issue retenue |
 |---|---|---|---|
 | D1 | **Tranchée le 15 nov 2026** | Historique migrations 0016–0018 : gel, renumérotation ou reprise opérateur | Gel des noms 0016–0025 + runbook de reprise dans `docs/setup/private-pilot.md`. Aucun environnement non jetable inspecté : `UNKNOWN`. |
-| D2 | En attente | Vérification UI : aucune, socle minimal ou retour partiel | 008 T017, future CI |
+| D2 | **Tranchée le 15 nov 2026** | Vérification UI : aucune, socle minimal ou retour partiel | Socle DOM minimal (`jsdom` + Testing Library) dans `pnpm test`, sans navigateur : navigation `/app`/`/admin`, gardes de redirection et formulaire de création de tenant. 008 T017 satisfaite ; spec 012 créée. |
 | D3 | **Tranchée le 15 nov 2026** | Règle `/settings` vs `/control` et sort de `tenantId = 0000` | Conserver `/app` (tenant) et `/admin` (plateforme) ; abandonner `/settings` et `/control`. Garder `0000` comme sentinelle plateforme réservée (migration 0025). |
 
 ## Preuves de référence
 
-- `pnpm typecheck`, `pnpm lint`, `pnpm test` (122 tests), `pnpm docs:test` (40 tests),
-  `pnpm docs:check` : exécutés localement le 15 novembre 2026.
+- `pnpm typecheck`, `pnpm lint`, `pnpm test` (128 tests, 21 fichiers), `pnpm build`,
+  `pnpm docs:test` (40 tests), `pnpm docs:check` : exécutés localement le
+  15 novembre 2026.
 - PostgreSQL jetable, Mailpit, `pnpm verify:security`, `pnpm verify:tenant-isolation`,
-  `pnpm build`, `pnpm smoke`, CI distante : `NOT_RUN` à cette date.
+  `pnpm smoke`, CI distante : `NOT_RUN` à cette date.
 
 ## Règles
 

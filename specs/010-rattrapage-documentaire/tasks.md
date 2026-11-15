@@ -58,6 +58,9 @@ correspondant et à la preuve citée.
 - [x] T013 [US3] Décision D3 : acter `/app` et `/admin` comme surfaces livrées,
   conserver la sentinelle `0000`, puis aligner `specs/008-admin-control-plane` et
   `specs/STATUS.md`
+- [x] T014 [US3] Décision D2 : socle DOM minimal (`jsdom` + Testing Library) sans
+  navigateur, six tests sur navigation, gardes de redirection et formulaire de
+  création de tenant ; spec `012-verification-ui-dom`
 
 ## Phase 5 : Validation
 

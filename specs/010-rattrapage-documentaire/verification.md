@@ -11,14 +11,14 @@ de `main` (`94e8b9a`).
 | `pnpm docs:check` | **PASS** | structure, liens, manifestes et décisions du diff valides |
 | `pnpm typecheck` | **PASS** | racine et trois workspaces |
 | `pnpm lint` | **PASS** | zéro warning |
-| `pnpm test` | **PASS** | 17 fichiers, 116 tests |
+| `pnpm test` | **PASS** | 21 fichiers, 128 tests (dont 6 tests DOM en jsdom) |
 | `node scripts/architecture-sync.mjs --reviewed` | **PASS** | manifeste régénéré après revue du delta |
 
 ## Contrôles non exécutés
 
 | Contrôle | Résultat | Motif |
 |---|---|---|
-| `pnpm build` | NOT_RUN | hors périmètre de ce lot documentaire |
+| `pnpm build` | **PASS** | build complet exécuté pendant le lot 012, après les tests DOM |
 | `pnpm smoke` | NOT_RUN | idem |
 | `pnpm verify:security` | NOT_RUN | PostgreSQL jetable non configuré |
 | `pnpm verify:tenant-isolation` | NOT_RUN | PostgreSQL jetable non configuré |
@@ -36,7 +36,7 @@ de `main` (`94e8b9a`).
   `specs/007-saas-reliability/tasks.md` et `specs/008-pr9-deblocage/tasks.md`.
 - Aucun fichier de `apps/api`, `apps/web`, `packages/shared` ni aucune migration.
 
-## Décisions D1 et D3 (15 novembre 2026)
+## Décisions D1, D3 et D2 (15 novembre 2026)
 
 - **D1** : noms de migration 0016–0025 gelés ; procédure de reprise ajoutée à
   `docs/setup/private-pilot.md` (diagnostic, correspondance, vérification des
@@ -46,8 +46,14 @@ de `main` (`94e8b9a`).
   et `/control` abandonnés ; sentinelle `0000` conservée (migration 0025). Spec 008
   alignée, tâches T001/T003/T004/T009/T011 justifiées ; les codes de refus nommés
   restent ouverts.
+- **D2** : socle DOM minimal retenu (`jsdom` + Testing Library), sans Playwright.
+  Six tests remplacent l'ancienne couverture navigateur sur la navigation, les
+  redirections de garde et la création de tenant ; la CI les exécute via `pnpm test`,
+  sans nouvelle étape. Rendu CSS, responsive, clavier réel et authentification
+  navigateur restent non couverts et ne sont pas revendiqués.
 - Après ces ajouts : `pnpm docs:check` et `pnpm docs:test` (40/40) **PASS**.
-  PostgreSQL jetable, navigateur et CI restent `NOT_RUN`.
+  `pnpm test` : 21 fichiers, 128 tests. PostgreSQL jetable, navigateur et CI
+  restent `NOT_RUN`.
 
 ## Nettoyage des branches
 

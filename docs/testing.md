@@ -37,8 +37,31 @@ imposer de couleur CSS calculée. Aucun code produit ni permission n'est modifi�
 - `pnpm test:auth` : suite complète des intégrations PostgreSQL.
 
 Les suites navigateur et le parcours SMTP réel ont été retirés à la demande du propriétaire.
-La CI ne vérifie plus automatiquement les parcours UI, le clavier, le responsive ni
-l’authentification par navigateur. Les résultats ci-dessous sont historiques.
+La CI ne vérifie plus de parcours dans un vrai navigateur, ni le clavier réel, le
+responsive ou l'authentification par navigateur. Les résultats ci-dessous sont
+historiques. Depuis le 15 novembre 2026, un socle DOM minimal couvre toutefois la
+logique de navigation et de formulaire (voir la section suivante).
+
+## Socle DOM minimal - 15 novembre 2026
+
+Décision D2 : aucune suite Playwright n'est réintroduite. Six tests s'exécutent en
+`jsdom` via `@testing-library/react`, dans la commande `pnpm test` déjà présente en
+CI ; aucune étape ni service supplémentaire n'est ajouté.
+
+Couvert :
+
+- séparation des liens `/app` (tenant) et `/admin` (plateforme) et liens
+  conditionnels selon les permissions exposées ;
+- refus d'un compte non super-admin sur `/admin` (redirection `/403`) et
+  redirection d'un super-admin de `/app` vers `/admin` ;
+- soumission du formulaire de création de tenant passant par `mutate()`, et
+  création d'organisation restant sur le chemin non idempotent.
+
+Non couvert, volontairement : rendu CSS, responsive, clavier réel, authentification
+navigateur, appels réseau réels. Ces tests ne prouvent aucune autorisation : les
+refus et les portées restent décidés et vérifiés côté serveur. PostgreSQL jetable,
+navigateur réel et CI distante restent hors de cette preuve et sont consignés
+`NOT_RUN` quand ils ne sont pas exécutés.
 
 ## Fiabilisation des mutations et des listes
 

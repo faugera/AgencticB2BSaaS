@@ -58,6 +58,6 @@
 - [x] T014 Tester l’UUID réservé dans l’API et la transaction, son refus aux acteurs ordinaires, l’absence de tenant client associé et le maintien de `null` sans appartenance.
 - [x] T015 Ajouter une migration après `0024` protégeant l’UUID réservé et établissant le contexte à partir de l’acteur vérifié, sans modifier les migrations appliquées.
 - [x] T016 Préserver les événements d’audit globaux à tenant SQL `NULL`, les clés d’idempotence existantes et les portées clientes explicites ; tester chaque comportement.
-- [ ] T017 Adapter les consommateurs de l’API et vérifier les autorisations et la navigation sans tests navigateur.
+- [x] T017 Adapter les consommateurs de l'API et vérifier les autorisations et la navigation sans tests navigateur. — Décision D2 du 15 novembre 2026 : socle DOM minimal (`jsdom` + Testing Library) sans Playwright. `navigation.dom.test.tsx` vérifie les liens `/app`/`/admin` et le `tenantId` ; `application-guard.dom.test.tsx` vérifie le refus `/admin` → `/403` et la redirection `/app` → `/admin` ; `organizations-form.dom.test.tsx` vérifie que la création de tenant passe par `mutate()`. Les autorisations restent prouvées côté serveur, pas par l'interface.
 - [ ] T018 Vérifier les migrations sur une base jetable neuve et une copie jetable d’un historique local, puis exécuter les contrôles sécurité, isolation, HTTP, SMTP, socle et documentation.
 - [ ] T019 Actualiser les documents concernés, consigner les preuves, publier la PR et traiter les discussions après CI verte.
