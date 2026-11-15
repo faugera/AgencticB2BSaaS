@@ -1,6 +1,7 @@
 # État des specs
 
-Synthèse au 15 novembre 2026, `main` au commit `94e8b9a`, plus la spec 010 en cours.
+Synthèse au 15 novembre 2026, `main` au commit `94e8b9a`, plus les specs 010 et 011
+en cours sur `codex/rattrapage-documentaire`.
 Source de vérité pour le détail : chaque `tasks.md`. Une tâche n'est cochée que si
 sa preuve est datée et reproductible ; sinon elle reste ouverte ou devient `NOT_RUN`
 motivé.
@@ -20,7 +21,7 @@ motivé.
 | 007-documentation-sync-harness | In Progress | 23/24 | 1 | Preuve CI (T023) | CI distante `NOT_RUN` |
 | 007-saas-reliability | In Progress | 31/38 | 7 | 1 partiel, 4 preuves, 2 obsolètes | Décisions D1/D2 ; PostgreSQL jetable |
 | 008-admin-control-plane | Draft | 3/19 | 16 | Implémentation | Arbitrage D3 (`/settings` vs `/control`) |
-| 008-pr9-deblocage | Draft | 0/8 | 8 | À auditer : probablement supplanté | Vérifier couverture par les tests de `main` |
+| 008-pr9-deblocage | Complete | 8/8 | 0 | — | Clôturée comme supplantée le 15 novembre 2026 ; reliquat migration suivi par 009/D1 |
 | 008-retrait-tests-navigateur | In Progress | 4/4 | 0 | — | Statut à passer à Complete |
 | 009-reconciliation-securite-b2b | In Progress | 5/6 | 1 | Décision ops (T006) | Inventaire des environnements non jetables |
 | 010-rattrapage-documentaire | In Progress | 10/10 | 0 | — | Publication de la PR |

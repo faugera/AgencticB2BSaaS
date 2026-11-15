@@ -46,10 +46,13 @@ dans les documents d'état et vérifier chaque occurrence restante comme histori
 **Test indépendant** : comparer chaque ligne de `specs/STATUS.md` au `tasks.md`
 correspondant et à la preuve citée.
 
-- [x] T008 [US3] Créer `specs/STATUS.md` avec les 15 dossiers de specs, tâches
+- [x] T008 [US3] Créer `specs/STATUS.md` avec les dossiers de specs existants, tâches
   restantes, nature et blocage
 - [x] T009 [US3] Réécrire la tâche T022 de `specs/007-saas-reliability/tasks.md`,
   qui référence `tests/e2e` supprimé, et annoter les tâches devenues obsolètes
+- [x] T011 [US3] Auditer `specs/008-pr9-deblocage` : relier chaque tâche à une
+  preuve de `main` ou au reliquat 009/D1, puis clôturer la spec comme supplantée
+  (spec, tasks, verification, `specs/STATUS.md`)
 
 ## Phase 5 : Validation
 

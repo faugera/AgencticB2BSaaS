@@ -11,7 +11,7 @@ le 15 novembre 2026.
 | FR-002 (limites exactes) | T003, T007 | README « Current limits », CHANGELOG 0020–0025 |
 | FR-003 (idempotence API vs client) | T005, T006 | ligne dédiée dans `docs/features-b2b.md` et la carte produit |
 | FR-004 (`docs:test` Windows) | T001, T002 | 40/40 sous Windows, saut explicite si `bash` absent |
-| FR-005 (tableau unique) | T008 | `specs/STATUS.md`, 15 specs |
+| FR-005 (tableau unique) | T008 | `specs/STATUS.md`, 16 specs au 15 novembre 2026 |
 | FR-006 (aucun changement métier) | toutes | diff limité aux documents, au test de contrôle et aux specs |
 | FR-007 (PASS/FAIL/NOT_RUN) | T010 | `verification.md` |
 

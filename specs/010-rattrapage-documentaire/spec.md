@@ -78,7 +78,7 @@ Un mainteneur consulte un tableau unique et sait, pour chaque spec, ce qui est l
 - **SC-001** : Zéro mention de branche `codex/*` présentée comme état courant dans les documents d'état.
 - **SC-002** : `pnpm docs:test` passe 40/40 sous Windows avec `bash` disponible.
 - **SC-003** : `pnpm docs:check` passe après régénération du manifeste d'architecture.
-- **SC-004** : `specs/STATUS.md` couvre les 15 dossiers de specs existants.
+- **SC-004** : `specs/STATUS.md` couvre tous les dossiers de specs existants.
 - **SC-005** : `pnpm typecheck`, `pnpm lint` et `pnpm test` restent verts sans modification de code applicatif.
 
 ## Assumptions
