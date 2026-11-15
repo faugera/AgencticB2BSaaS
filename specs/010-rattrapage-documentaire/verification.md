@@ -36,6 +36,19 @@ de `main` (`94e8b9a`).
   `specs/007-saas-reliability/tasks.md` et `specs/008-pr9-deblocage/tasks.md`.
 - Aucun fichier de `apps/api`, `apps/web`, `packages/shared` ni aucune migration.
 
+## Décisions D1 et D3 (15 novembre 2026)
+
+- **D1** : noms de migration 0016–0025 gelés ; procédure de reprise ajoutée à
+  `docs/setup/private-pilot.md` (diagnostic, correspondance, vérification des
+  empreintes, renommage transactionnel, garde-fous). Aucune migration appliquée
+  n'est modifiée ; aucun environnement non jetable n'est inspecté : `UNKNOWN`.
+- **D3** : surfaces `/app` (tenant) et `/admin` (plateforme) conservées ; `/settings`
+  et `/control` abandonnés ; sentinelle `0000` conservée (migration 0025). Spec 008
+  alignée, tâches T001/T003/T004/T009/T011 justifiées ; les codes de refus nommés
+  restent ouverts.
+- Après ces ajouts : `pnpm docs:check` et `pnpm docs:test` (40/40) **PASS**.
+  PostgreSQL jetable, navigateur et CI restent `NOT_RUN`.
+
 ## Nettoyage des branches
 
 - 7 branches locales supprimées après vérification (`ahead:0`) ; la branche

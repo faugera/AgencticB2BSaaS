@@ -43,6 +43,20 @@ le 15 novembre 2026.
 - Les statuts `Complete` des specs 004/005/006/007-documentation/008-retrait ne sont
   pas modifiés ici : ils exigent une revue dédiée, consignée dans `STATUS.md`.
 
+## Décisions D1 et D3
+
+- **D1** : l'historique montre que `1ec1f4a` a décalé le bloc SaaS de 0016–0020 vers
+  0020–0024 et inséré le bloc B2B 0016–0019. `migrateAuth` ne détecte pas un
+  renommage ; un environnement migré avant ce commit peut donc rejouer des objets
+  sous de nouveaux noms. Décision : gel des noms et runbook de reprise détaillé dans
+  `docs/setup/private-pilot.md`, sans réécrire ni forcer un checksum.
+- **D3** : les routes livrées sont `/app` (tenant) et `/admin` (plateforme). Décision :
+  les conserver, abandonner `/settings` et `/control`, et garder
+  `00000000-0000-0000-0000-000000000000` comme sentinelle plateforme réservée par
+  la migration 0025. Les codes de refus nommés restent des tâches ouvertes de 008.
+- Aucun environnement non jetable n'a été inspecté : l'état réel des bases reste
+  `UNKNOWN` et n'est pas présenté comme vérifié.
+
 ## Verdict
 
 Cohérent et borné. Aucune violation de la constitution ni élargissement de périmètre.

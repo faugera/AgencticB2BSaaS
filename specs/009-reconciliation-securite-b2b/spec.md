@@ -1,7 +1,13 @@
 # Spécification : Réconciliation de la sécurité B2B
 
 **Feature Branch**: `codex/reconciliation-securite-stack`
-**Status**: In Progress
+**Status**: Complete
+**Closed**: 2026-11-15 par la décision D1 (gel des noms + runbook de reprise)
+
+> Les correctifs B2B sont livrés sur `main` et le reliquat d'exploitation est
+> désormais couvert : noms 0016–0025 gelés, procédure de reprise documentée dans
+> `docs/setup/private-pilot.md`. Aucun environnement non jetable n'a été inspecté :
+> son historique reste `UNKNOWN`, sans modification des migrations appliquées.
 
 ## User Scenarios & Testing
 
@@ -19,4 +25,4 @@ Un utilisateur travaille dans un tenant actif, avec les seules capacités de ce 
 
 - **SC-001** : Les tests unitaires, sécurité, isolation et reprise de migrations passent sur la révision soumise.
 - **SC-002** : Les huit constats de la PR 9 sont reliés à un comportement et à une preuve ou limite explicite.
-- **SC-003** : Les migrations proposées restent provisoires tant que l'historique des environnements non jetables n'est pas connu.
+- **SC-003** : Les noms de migration 0016–0025 sont gelés ; la reprise des environnements non jetables suit une procédure documentée et vérifiée, sans réécriture d'une migration appliquée. Leur historique réel reste `UNKNOWN` tant qu'aucun opérateur ne l'a inspecté.

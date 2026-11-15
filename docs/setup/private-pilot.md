@@ -151,6 +151,88 @@ separately preserve auth/SMTP secrets, set retention and rehearse recovery befor
 opening the pilot. Infrastructure-specific backup automation/RTO is not deployed
 by this repository.
 
+## Reprise après réconciliation des migrations 0016–0025
+
+Le commit `1ec1f4a` a réorganisé les migrations : le bloc B2B occupe désormais
+0016–0019 et le bloc SaaS, auparavant 0016–0020, a été renommé en 0020–0024.
+Les fichiers renommés sont identiques octet pour octet à ceux de la tête de branche
+`3e7fd02` ; leurs empreintes ne diffèrent donc que si l'environnement avait appliqué
+une version intermédiaire du bloc SaaS.
+
+`migrateAuth` compare le nom et l'empreinte SHA-256. Un environnement migré avant
+`1ec1f4a` peut conserver dans `migration_history.versions` les anciens noms, puis
+tenter de rejouer les mêmes objets sous les nouveaux noms. Ne jamais éditer un
+fichier déjà appliqué, ni supprimer une ligne d'historique sans sauvegarde vérifiée.
+
+### Diagnostic en lecture seule
+
+```sql
+SELECT name, checksum, applied_at
+FROM migration_history.versions
+ORDER BY name;
+```
+
+Anciens noms à rechercher et correspondance attendue :
+
+| Ancien nom | Nom actuel |
+| --- | --- |
+| `0016_idempotency_outbox.sql` | `0020_idempotency_outbox.sql` |
+| `0017_keyset_pagination.sql` | `0021_keyset_pagination.sql` |
+| `0018_shared_rate_limits.sql` | `0022_shared_rate_limits.sql` |
+| `0019_outbox_failure_ack_token_guard.sql` | `0023_outbox_failure_ack_token_guard.sql` |
+| `0020_shared_rate_limit_timestamp_fix.sql` | `0024_shared_rate_limit_timestamp_fix.sql` |
+
+Les migrations B2B `0016_organization_directory_isolation` à
+`0019_active_organization_context` doivent rester absentes de l'historique avant la
+reprise : le migrateur les appliquera après le renommage.
+
+### Procédure de reprise
+
+1. Sauvegarder et éprouver la restauration sur une copie isolée (voir la section
+   précédente). Arrêter les runtimes ; aucune migration ne s'exécute au démarrage.
+2. Calculer l'empreinte de chaque fichier actuel, en hexadécimal minuscule comme le
+   migrateur. POSIX : `sha256sum apps/api/migrations/0020_idempotency_outbox.sql`.
+   PowerShell : `Get-FileHash -Algorithm SHA256 <fichier>` puis convertir en
+   minuscules.
+3. Comparer chaque empreinte d'ancienne ligne à l'empreinte du fichier actuel.
+4. **Si toutes correspondent**, renommer les lignes dans une transaction, uniquement
+   si les nouveaux noms sont absents :
+
+```sql
+BEGIN;
+SELECT name FROM migration_history.versions WHERE name IN (
+  '0020_idempotency_outbox.sql','0021_keyset_pagination.sql',
+  '0022_shared_rate_limits.sql','0023_outbox_failure_ack_token_guard.sql',
+  '0024_shared_rate_limit_timestamp_fix.sql'
+); -- doit retourner zéro ligne
+UPDATE migration_history.versions SET name='0020_idempotency_outbox.sql'
+  WHERE name='0016_idempotency_outbox.sql';
+UPDATE migration_history.versions SET name='0021_keyset_pagination.sql'
+  WHERE name='0017_keyset_pagination.sql';
+UPDATE migration_history.versions SET name='0022_shared_rate_limits.sql'
+  WHERE name='0018_shared_rate_limits.sql';
+UPDATE migration_history.versions SET name='0023_outbox_failure_ack_token_guard.sql'
+  WHERE name='0019_outbox_failure_ack_token_guard.sql';
+UPDATE migration_history.versions SET name='0024_shared_rate_limit_timestamp_fix.sql'
+  WHERE name='0020_shared_rate_limit_timestamp_fix.sql';
+COMMIT;
+```
+
+5. **Si une empreinte diffère**, ne pas renommer : restaurer la sauvegarde ou
+   recréer la base, puis rejouer l'arbre courant. Une divergence d'empreinte signale
+   une version intermédiaire ou un schéma modifié manuellement ; elle exige un
+   arbitrage opérateur, pas un forçage de checksum.
+6. Lancer `pnpm auth:migrate`, vérifier `/ready`, le login et `pnpm smoke`. Attendu :
+   application de `0016`–`0019` B2B et de `0025`, aucun rejeu de `0020`–`0024`,
+   aucune erreur de checksum ni de table existante.
+7. Un volume Compose **jetable** peut être recréé à la place : `docker compose down -v`
+   supprime les données, puis `pnpm db:up`, `pnpm db:provision` et `pnpm auth:migrate`.
+   Ne jamais exécuter cette suppression sur un environnement partagé.
+
+Garde-fous : aucune réécriture de migration appliquée, aucune suppression de ligne
+d'historique sans sauvegarde, aucun checksum inséré sans vérification du schéma, et
+aucune migration automatique au démarrage.
+
 ## Reprise B2B — migrations0013 à0015
 
 Sauvegarder puis éprouver la restauration sur une copie isolée avant application

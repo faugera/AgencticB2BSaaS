@@ -53,6 +53,11 @@ correspondant et à la preuve citée.
 - [x] T011 [US3] Auditer `specs/008-pr9-deblocage` : relier chaque tâche à une
   preuve de `main` ou au reliquat 009/D1, puis clôturer la spec comme supplantée
   (spec, tasks, verification, `specs/STATUS.md`)
+- [x] T012 [US3] Décision D1 : geler les noms 0016–0025 et documenter la reprise
+  des environnements migrés avant `1ec1f4a` dans `docs/setup/private-pilot.md`
+- [x] T013 [US3] Décision D3 : acter `/app` et `/admin` comme surfaces livrées,
+  conserver la sentinelle `0000`, puis aligner `specs/008-admin-control-plane` et
+  `specs/STATUS.md`
 
 ## Phase 5 : Validation
 

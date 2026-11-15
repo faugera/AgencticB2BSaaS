@@ -19,21 +19,21 @@ motivé.
 | 006-integration-test-efficiency | In Progress | 4/4 | 0 | — | Statut à passer à Complete |
 | 007-agent-guide | Complete | 8/8 | 0 | — | — |
 | 007-documentation-sync-harness | In Progress | 23/24 | 1 | Preuve CI (T023) | CI distante `NOT_RUN` |
-| 007-saas-reliability | In Progress | 31/38 | 7 | 1 partiel, 4 preuves, 2 obsolètes | Décisions D1/D2 ; PostgreSQL jetable |
-| 008-admin-control-plane | Draft | 3/19 | 16 | Implémentation | Arbitrage D3 (`/settings` vs `/control`) |
+| 007-saas-reliability | In Progress | 31/38 | 7 | 1 partiel, 4 preuves, 2 obsolètes | D2 ; PostgreSQL jetable |
+| 008-admin-control-plane | In Progress | 8/19 | 11 | Implémentation et preuves | D2 (vérification UI) ; PostgreSQL jetable (T018) ; publication (T019) |
 | 008-pr9-deblocage | Complete | 8/8 | 0 | — | Clôturée comme supplantée le 15 novembre 2026 ; reliquat migration suivi par 009/D1 |
 | 008-retrait-tests-navigateur | In Progress | 4/4 | 0 | — | Statut à passer à Complete |
-| 009-reconciliation-securite-b2b | In Progress | 5/6 | 1 | Décision ops (T006) | Inventaire des environnements non jetables |
-| 010-rattrapage-documentaire | In Progress | 10/10 | 0 | — | Publication de la PR |
+| 009-reconciliation-securite-b2b | Complete | 6/6 | 0 | — | — |
+| 010-rattrapage-documentaire | In Progress | 13/13 | 0 | — | Publication de la PR |
 | 011-idempotence-client | In Progress | 6/6 | 0 | — | Publication de la PR |
 
-## Décisions en attente
+## Décisions
 
-| Réf. | Question | Impact |
-|---|---|---|
-| D1 | Historique migrations 0016–0018 : gel, renumérotation ou reprise opérateur | 009 T006, 007 reconciliation |
-| D2 | Vérification UI : aucune, socle minimal ou retour partiel | 008 T017, future CI |
-| D3 | Règle `/settings` vs `/control` et sort de `tenantId = 0000` | 008 (16 tâches) |
+| Réf. | Statut | Question | Issue retenue |
+|---|---|---|---|
+| D1 | **Tranchée le 15 nov 2026** | Historique migrations 0016–0018 : gel, renumérotation ou reprise opérateur | Gel des noms 0016–0025 + runbook de reprise dans `docs/setup/private-pilot.md`. Aucun environnement non jetable inspecté : `UNKNOWN`. |
+| D2 | En attente | Vérification UI : aucune, socle minimal ou retour partiel | 008 T017, future CI |
+| D3 | **Tranchée le 15 nov 2026** | Règle `/settings` vs `/control` et sort de `tenantId = 0000` | Conserver `/app` (tenant) et `/admin` (plateforme) ; abandonner `/settings` et `/control`. Garder `0000` comme sentinelle plateforme réservée (migration 0025). |
 
 ## Preuves de référence
 
