@@ -43,7 +43,7 @@ conservent l’état et ne livrent pas un lien révoqué.
 - [X] T006 [US1] Implémenter dans `apps/api/src/business/jobs/outbox-crypto.ts` le chiffrement authentifié des charges sensibles, la lecture par version de clé et le refus explicite d’une version ou d’un tag invalide ; limiter ce module aux primitives cryptographiques.
 - [X] T007 [US1] Implémenter les fonctions d’accès à l’outbox, le traitement des baux expirés et l’effacement du texte chiffré après livraison/expiration dans `apps/api/src/business/jobs/outbox-store.ts`, sans accès direct runtime aux tables privées.
 - [X] T008 [US1] Ajouter la réservation atomique et le rejeu de résultat sûr par acteur, action, portée et empreinte dans `apps/api/src/business/store.ts` et les routes critiques de `apps/api/src/business/routes.ts` et `apps/api/src/business/access-routes.ts`.
-- [ ] T009 [US1] Remplacer l’envoi synchrone d’invitation par l’enregistrement d’événements d’activation, de vérification et d’invitation dans `apps/api/src/business/routes.ts` et `apps/api/src/auth/operator.ts`, en invalidant les événements d’activation obsolètes.
+- [ ] T009 [US1] Remplacer l’envoi synchrone d’invitation par l’enregistrement d’événements d’activation, de vérification et d’invitation dans `apps/api/src/business/routes.ts` et `apps/api/src/auth/operator.ts`, en invalidant les événements d’activation obsolètes. — Constat du 15 novembre 2026 : l’outbox couvre les invitations HTTP ; `inviteIdentity` reste synchrone uniquement pour la CLI opérateur. Arbitrage requis avant clôture.
 - [X] T010 [US1] Implémenter le worker reprenable, le backoff borné, la réautorisation métier et l’arrêt propre dans `apps/api/src/business/jobs/outbox-worker.ts`, puis le démarrer et l’arrêter avec le cycle de vie de `apps/api/src/app.ts`.
 - [X] T011 [US1] Adapter l’état de livraison et l’action de reprise autorisée dans `apps/api/src/business/routes.ts` et `apps/web/src/pages/InvitationManagement.tsx` sans exposer de jeton ; faire précéder toute modification UI par la revue d’accessibilité requise.
 - [ ] T012 [US1] Vérifier les parcours d’invitation, activation, reprise et refus d’accès avec PostgreSQL/Mailpit dans `apps/api/src/business/outbox.integration.test.ts` et `apps/api/src/auth/flow.integration.test.ts`.
@@ -64,7 +64,7 @@ contiennent chaque élément une fois, dans un ordre stable, avec refus inter-te
 
 - [X] T013 [P] [US2] Ajouter dans `apps/web/src/http.test.ts` des tests de contrat pour chaque schéma listé dans `specs/007-saas-reliability/contracts/api.md`, couvrant un champ requis manquant et les enums inconnus applicables, ainsi que les erreurs HTTP sûres.
 - [X] T014 [P] [US2] Ajouter les tests PostgreSQL des curseurs, des bornes de page, des suppressions concurrentes et des refus inter-tenant dans `apps/api/src/business/pagination.integration.test.ts`.
-- [X] T015 [P] [US2] Ajouter les tests clavier, FR/EN et responsive des contrôles de pagination dans `tests/e2e/pagination.spec.ts`.
+- [X] T015 [P] [US2] Ajouter les tests clavier, FR/EN et responsive des contrôles de pagination dans `tests/e2e/pagination.spec.ts`. — Preuve historique : fichier retiré avec la suite navigateur le 7 novembre 2026 ; ne pas relancer.
 
 ### Implémentation
 
@@ -74,7 +74,7 @@ contiennent chaque élément une fois, dans un ordre stable, avec refus inter-te
 - [X] T019 [US2] Ajouter les curseurs stables date/UUID et les limites bornées aux lectures membres, invitations et workspaces dans `apps/api/migrations/0021_keyset_pagination.sql` et les routes métier concernées.
 - [X] T020 [US2] Documenter le contrat `items`/`nextCursor` et les réponses validées dans `apps/api` et `specs/007-saas-reliability/contracts/api.md`, en gardant les erreurs sûres existantes.
 - [X] T021 [US2] Implémenter la navigation paginée accessible et conserver la portée tenant sélectionnée dans `apps/web/src/pages/InvitationManagement.tsx`, `apps/web/src/pages/WorkspaceManagement.tsx` et `apps/web/src/application.tsx`.
-- [ ] T022 [US2] Exécuter les tests d’intégration sur au moins trois pages, curseurs invalides et requêtes inter-tenant dans `apps/api/src/business/pagination.integration.test.ts` et `tests/e2e/pagination.spec.ts`.
+- [ ] T022 [US2] Exécuter les tests d’intégration sur au moins trois pages, curseurs invalides et requêtes inter-tenant dans `apps/api/src/business/pagination.integration.test.ts` ; le scénario navigateur associé a été retiré avec la suite E2E le 7 novembre 2026.
 
 **Point de contrôle** : aucune liste concernée ne charge sans borne ; les
 réponses concernées sont contrôlées au runtime côté client et la portée reste

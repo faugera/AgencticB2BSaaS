@@ -1,6 +1,6 @@
-# Carte produit — état courant au 25 octobre 2026
+# Carte produit - état courant au 15 novembre 2026
 
-État de la branche codex/b2b-organizations-rbac depuis main f47449c, qui inclut la PR8 fusionnée. IMPLEMENTED signifie code
+État de `main` au commit `94e8b9a`. IMPLEMENTED signifie code
 présent, PARTIAL couverture incomplète, PLANNED intention, NOT_FOUND absence identifiée,
 UNKNOWN état non vérifié. Aucun statut ne certifie un déploiement ou une conformité exhaustive.
 
@@ -21,6 +21,7 @@ UNKNOWN état non vérifié. Aucun statut ne certifie un déploiement ou une con
 | Journal unique, consultation tenant autorisée et plateforme super-admin | IMPLEMENTED | apps/api/src/business/audit-routes.ts ; migration 0015 |
 | Suppression logique utilisateur/tenant et dates | IMPLEMENTED | Migration 0011 ; SQL opérateur uniquement, aucune UI/API de suppression |
 | Isolation tenant et autorisation persistée | IMPLEMENTED | apps/api/src/business/store.ts ; contexte transactionnel serveur |
+| Fiabilité des mutations : outbox, idempotence, pagination, débit partagé | IMPLEMENTED | Migrations 0020–0025 ; worker non exercé hors PostgreSQL/Mailpit jetables |
 | Accessibilité et responsive exhaustifs | PARTIAL | FR/EN et parcours testés ; aucune certification exhaustive |
 | Exploitation : rétention/export audit, backups automatisés et HA | PARTIAL | Décisions opérateur restantes dans ADR-005 |
 | SSO/SCIM, MFA imposée et appartenance à plusieurs clients | PLANNED | Hors pilote ; ADR-005 |
@@ -35,7 +36,8 @@ types seuls. Le navigateur ne constitue pas une frontière d'autorisation.
 
 Les cinq anciens chantiers sont [réconciliés](../../docs/sdd/legacy-reconciliation.md)
 sans réécrire leurs checkpoints. Les preuves SQL/UI historiques ne sont pas des tests
-relancés le 25 octobre pour l'adoption Spec Kit. La suite UI a été réduite à 72 cas ;
+relancés le 25 octobre pour l'adoption Spec Kit. Les tests navigateur ont été retirés
+le 7 novembre 2026 ;
 [la couverture actuelle](../../docs/testing.md) distingue mocks et intégrations réelles.
 Les gardes IA sont dans la constitution, sans nouvelle capacité IA.
 

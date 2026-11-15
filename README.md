@@ -73,10 +73,12 @@ Claude Code's `CLAUDE.md` points to the same instructions.
 
 ## Current limits
 
-The pilot is single-instance, with synchronous, retryable invitation mail and
-optional MFA even for super-admin. Hosting, SMTP sender, encrypted backups and
+The pilot runs as a single application instance, but shared state lives in
+PostgreSQL: business invitations go through an encrypted outbox drained by a
+lease-based worker, and rate limiting is shared by every process. MFA remains
+optional, even for super-admin. Hosting, SMTP sender, encrypted backups and
 branch protection still require operator configuration. SSO/SCIM, billing, agents,
-workflows and high availability are deferred. The OpenAI Agents SDK adapter will be added with the
+workflows, horizontal scaling and high availability are deferred. The OpenAI Agents SDK adapter will be added with the
 first concrete agent use case. No API key or provider dependency is needed now.
 
 Direct dependency versions and transitive resolution are pinned in

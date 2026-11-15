@@ -10,13 +10,13 @@
 
 ### Tests
 
-- [ ] T001 Vérifier l’état actuel des routes, permissions et accès tenant / plateforme dans le codebase et les docs liées.
+- [x] T001 Vérifier l'état actuel des routes, permissions et accès tenant / plateforme dans le codebase et les docs liées. — Audit du 15 novembre 2026 : routes `/app/*` et `/admin/*` dans `apps/web/src/main.tsx` ; garde super-admin dans `application.tsx:76` ; documentation `README.md`, `docs/data-model.md` et présent spec.
 - [ ] T002 Ajouter des tests de refus pour cross-tenant, franchissement de frontière et auto-élévation.
 
 ### Implémentation
 
-- [ ] T003 Définir la règle métier de séparation `/settings` vs `/control` et la portée explicitement autorisée.
-- [ ] T004 Documenter le traitement du contexte `tenantId = 0000` comme réservé à la plateforme.
+- [x] T003 Définir la règle métier de séparation `/app` vs `/admin` et la portée explicitement autorisée. — Décision D3 du 15 novembre 2026 : conserver `/app` (tenant) et `/admin` (plateforme) ; abandonner `/settings` et `/control`.
+- [x] T004 Documenter le traitement du contexte `tenantId = 0000` comme réservé à la plateforme. — Livré par la migration 0025, documenté dans `docs/data-model.md` et la clarification D3 ; preuve d'exécution PostgreSQL historique dans 009 `verification.md`, non rejouée le 15 novembre.
 
 ## Phase 2 — Sécurité des frontières
 
@@ -31,7 +31,7 @@
 
 - [ ] T007 Refuser les tentatives de franchissement de frontière côté serveur et enregistrer les incidents.
 - [ ] T008 Refuser les auto-attributions de privilège supérieur et les mutations de rôle non autorisées.
-- [ ] T009 Rendre l’accès tenant et plateforme strictement distinct dans les parcours UI et les API concernées.
+- [x] T009 Rendre l'accès tenant et plateforme strictement distinct dans les parcours UI et les API concernées. — Livré : `/admin` redirige vers `/403` si `platformRole !== 'super_admin'` ; un super-admin arrivant sur `/app` est redirigé vers `/admin` (`application.tsx:76-87`) ; l'API réautorise chaque requête côté serveur. Les codes de refus nommés restent ouverts (T002/T007/T008).
 
 ## Phase 3 — Validation et preuve
 
@@ -40,7 +40,7 @@
 ### Tests
 
 - [ ] T010 Vérifier le comportement d’accès pour les rôles TENANT_ADMIN, PLATFORM_ADMIN et PLATFORM_OWNER.
-- [ ] T011 Vérifier la non-réutilisation de `tenantId = 0000` comme tenant client.
+- [x] T011 Vérifier la non-réutilisation de `tenantId = 0000` comme tenant client. — Couvert par T014 et la migration 0025 : la sentinelle est refusée aux acteurs ordinaires et n'a aucun tenant client associé. Preuve PostgreSQL historique (009 `verification.md`) ; non rejouée le 15 novembre.
 
 ### Implémentation
 
@@ -58,6 +58,6 @@
 - [x] T014 Tester l’UUID réservé dans l’API et la transaction, son refus aux acteurs ordinaires, l’absence de tenant client associé et le maintien de `null` sans appartenance.
 - [x] T015 Ajouter une migration après `0024` protégeant l’UUID réservé et établissant le contexte à partir de l’acteur vérifié, sans modifier les migrations appliquées.
 - [x] T016 Préserver les événements d’audit globaux à tenant SQL `NULL`, les clés d’idempotence existantes et les portées clientes explicites ; tester chaque comportement.
-- [ ] T017 Adapter les consommateurs de l’API et vérifier les autorisations et la navigation sans tests navigateur.
+- [x] T017 Adapter les consommateurs de l'API et vérifier les autorisations et la navigation sans tests navigateur. — Décision D2 du 15 novembre 2026 : socle DOM minimal (`jsdom` + Testing Library) sans Playwright. `navigation.dom.test.tsx` vérifie les liens `/app`/`/admin` et le `tenantId` ; `application-guard.dom.test.tsx` vérifie le refus `/admin` → `/403` et la redirection `/app` → `/admin` ; `organizations-form.dom.test.tsx` vérifie que la création de tenant passe par `mutate()`. Les autorisations restent prouvées côté serveur, pas par l'interface.
 - [ ] T018 Vérifier les migrations sur une base jetable neuve et une copie jetable d’un historique local, puis exécuter les contrôles sécurité, isolation, HTTP, SMTP, socle et documentation.
 - [ ] T019 Actualiser les documents concernés, consigner les preuves, publier la PR et traiter les discussions après CI verte.

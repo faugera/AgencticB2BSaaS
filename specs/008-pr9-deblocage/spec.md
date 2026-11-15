@@ -1,7 +1,15 @@
 # Feature Specification: Déblocage de la PR 9
 
 **Created**: 2026-11-13
-**Status**: Draft
+**Status**: Complete
+**Closed**: 2026-11-15, comme supplantée
+
+> Audit du 15 novembre 2026 : les correctifs visés sont présents sur `main` via
+> d'autres fusions (migrations 0017/0019/0025, tests `review-*`, isolation du
+> limiteur). La publication de la PR 9 n'est plus le chemin de livraison. Le seul
+> reliquat — historique des migrations des environnements non jetables — reste
+> suivi par 009 T006 et la décision D1. Détail : [tasks.md](tasks.md) et
+> [verification.md](verification.md).
 
 ## User Scenarios & Testing
 

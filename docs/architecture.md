@@ -1,7 +1,9 @@
 # Architecture actuelle
 
-Branche B2B depuis main f47449c, qui inclut la PR8 fusionnée, 25 octobre 2026. Ce document décrit le code,
-pas les migrations effectivement déployées. [Spec courante](../specs/002-b2b-organizations-rbac/spec.md),
+État de `main` au 15 novembre 2026 (commit `94e8b9a`). Ce document décrit le code,
+pas les migrations effectivement déployées. Specs actives : [fiabilisation
+SaaS](../specs/007-saas-reliability/spec.md) et [réconciliation sécurité
+B2B](../specs/009-reconciliation-securite-b2b/spec.md). Voir aussi
 [modèle](data-model.md), [permissions](features-b2b.md), [runbook](setup/private-pilot.md).
 
 [Schéma d'architecture et des données](architecture.html) · [maintenance du schéma](setup/architecture-diagram.md).

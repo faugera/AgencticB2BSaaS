@@ -1,5 +1,13 @@
 # Changelog
 
+## Fiabilisation SaaS - 2026-11-15
+
+- Idempotence des mutations sensibles (création de tenant, invitations, revue de demande) avec rejeu borné à 24 h.
+- Invitations métier via outbox chiffrée AES-256-GCM, worker à bail et reprise des échecs.
+- Pagination keyset des listes et limitation de débit partagée en PostgreSQL.
+- Contexte plateforme réservé à l'UUID nul ; aucune création de tenant client avec cet identifiant.
+- Preuves : contrôles documentaires, types, lint et 128 tests unitaires, dont 6 tests DOM (`jsdom`) sur navigation, gardes de redirection et formulaire de création de tenant. CI GitHub verte (run `43737124731`) : PostgreSQL jetable, migrations, sécurité, isolation et smoke. Mailpit jetable et navigateur réel : `NOT_RUN`.
+
 ## B2B — organisations, rôles et profil
 
 - Organisations clients distinctes, tenants multiples et rôles cumulables selon une pyramide contrôlée.
