@@ -182,9 +182,14 @@ Anciens noms à rechercher et correspondance attendue :
 | `0019_outbox_failure_ack_token_guard.sql` | `0023_outbox_failure_ack_token_guard.sql` |
 | `0020_shared_rate_limit_timestamp_fix.sql` | `0024_shared_rate_limit_timestamp_fix.sql` |
 
-Les migrations B2B `0016_organization_directory_isolation` à
-`0019_active_organization_context` doivent rester absentes de l'historique avant la
-reprise : le migrateur les appliquera après le renommage.
+Les migrations B2B `0016_organization_directory_isolation`,
+`0017_review_security_repairs` et `0018_preferences_partial_update` **peuvent déjà
+figurer** dans l'historique : l'arbre `3e7fd02` superposait les deux blocs et une
+base migrée depuis cet arbre les a appliquées. Dans ce cas, vérifier leurs
+empreintes et les conserver : `migrateAuth` les ignore et n'applique que les
+migrations absentes. En revanche, `0019_active_organization_context` n'existe pas
+dans `3e7fd02` ; elle doit être absente avant la reprise et sera appliquée par le
+migrateur.
 
 ### Procédure de reprise
 
@@ -194,7 +199,8 @@ reprise : le migrateur les appliquera après le renommage.
    migrateur. POSIX : `sha256sum apps/api/migrations/0020_idempotency_outbox.sql`.
    PowerShell : `Get-FileHash -Algorithm SHA256 <fichier>` puis convertir en
    minuscules.
-3. Comparer chaque empreinte d'ancienne ligne à l'empreinte du fichier actuel.
+3. Comparer chaque empreinte d'ancienne ligne du bloc SaaS, ainsi que celles des
+   lignes B2B présentes, à l'empreinte du fichier actuel.
 4. **Si toutes correspondent**, renommer les lignes dans une transaction, uniquement
    si les nouveaux noms sont absents :
 
@@ -223,7 +229,8 @@ COMMIT;
    une version intermédiaire ou un schéma modifié manuellement ; elle exige un
    arbitrage opérateur, pas un forçage de checksum.
 6. Lancer `pnpm auth:migrate`, vérifier `/ready`, le login et `pnpm smoke`. Attendu :
-   application de `0016`–`0019` B2B et de `0025`, aucun rejeu de `0020`–`0024`,
+   application des migrations B2B absentes (dont `0019_active_organization_context`)
+   et de `0025`, conservation des B2B déjà présentes, aucun rejeu de `0020`–`0024`,
    aucune erreur de checksum ni de table existante.
 7. Un volume Compose **jetable** peut être recréé à la place : `docker compose down -v`
    supprime les données, puis `pnpm db:up`, `pnpm db:provision` et `pnpm auth:migrate`.
